@@ -107,16 +107,6 @@ body::before {
   opacity: 0.35;
 }
 
-/* Marquee scroll animation */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-.animate-marquee {
-  animation: marquee 28s linear infinite;
-}
-
 /* Shimmer effect para cards */
 @keyframes shimmer {
   0% { background-position: -200% center; }
@@ -139,10 +129,6 @@ body::before {
 
 /* Accesibilidad — respeta preferencia de movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation-play-state: paused;
-  }
-
   .shimmer-card:hover {
     animation: none;
   }

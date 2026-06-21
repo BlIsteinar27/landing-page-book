@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { motion, type Transition } from 'motion/react';
 import { Star } from 'lucide-react';
 
 const palabrasClave = [
@@ -9,6 +9,21 @@ const palabrasClave = [
   'Transformación', 'Crecimiento Personal', 'Autodescubrimiento', 'Propósito',
   'Mentalidad', 'Potencial', 'Inspiración', 'Claridad Mental', 'Vida Plena',
 ];
+
+const cardsContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.12, delayChildren: 0.1 },
+  },
+};
+
+const cardItemTransition: Transition = { duration: 0.55, ease: 'easeOut' };
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: cardItemTransition },
+};
 
 export default function TestimoniosSection() {
   const testimonios = [
@@ -66,15 +81,18 @@ export default function TestimoniosSection() {
           Lo que dicen quienes lo leyeron
         </motion.h2>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {testimonios.map((t, i) => (
+        {/* Cards con stagger */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          variants={cardsContainerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+        >
+          {testimonios.map((t) => (
             <motion.div
               key={t.nombre}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.55, ease: 'easeOut', delay: i * 0.1 }}
+              variants={cardVariants}
               whileHover={{ y: -4 }}
               className="shimmer-card flex flex-col gap-5 rounded-2xl p-6 border border-border-default transition-colors duration-300"
             >
@@ -109,13 +127,17 @@ export default function TestimoniosSection() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
 
-      {/* Marquee de palabras clave */}
+      {/* Marquee de palabras clave — Motion */}
       <div className="relative overflow-hidden py-6 border-t border-border-subtle border-b">
-        <div className="animate-marquee flex gap-8 whitespace-nowrap">
-          {palabrasClave.map((palabra, i) => (
+        <motion.div
+          className="flex gap-8 whitespace-nowrap w-max"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ duration: 90, ease: 'linear', repeat: Infinity }}
+        >
+          {[...palabrasClave, ...palabrasClave].map((palabra, i) => (
             <span
               key={i}
               className={`text-sm font-medium tracking-wide shrink-0 ${i % 3 === 0 ? 'text-accent' : 'text-ink-muted'}`}
@@ -124,7 +146,7 @@ export default function TestimoniosSection() {
               <span className="ml-8 text-border-default">·</span>
             </span>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

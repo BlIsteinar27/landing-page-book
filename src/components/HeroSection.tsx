@@ -1,7 +1,46 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { motion, type Transition } from 'motion/react';
 import CTAButton from '@/components/CTAButton';
+
+const heroColumnVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.13, delayChildren: 0 },
+  },
+};
+
+const heroBadgeTransition: Transition = { duration: 0.5, ease: 'easeOut' };
+const heroTitleTransition: Transition = { duration: 0.75, ease: [0.16, 1, 0.3, 1] };
+const heroSubtitleTransition: Transition = { duration: 0.65, ease: 'easeOut' };
+const heroCTATransition: Transition = { duration: 0.6, ease: 'easeOut' };
+const heroSocialProofTransition: Transition = { duration: 0.5 };
+
+const heroBadgeVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: heroBadgeTransition },
+};
+
+const heroTitleVariants = {
+  hidden: { opacity: 0, y: 24, filter: 'blur(8px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: heroTitleTransition },
+};
+
+const heroSubtitleVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: heroSubtitleTransition },
+};
+
+const heroCTAVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: heroCTATransition },
+};
+
+const heroSocialProofVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: heroSocialProofTransition },
+};
 
 export default function HeroSection() {
   return (
@@ -24,13 +63,16 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
 
           {/* ——— Columna de texto ——— */}
-          <div className="lg:col-span-7 flex flex-col gap-7 text-center lg:text-left">
+          <motion.div
+            className="lg:col-span-7 flex flex-col gap-7 text-center lg:text-left"
+            variants={heroColumnVariants}
+            initial="hidden"
+            animate="visible"
+          >
 
             {/* Badge de lanzamiento */}
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              variants={heroBadgeVariants}
               className="inline-flex items-center gap-2 justify-center lg:justify-start"
             >
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase border border-border-emphasis bg-accent-dim text-accent">
@@ -41,9 +83,7 @@ export default function HeroSection() {
 
             {/* Título principal — Syne ultra-heavy */}
             <motion.h1
-              initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              variants={heroTitleVariants}
               className="text-[clamp(2.6rem,8vw,5.5rem)] leading-[1.05] tracking-tight font-black font-display text-ink-primary"
             >
               El libro que{' '}
@@ -55,9 +95,7 @@ export default function HeroSection() {
 
             {/* Subtítulo */}
             <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.65, ease: 'easeOut', delay: 0.25 }}
+              variants={heroSubtitleVariants}
               className="text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 text-ink-secondary"
             >
               Una historia de autodescubrimiento que te guiará hacia el crecimiento personal y el potencial que llevas dentro.
@@ -66,9 +104,7 @@ export default function HeroSection() {
             {/* CTAs — jerarquía clara: primario + secundario */}
             <motion.div
               data-cta-block
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.38 }}
+              variants={heroCTAVariants}
               className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2"
             >
               <CTAButton variant="amazon" />
@@ -77,9 +113,7 @@ export default function HeroSection() {
 
             {/* Social proof — número de lectores */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.55 }}
+              variants={heroSocialProofVariants}
               className="flex items-center gap-3 justify-center lg:justify-start pt-1"
             >
               <div className="flex -space-x-2">
@@ -96,7 +130,7 @@ export default function HeroSection() {
                 ya transformaron su vida
               </p>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* ——— Mockup del libro ——— */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">

@@ -44,7 +44,9 @@ export default function StickyCTA() {
             href={LINKS.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             className="flex items-center justify-center gap-2.5 w-full py-4 font-semibold text-sm rounded-2xl bg-accent text-white hover:opacity-90 transition-opacity"
             style={{ boxShadow: '0 0 30px var(--accent-glow)' }}
           >

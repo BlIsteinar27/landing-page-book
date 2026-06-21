@@ -1,6 +1,21 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { motion, type Transition } from 'motion/react';
+
+const credencialesContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.2 },
+  },
+};
+
+const credencialItemTransition: Transition = { duration: 0.45 };
+
+const credencialVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: credencialItemTransition },
+};
 
 export default function SobreAutoraSection() {
   const credenciales = [
@@ -82,14 +97,17 @@ export default function SobreAutoraSection() {
             </p>
 
             {/* Credenciales numéricas */}
-            <div className="grid grid-cols-3 gap-4 mt-2 pt-6 border-t border-border-subtle">
-              {credenciales.map((c, i) => (
+            <motion.div
+              className="grid grid-cols-3 gap-4 mt-2 pt-6 border-t border-border-subtle"
+              variants={credencialesContainerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {credenciales.map((c) => (
                 <motion.div
                   key={c.label}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.45, delay: 0.2 + i * 0.08 }}
+                  variants={credencialVariants}
                   className="flex flex-col gap-1"
                 >
                   <span className="text-2xl sm:text-3xl font-black tracking-tight font-display text-accent">
@@ -100,7 +118,7 @@ export default function SobreAutoraSection() {
                   </span>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>

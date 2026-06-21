@@ -1,6 +1,21 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { motion, type Transition } from 'motion/react';
+
+const parrafosContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.05 },
+  },
+};
+
+const parrafoItemTransition: Transition = { duration: 0.55, ease: 'easeOut' };
+
+const parrafoVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: parrafoItemTransition },
+};
 
 export default function SinopsisSection() {
   return (
@@ -41,7 +56,13 @@ export default function SinopsisSection() {
         </motion.blockquote>
 
         {/* Cuerpo de la sinopsis — 3 párrafos con entrada escalonada */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
+          variants={parrafosContainerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+        >
           {[
             {
               num: '01',
@@ -55,13 +76,10 @@ export default function SinopsisSection() {
               num: '03',
               text: 'Más que una lectura, es una guía interactiva que te acompañará paso a paso mientras construyes la vida que siempre has soñado.',
             },
-          ].map((item, i) => (
+          ].map((item) => (
             <motion.div
               key={item.num}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.55, ease: 'easeOut', delay: i * 0.1 }}
+              variants={parrafoVariants}
               className="flex flex-col gap-3"
             >
               <span className="text-xs font-mono tracking-widest text-ink-muted">
@@ -72,7 +90,7 @@ export default function SinopsisSection() {
               </p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* Separador inferior */}

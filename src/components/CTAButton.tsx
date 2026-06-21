@@ -24,8 +24,8 @@ export default function CTAButton({
   className = '',
 }: CTAButtonProps) {
   const sharedMotion = {
-    whileTap: { scale: 0.96 as number },
-    whileHover: { scale: 1.02 as number },
+    whileTap: { scale: 0.96 },
+    whileHover: { scale: 1.02 },
     transition: { type: 'spring' as const, stiffness: 400, damping: 20 },
   };
 
