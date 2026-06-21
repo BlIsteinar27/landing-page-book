@@ -2,37 +2,24 @@
 
 import { motion } from 'motion/react';
 import { ShoppingBag, MessageCircle } from 'lucide-react';
-import { formatWhatsAppLink } from '@/utils/whatsapp';
-import { AMAZON_URL } from '@/config/links';
+import { LINKS } from '@/config/links';
 
 interface CTAButtonProps {
   variant: 'amazon' | 'whatsapp';
-  amazonUrl?: string;
-  whatsappNumber?: string;
-  whatsappMessage?: string;
   className?: string;
 }
 
-const WHATSAPP_DEFAULT_NUMBER = '584244252248';
-const WHATSAPP_DEFAULT_MESSAGE = 'si lees esto es porque soy demasiado bueno programando';
+const sharedMotion = {
+  whileTap: { scale: 0.96 },
+  whileHover: { scale: 1.02 },
+  transition: { type: 'spring' as const, stiffness: 400, damping: 20 },
+};
 
-export default function CTAButton({
-  variant,
-  amazonUrl = AMAZON_URL,
-  whatsappNumber = WHATSAPP_DEFAULT_NUMBER,
-  whatsappMessage = WHATSAPP_DEFAULT_MESSAGE,
-  className = '',
-}: CTAButtonProps) {
-  const sharedMotion = {
-    whileTap: { scale: 0.96 },
-    whileHover: { scale: 1.02 },
-    transition: { type: 'spring' as const, stiffness: 400, damping: 20 },
-  };
-
+export default function CTAButton({ variant, className = '' }: CTAButtonProps) {
   if (variant === 'amazon') {
     return (
       <motion.a
-        href={amazonUrl}
+        href={LINKS.amazon}
         target="_blank"
         rel="noopener noreferrer"
         {...sharedMotion}
@@ -47,7 +34,7 @@ export default function CTAButton({
 
   return (
     <motion.a
-      href={formatWhatsAppLink(whatsappNumber, whatsappMessage)}
+      href={LINKS.whatsapp}
       target="_blank"
       rel="noopener noreferrer"
       {...sharedMotion}

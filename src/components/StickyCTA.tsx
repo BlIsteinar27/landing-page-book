@@ -10,13 +10,7 @@ export default function StickyCTA() {
 
   useEffect(() => {
     const update = (entries: IntersectionObserverEntry[]) => {
-      const anyVisible = entries.some((e) => e.isIntersecting);
-      if (anyVisible) {
-        setShowSticky(false);
-      } else {
-        const allHidden = entries.every((e) => !e.isIntersecting);
-        if (allHidden) setShowSticky(true);
-      }
+      setShowSticky(entries.every((e) => !e.isIntersecting));
     };
 
     const observer = new IntersectionObserver(update, { threshold: 0 });

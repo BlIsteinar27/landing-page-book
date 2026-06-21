@@ -17,12 +17,13 @@ const credencialVariants = {
   visible: { opacity: 1, y: 0, transition: credencialItemTransition },
 };
 
+const credenciales = [
+  { valor: '10+', label: 'Años guiando personas' },
+  { valor: '500+', label: 'Lectores transformados' },
+  { valor: '1er', label: 'Libro publicado' },
+];
+
 export default function SobreAutoraSection() {
-  const credenciales = [
-    { valor: '10+', label: 'Años guiando personas' },
-    { valor: '500+', label: 'Lectores transformados' },
-    { valor: '1er', label: 'Libro publicado' },
-  ];
 
   return (
     <section className="relative py-24 md:py-32 px-5 overflow-hidden bg-surface-base">

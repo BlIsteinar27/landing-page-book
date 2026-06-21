@@ -50,9 +50,6 @@
   --accent: var(--color-accent);
   --accent-dim: var(--color-accent-dim);
   --accent-glow: var(--color-accent-glow);
-  --font-display: "Syne", system-ui, sans-serif;
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-body: "Inter", system-ui, sans-serif;
 }
 
 *,

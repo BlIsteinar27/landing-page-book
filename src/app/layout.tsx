@@ -24,9 +24,23 @@ const inter = Inter({
   display: "swap",
 });
 
+const META_TITLE = "Victoria - Libro que transformará tu vida";
+const META_DESCRIPTION = "Descubre el libro de Victoria. Una historia inspiradora que te guiará hacia el crecimiento personal y el descubrimiento de tu verdadero potencial.";
+
 export const metadata: Metadata = {
-  title: "Victoria - Libro que transformará tu vida",
-  description: "Descubre el libro de Victoria. Una historia inspiradora que te guiará hacia el crecimiento personal y el descubrimiento de tu verdadero potencial.",
+  title: META_TITLE,
+  description: META_DESCRIPTION,
+  openGraph: {
+    title: META_TITLE,
+    description: META_DESCRIPTION,
+    type: "book",
+    locale: "es_ES",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: META_TITLE,
+    description: META_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
