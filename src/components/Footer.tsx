@@ -2,6 +2,8 @@
 
 import { motion } from 'motion/react';
 import CTAButton from '@/components/CTAButton';
+import InstagramIcon from '@/components/icons/InstagramIcon';
+import TikTokIcon from '@/components/icons/TikTokIcon';
 
 export default function Footer() {
   return (
@@ -57,24 +59,14 @@ export default function Footer() {
               {
                 label: 'Instagram',
                 url: 'https://www.instagram.com/victoria_aql',
-                svg: (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                    <circle cx="12" cy="12" r="4"/>
-                    <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
-                  </svg>
-                ),
+                icon: <InstagramIcon className="w-4 h-4" />,
               },
               {
                 label: 'TikTok',
                 url: 'https://tiktok.com/@victoria_aql',
-                svg: (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
-                  </svg>
-                ),
+                icon: <TikTokIcon className="w-4 h-4" />,
               },
-            ].map(({ svg, label, url }) => (
+            ].map(({ icon, label, url }) => (
               <motion.a
                 key={label}
                 href={url}
@@ -86,7 +78,7 @@ export default function Footer() {
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                 className="w-8 h-8 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-3 text-ink-tertiary hover:text-accent transition-colors"
               >
-                {svg}
+                {icon}
               </motion.a>
             ))}
           </div>
