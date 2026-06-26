@@ -5,7 +5,7 @@ import { ShoppingBag, MessageCircle } from 'lucide-react';
 import { LINKS } from '@/config/links';
 
 interface CTAButtonProps {
-  variant: 'amazon' | 'whatsapp' | 'primary';
+  variant: 'whatsapp' | 'primary';
   className?: string;
   text?: string;
 }
@@ -24,27 +24,11 @@ export default function CTAButton({ variant, className = '', text }: CTAButtonPr
         target="_blank"
         rel="noopener noreferrer"
         {...sharedMotion}
-        className={`inline-flex items-center justify-center gap-2.5 px-7 py-4 font-semibold text-sm rounded-2xl bg-accent text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-accent ${className}`}
+        className={`inline-flex items-center justify-center gap-2.5 px-7 py-4 font-semibold text-sm rounded-2xl bg-accent text-surface-base hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-accent ${className}`}
         style={{ boxShadow: '0 0 24px var(--accent-glow)' }}
       >
         <ShoppingBag className="w-4 h-4" />
         {text || 'Comprar en Amazon'}
-      </motion.a>
-    );
-  }
-
-  if (variant === 'amazon') {
-    return (
-      <motion.a
-        href={LINKS.amazon}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...sharedMotion}
-        className={`inline-flex items-center justify-center gap-2.5 px-7 py-4 font-semibold text-sm rounded-2xl bg-accent text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-accent ${className}`}
-        style={{ boxShadow: '0 0 24px var(--accent-glow)' }}
-      >
-        <ShoppingBag className="w-4 h-4" />
-        Comprar en Amazon
       </motion.a>
     );
   }

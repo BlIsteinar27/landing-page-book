@@ -38,7 +38,7 @@ export default function SinopsisSectionClient() {
       
       <div className="flex flex-col sm:flex-row gap-3 pt-4">
         <CTAButton variant="whatsapp" />
-        <CTAButton variant="amazon" />
+        <CTAButton variant="primary" text="Comprar en Amazon" />
       </div>
     </motion.div>
   );

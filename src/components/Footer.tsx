@@ -41,7 +41,7 @@ export default function Footer() {
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
           className="flex flex-col sm:flex-row gap-3 w-full sm:justify-center"
         >
-          <CTAButton variant="amazon" />
+          <CTAButton variant="primary" text="Comprar en Amazon" />
           <CTAButton variant="whatsapp" />
         </motion.div>
 
@@ -76,7 +76,7 @@ export default function Footer() {
                 whileHover={{ scale: 1.15 }}
                 whileTap={{ scale: 0.92 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-3 text-ink-tertiary hover:text-accent transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-3 text-ink-tertiary hover:text-accent transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-2"
               >
                 {icon}
               </motion.a>

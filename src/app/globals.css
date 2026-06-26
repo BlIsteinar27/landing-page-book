@@ -2,11 +2,11 @@
 
 @theme {
   /* Superficies — Victoria Querales Brand (Púrpura oscuro) */
-  --color-surface-base: #1a0d2e;
-  --color-surface-1: #241438;
-  --color-surface-2: #2e1b42;
-  --color-surface-3: #38224c;
-  --color-surface-4: #422956;
+  --color-surface-base: #3d1f5c; /* Cambiado de #1a0d2e a #3d1f5c (brandboard oficial) */
+  --color-surface-1: #47266a;    /* Recalculado: +10% luminosidad */
+  --color-surface-2: #522d79;    /* Recalculado: +20% luminosidad */
+  --color-surface-3: #5c3587;    /* Recalculado: +30% luminosidad */
+  --color-surface-4: #673d96;    /* Recalculado: +40% luminosidad */
 
   /* Bordes — Con tinte dorado sutil */
   --color-border-subtle: rgba(255, 198, 103, 0.08);
@@ -34,7 +34,7 @@
   --color-success: #3a7a35;
 
   /* Tipografía — Victoria Querales Brand */
-  --font-display: "Cinzel Decorative", "Playfair Display", Georgia, serif;
+  --font-display: "Starlight Rune", "Cinzel Decorative", "Playfair Display", Georgia, serif;
   --font-serif: "Playfair Display", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
 }

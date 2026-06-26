@@ -41,7 +41,7 @@ export default function StickyCTA() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            className="flex items-center justify-center gap-2.5 w-full py-4 font-semibold text-sm rounded-2xl bg-accent text-white hover:opacity-90 transition-opacity"
+            className="flex items-center justify-center gap-2.5 w-full py-4 font-semibold text-sm rounded-2xl bg-accent text-surface-base hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
             style={{ boxShadow: '0 0 30px var(--accent-glow)' }}
           >
             <ShoppingBag className="w-4 h-4" />

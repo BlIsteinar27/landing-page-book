@@ -1,6 +1,23 @@
 import type { Metadata } from "next";
 import { Cinzel_Decorative, Playfair_Display, Inter } from "next/font/google";
+// import localFont from 'next/font/local'; // Descomentar cuando se tenga el archivo de Starlight Rune
 import "./globals.css";
+
+// Configuración para fuente local Starlight Rune (PENDIENTE DE ARCHIVO)
+// Descomentar cuando se coloque el archivo en public/fonts/StarlightRune-Regular.woff2
+/*
+const starlightRune = localFont({
+  src: [
+    {
+      path: './fonts/StarlightRune-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+  ],
+  display: 'swap',
+  variable: '--font-display',
+});
+*/
 
 const cinzel = Cinzel_Decorative({
   subsets: ["latin"],
