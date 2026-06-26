@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { LINKS } from '@/config/links';
+import { LINKS, SOCIAL_LINKS } from '@/config/links';
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon';
 import InstagramIcon from '@/components/icons/InstagramIcon';
 
@@ -55,7 +55,7 @@ export default function ContactoSection() {
           
           {/* Instagram DM */}
           <a
-            href="https://www.instagram.com/victoria_aql"
+            href={SOCIAL_LINKS.instagram}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-3 px-6 py-3 rounded-lg bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white font-medium hover:opacity-90 transition-opacity drop-shadow-md focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-1"

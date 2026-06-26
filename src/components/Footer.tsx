@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import CTAButton from '@/components/CTAButton';
 import InstagramIcon from '@/components/icons/InstagramIcon';
 import TikTokIcon from '@/components/icons/TikTokIcon';
+import { SOCIAL_LINKS } from '@/config/links';
 
 export default function Footer() {
   return (
@@ -41,8 +42,9 @@ export default function Footer() {
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
           className="flex flex-col sm:flex-row gap-3 w-full sm:justify-center"
         >
-          <CTAButton variant="primary" text="Comprar en Amazon" />
-          <CTAButton variant="whatsapp" />
+          {/* Botón Amazon comentado temporalmente hasta tener el link real */}
+          {/* <CTAButton variant="primary" text="Pre-ordena en Amazon" /> */}
+          <CTAButton variant="whatsapp" text="Consigue tu copia" />
         </motion.div>
 
         {/* Separador */}
@@ -58,12 +60,12 @@ export default function Footer() {
             {[
               {
                 label: 'Instagram',
-                url: 'https://www.instagram.com/victoria_aql',
+                url: SOCIAL_LINKS.instagram,
                 icon: <InstagramIcon className="w-4 h-4" />,
               },
               {
                 label: 'TikTok',
-                url: 'https://tiktok.com/@victoria_aql',
+                url: SOCIAL_LINKS.tiktok,
                 icon: <TikTokIcon className="w-4 h-4" />,
               },
             ].map(({ icon, label, url }) => (

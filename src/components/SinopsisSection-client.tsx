@@ -45,8 +45,9 @@ export default function SinopsisSectionClient() {
       </p>
       
       <div className="flex flex-col sm:flex-row gap-3 pt-4">
-        <CTAButton variant="whatsapp" />
-        <CTAButton variant="primary" text="Comprar en Amazon" />
+        <CTAButton variant="whatsapp" text="Reserva Los Dos Reinos" />
+        {/* Botón Amazon comentado temporalmente hasta tener el link real */}
+        {/* <CTAButton variant="primary" text="Pre-ordena en Amazon" /> */}
       </div>
     </motion.div>
   );

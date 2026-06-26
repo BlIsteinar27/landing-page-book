@@ -3,18 +3,19 @@
 import { motion } from 'motion/react';
 import InstagramIcon from '@/components/icons/InstagramIcon';
 import TikTokIcon from '@/components/icons/TikTokIcon';
+import { SOCIAL_LINKS } from '@/config/links';
 
 const redes = [
   {
     nombre: 'Instagram',
-    handle: '@victoria_aql',
-    url: 'https://www.instagram.com/victoria_aql',
+    handle: SOCIAL_LINKS.instagramHandle,
+    url: SOCIAL_LINKS.instagram,
     icon: <InstagramIcon />,
   },
   {
     nombre: 'TikTok',
-    handle: '@victoria_aql',
-    url: 'https://tiktok.com/@victoria_aql',
+    handle: SOCIAL_LINKS.tiktokHandle,
+    url: SOCIAL_LINKS.tiktok,
     icon: <TikTokIcon />,
   },
 ];
@@ -51,8 +52,8 @@ export default function ComunidadSection() {
           y sé parte de la comunidad.
         </motion.p>
         
-        {/* Cards de redes */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        {/* Cards de redes personalizadas */}
+        <div className="flex flex-col sm:flex-row gap-6 justify-center">
           {redes.map((red, i) => (
             <motion.a
               key={red.nombre}
@@ -63,14 +64,34 @@ export default function ComunidadSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="flex items-center gap-4 px-6 py-4 rounded-lg bg-surface-2 border border-border-subtle hover:border-accent transition-colors group focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+              whileHover={{ y: -4 }}
+              className="relative group"
             >
-              <span className="text-accent group-hover:scale-110 transition-transform">
-                {red.icon}
-              </span>
-              <div className="text-left">
-                <p className="font-medium text-ink-primary">{red.nombre}</p>
-                <p className="text-sm text-ink-tertiary">{red.handle}</p>
+              {/* Glow effect */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-accent/20 to-transparent opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
+              
+              {/* Card */}
+              <div className="relative flex items-center gap-4 px-8 py-5 rounded-xl bg-surface-2 border border-border-subtle group-hover:border-accent/50 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base">
+                {/* Icon container con efecto cósmico */}
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-full bg-accent/20 blur-md group-hover:bg-accent/30 transition-colors" />
+                  <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/20 group-hover:border-accent/40 transition-all">
+                    <span className="text-accent group-hover:scale-110 transition-transform">
+                      {red.icon}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Text */}
+                <div className="text-left">
+                  <p className="font-semibold text-ink-primary group-hover:text-accent transition-colors">{red.nombre}</p>
+                  <p className="text-sm text-ink-tertiary font-mono">{red.handle}</p>
+                </div>
+                
+                {/* Arrow indicator */}
+                <svg className="w-4 h-4 text-ink-tertiary group-hover:text-accent group-hover:translate-x-1 transition-all ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </div>
             </motion.a>
           ))}

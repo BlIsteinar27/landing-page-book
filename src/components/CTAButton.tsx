@@ -42,7 +42,7 @@ export default function CTAButton({ variant, className = '', text }: CTAButtonPr
       className={`inline-flex items-center justify-center gap-2.5 px-7 py-4 font-medium text-sm rounded-2xl bg-surface-2 text-ink-primary border border-border-emphasis hover:bg-surface-3 transition-colors ${className}`}
     >
       <MessageCircle className="w-4 h-4 text-[#25D366]" />
-      Comprar por WhatsApp
+      {text || 'Reserva por WhatsApp'}
     </motion.a>
   );
 }
