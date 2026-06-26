@@ -1,29 +1,19 @@
 import type { Metadata } from "next";
-import { Cinzel_Decorative, Playfair_Display, Inter } from "next/font/google";
-// import localFont from 'next/font/local'; // Descomentar cuando se tenga el archivo de Starlight Rune
+import { Playfair_Display, Inter } from "next/font/google";
+import localFont from 'next/font/local';
 import "./globals.css";
 
-// Configuración para fuente local Starlight Rune (PENDIENTE DE ARCHIVO)
-// Descomentar cuando se coloque el archivo en public/fonts/StarlightRune-Regular.woff2
-/*
+// Configuración para fuente local Starlight Rune (Yudi-YqPny.ttf)
 const starlightRune = localFont({
   src: [
     {
-      path: './fonts/StarlightRune-Regular.woff2',
+      path: '../fonts/Yudi-YqPny.ttf',
       weight: '400',
       style: 'normal',
     },
   ],
   display: 'swap',
   variable: '--font-display',
-});
-*/
-
-const cinzel = Cinzel_Decorative({
-  subsets: ["latin"],
-  weight: ["400", "700", "900"],
-  variable: "--font-display",
-  display: "swap",
 });
 
 const playfair = Playfair_Display({
@@ -66,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`h-full antialiased ${cinzel.variable} ${playfair.variable} ${inter.variable}`}>
+    <html lang="es" className={`h-full antialiased ${starlightRune.variable} ${playfair.variable} ${inter.variable}`}>
       <body className="min-h-full flex flex-col">
         <a href="#main-content" className="skip-link">
           Saltar al contenido principal

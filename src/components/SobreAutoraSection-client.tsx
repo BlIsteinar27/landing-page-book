@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, type Transition } from 'motion/react';
+import Image from 'next/image';
 
 const credencialesContainerVariants = {
   hidden: { opacity: 0 },
@@ -54,15 +55,19 @@ export default function SobreAutoraSectionClient() {
               }}
             />
             <div
-              className="relative w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60 rounded-full overflow-hidden flex items-center justify-center border-2 border-border-emphasis"
+              className="relative w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60 rounded-full overflow-hidden border-2 border-border-emphasis"
               style={{
-                background: 'linear-gradient(145deg, var(--surface-3), var(--surface-4))',
                 boxShadow: '0 0 40px var(--accent-glow)',
               }}
             >
-              <span className="text-sm italic font-serif text-ink-tertiary">
-                Foto profesional pendiente
-              </span>
+              <Image
+                src="/landing-book-victoria/foto-escritora.jpg"
+                alt="Victoria Querales - Autora de la saga Dioses Universales"
+                fill
+                loading="lazy"
+                className="object-cover"
+                sizes="(max-width: 640px) 176px, (max-width: 768px) 208px, 240px"
+              />
             </div>
           </div>
         </motion.div>

@@ -48,7 +48,13 @@
 
 ### 2. Sobre el Libro
 
-**Sinopsis:** _(Pendiente de recibir de Victoria — sin spoilers)_
+**Sinopsis:**
+
+En el Reino Central, las gemelas Laila y Liora personifican el equilibrio entre la luz y la oscuridad. Sin embargo, su destino se fractura cuando Kenan, su creador, destierra a Laila al reino Oscuro bajo la tutela del dios de la muerte, Seth Godness. Forjada en el dolor y la crueldad, Laila deberá aprender a reinar en un mundo que la rechaza.
+
+Más de quinientos años después, el implacable dios Cosmo Godness busca una consorte para perpetuar el linaje divino y someter el universo. Su mirada recae sobre Aryana, una veterinaria cuya fuerza lo cautiva. Atrapada en un pacto divino para salvar a su familia de un nido de intrigas celestiales, Aryana deberá sobrevivir a la dinastía más peligrosa del cosmos. Los Godness.
+
+Los dos reinos es una historia épica de traición, dolor y redención, donde la línea entre la luz y la oscuridad desaparece, y el amor y la venganza dictan el destino de la creación.
 
 **Género/Tono:** Fantasía oscura, política y romántica
 
@@ -152,13 +158,13 @@ Archivos en `public/landing-book-victoria/`:
 
 ## Información Pendiente de Recibir
 
-- [ ] Sinopsis del libro (sin spoilers)
-- [ ] Foto profesional de Victoria (confirmar si ya está en los assets)
+- [x] Sinopsis del libro (sin spoilers) — **Recibida e implementada**
+- [x] Foto profesional de Victoria — **Recibida e implementada** (foto-escritora.jpg)
 - [ ] Enlace de WhatsApp para ventas
 - [ ] Enlace de Amazon (cuando esté disponible)
 - [ ] Confirmación de cuál archivo es la portada del libro
 - [ ] Fragmento o cita del libro para la sección de atmósfera (opcional)
-- [ ] **Archivo de fuente Starlight Rune** (para implementación de tipografía de display)
+- [x] **Archivo de fuente Starlight Rune** — **Recibido e implementado** (Yudi-YqPny.ttf)
 
 ---
 
@@ -169,11 +175,10 @@ Archivos en `public/landing-book-victoria/`:
 ### Tipografía
 
 - [x] Inter (body) — Implementado
-- [ ] Starlight Rune (display) — **Pendiente de archivo de fuente**
-  - **Estado:** Investigación completada
-  - **Fuentes encontradas:** Disponible en 1001 Fonts, Fontesk, Creative Fabrica (NO está en Google Fonts ni Adobe Fonts)
-  - **Acción requerida:** Cliente debe proporcionar archivo de fuente (.woff2 o .woff preferiblemente) para implementación local
-  - **Configuración preparada:** Layout.tsx y globals.css listos para cuando se tenga el archivo
+- [x] Starlight Rune (display) — **Implementado** (archivo: Yudi-YqPny.ttf)
+  - **Estado:** Fuente local implementada
+  - **Archivo:** Yudi-YqPny.ttf (ubicado en public/landing-book-victoria/)
+  - **Configuración:** Layout.tsx configurado con next/font/local
 
 ### Paleta de Colores
 

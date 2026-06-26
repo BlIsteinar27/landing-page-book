@@ -7,12 +7,12 @@ import Image from 'next/image';
 const personajes = [
   {
     id: 1,
-    src: '/landing-book-victoria/prota-libro-1-con-fondo.PNG',
+    src: '/landing-book-victoria/prota-libro-1-sin-fondo.PNG',
     alt: 'Primera pareja de protagonistas de Los Dos Reinos',
   },
   {
     id: 2,
-    src: '/landing-book-victoria/prota-2-libro-1-con-fondo.jpg',
+    src: '/landing-book-victoria/prota-2-libro-1-sin-fondo.png',
     alt: 'Segunda pareja de protagonistas de Los Dos Reinos',
   },
 ];

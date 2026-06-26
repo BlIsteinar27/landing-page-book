@@ -29,7 +29,15 @@ export default function SinopsisSectionClient() {
       </div>
       
       <p className="text-ink-secondary leading-relaxed">
-        [Sinopsis pendiente de Victoria — sin spoilers]
+        En el Reino Central, las gemelas Laila y Liora personifican el equilibrio entre la luz y la oscuridad. Sin embargo, su destino se fractura cuando Kenan, su creador, destierra a Laila al reino Oscuro bajo la tutela del dios de la muerte, Seth Godness. Forjada en el dolor y la crueldad, Laila deberá aprender a reinar en un mundo que la rechaza.
+      </p>
+      
+      <p className="text-ink-secondary leading-relaxed">
+        Más de quinientos años después, el implacable dios Cosmo Godness busca una consorte para perpetuar el linaje divino y someter el universo. Su mirada recae sobre Aryana, una veterinaria cuya fuerza lo cautiva. Atrapada en un pacto divino para salvar a su familia de un nido de intrigas celestiales, Aryana deberá sobrevivir a la dinastía más peligrosa del cosmos. Los Godness.
+      </p>
+      
+      <p className="text-ink-secondary leading-relaxed italic">
+        Los dos reinos es una historia épica de traición, dolor y redención, donde la línea entre la luz y la oscuridad desaparece, y el amor y la venganza dictan el destino de la creación.
       </p>
       
       <p className="text-sm text-ink-tertiary">
