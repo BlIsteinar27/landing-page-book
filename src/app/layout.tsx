@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Syne, Playfair_Display, Inter } from "next/font/google";
+import { Cinzel_Decorative, Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 
-const syne = Syne({
+const cinzel = Cinzel_Decorative({
   subsets: ["latin"],
-  weight: ["700", "800"],
+  weight: ["400", "700", "900"],
   variable: "--font-display",
   display: "swap",
 });
@@ -24,16 +24,16 @@ const inter = Inter({
   display: "swap",
 });
 
-const META_TITLE = "Victoria - Libro que transformará tu vida";
-const META_DESCRIPTION = "Descubre el libro de Victoria. Una historia inspiradora que te guiará hacia el crecimiento personal y el descubrimiento de tu verdadero potencial.";
+const META_TITLE = "Victoria Querales | Dioses Universales - Fantasía Oscura";
+const META_DESCRIPTION = "Descubre Los Dos Reinos, el primer libro de la saga Dioses Universales. Una historia épica de fantasía oscura, política y romance. Lanzamiento octubre 2026.";
 
 export const metadata: Metadata = {
   title: META_TITLE,
   description: META_DESCRIPTION,
   openGraph: {
-    title: META_TITLE,
-    description: META_DESCRIPTION,
-    type: "book",
+    title: "Victoria Querales | Dioses Universales",
+    description: "Donde amar es un acto político capaz de cambiar por completo el universo.",
+    type: "website",
     locale: "es_ES",
   },
   twitter: {
@@ -49,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`h-full antialiased ${syne.variable} ${playfair.variable} ${inter.variable}`}>
+    <html lang="es" className={`h-full antialiased ${cinzel.variable} ${playfair.variable} ${inter.variable}`}>
       <body className="min-h-full flex flex-col">
         <a href="#main-content" className="skip-link">
           Saltar al contenido principal

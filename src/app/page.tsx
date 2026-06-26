@@ -1,7 +1,10 @@
 import HeroSection from '@/components/HeroSection';
-import SinopsisSection from '@/components/SinopsisSection';
+import SobreLibroSection from '@/components/SinopsisSection';
+import PersonajesSection from '@/components/PersonajesSection';
+import SagaSection from '@/components/SagaSection';
 import SobreAutoraSection from '@/components/SobreAutoraSection';
-import TestimoniosSection from '@/components/TestimoniosSection';
+import ComunidadSection from '@/components/ComunidadSection';
+import ContactoSection from '@/components/ContactoSection';
 import Footer from '@/components/Footer';
 import StickyCTA from '@/components/StickyCTA';
 
@@ -9,9 +12,12 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <SinopsisSection />
+      <SobreLibroSection />
+      <PersonajesSection />
+      <SagaSection />
       <SobreAutoraSection />
-      <TestimoniosSection />
+      <ComunidadSection />
+      <ContactoSection />
       <Footer />
       <StickyCTA />
     </>

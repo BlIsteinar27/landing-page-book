@@ -1,34 +1,40 @@
 @import "tailwindcss";
 
 @theme {
-  /* Superficies — Dark Premium */
-  --color-surface-base: #080808;
-  --color-surface-1: #0f0f0f;
-  --color-surface-2: #161616;
-  --color-surface-3: #1e1e1e;
-  --color-surface-4: #252525;
+  /* Superficies — Victoria Querales Brand (Púrpura oscuro) */
+  --color-surface-base: #1a0d2e;
+  --color-surface-1: #241438;
+  --color-surface-2: #2e1b42;
+  --color-surface-3: #38224c;
+  --color-surface-4: #422956;
 
-  /* Bordes */
-  --color-border-subtle: rgba(255, 255, 255, 0.06);
-  --color-border-default: rgba(255, 255, 255, 0.10);
-  --color-border-emphasis: rgba(255, 255, 255, 0.18);
+  /* Bordes — Con tinte dorado sutil */
+  --color-border-subtle: rgba(255, 198, 103, 0.08);
+  --color-border-default: rgba(255, 198, 103, 0.15);
+  --color-border-emphasis: rgba(255, 198, 103, 0.25);
 
-  /* Texto */
-  --color-ink-primary: #f5f0e8;
-  --color-ink-secondary: rgba(245, 240, 232, 0.65);
-  --color-ink-tertiary: rgba(245, 240, 232, 0.38);
-  --color-ink-muted: rgba(245, 240, 232, 0.22);
+  /* Texto — Crema VQ */
+  --color-ink-primary: #fef4e6;
+  --color-ink-secondary: rgba(254, 244, 230, 0.72);
+  --color-ink-tertiary: rgba(254, 244, 230, 0.45);
+  --color-ink-muted: rgba(254, 244, 230, 0.25);
 
-  /* Acento único — Terracota cálida */
-  --color-accent: #c97a50;
-  --color-accent-dim: rgba(201, 122, 80, 0.15);
-  --color-accent-glow: rgba(201, 122, 80, 0.25);
+  /* Acento primario — Dorado VQ */
+  --color-accent: #ffc667;
+  --color-accent-dim: rgba(255, 198, 103, 0.15);
+  --color-accent-glow: rgba(255, 198, 103, 0.25);
+
+  /* Acento secundario — Naranja VQ */
+  --color-accent-secondary: #fa8c34;
+
+  /* Púrpura medio — Para hovers y elementos secundarios */
+  --color-purple-medium: #724aa5;
 
   /* Semánticos */
   --color-success: #3a7a35;
 
-  /* Tipografía */
-  --font-display: "Syne", system-ui, sans-serif;
+  /* Tipografía — Victoria Querales Brand */
+  --font-display: "Cinzel Decorative", "Playfair Display", Georgia, serif;
   --font-serif: "Playfair Display", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
 }

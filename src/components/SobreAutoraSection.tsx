@@ -18,9 +18,9 @@ const credencialVariants = {
 };
 
 const credenciales = [
-  { valor: '10+', label: 'Años guiando personas' },
-  { valor: '500+', label: 'Lectores transformados' },
-  { valor: '1er', label: 'Libro publicado' },
+  { valor: '11+', label: 'Años escribiendo' },
+  { valor: '7', label: 'Libros en la saga' },
+  { valor: '2026', label: 'Lanzamiento oficial' },
 ];
 
 export default function SobreAutoraSection() {
@@ -72,7 +72,7 @@ export default function SobreAutoraSection() {
                 }}
               >
                 <span className="text-sm italic font-serif text-ink-tertiary">
-                  Foto de Victoria
+                  Foto profesional pendiente
                 </span>
               </div>
             </div>
@@ -87,15 +87,38 @@ export default function SobreAutoraSection() {
             className="md:col-span-8 flex flex-col gap-6 text-center md:text-left"
           >
             <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black leading-tight tracking-tight font-display text-ink-primary">
-              Victoria
+              Victoria Querales
             </h2>
 
             <p className="text-sm sm:text-base leading-relaxed text-ink-secondary">
-              Escritora y mentora apasionada por el desarrollo personal. Con más de una década de experiencia guiando a personas hacia su máximo potencial, ha dedicado su vida a compartir herramientas prácticas para el crecimiento emocional y espiritual.
+              Soy Licenciada en Comunicación Social con mención en Periodismo Audiovisual, 
+              y llevo más de una década construyendo universos desde la palabra. Mi relación 
+              con la escritura creativa comenzó en 2015, impulsada por una pregunta que 
+              siempre me acompañó: ¿qué hay más allá de la comprensión humana?
             </p>
             <p className="text-sm sm:text-base leading-relaxed text-ink-secondary">
-              Su estilo único combina la calidez humana con conocimientos basados en evidencia, haciendo que conceptos complejos sean accesibles para todos.
+              En 2019 compartí los primeros borradores de mi saga Dioses Universales — 
+              publicando el primer libro, Los Dos Reinos en Wattpad — donde una comunidad 
+              de lectores acompañó el nacimiento de este universo. Tras años de trabajo y 
+              dedicación, cerré la saga en 2024 con siete libros que conforman una historia 
+              épica sobre poder, familia y destino.
             </p>
+            <p className="text-sm sm:text-base leading-relaxed text-ink-secondary">
+              Actualmente, la saga se encuentra en proceso de edición profesional, y su 
+              primer volumen llegará a manos de los lectores en octubre de 2026. Los 
+              borradores originales de Wattpad ya no están disponibles, pues esta nueva 
+              etapa trae consigo una versión pulida y definitiva de mi universo.
+            </p>
+            
+            {/* Cita de inspiración */}
+            <blockquote className="border-l-2 border-accent pl-4 italic text-ink-secondary">
+              "Desde niña, me inventaba historias para tranquilizar la soledad de mi mente 
+              inquieta. Siempre estaba en las nubes, imaginando cómo se creó el universo y 
+              si de verdad existen seres poderosos capaces de mantener el orden más allá de 
+              la comprensión humana. Por ese motivo, hace 11 años comencé los primeros 
+              borradores de lo que hoy es mi saga Dioses Universales — porque algunas 
+              preguntas solo encuentran respuesta cuando las conviertes en un mundo propio."
+            </blockquote>
 
             {/* Credenciales numéricas */}
             <motion.div
