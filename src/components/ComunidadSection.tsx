@@ -22,7 +22,7 @@ const redes = [
 
 export default function ComunidadSection() {
   return (
-    <section className="relative py-24 px-5 bg-surface-base">
+    <section className="relative py-24 px-6 md:px-8 bg-surface-2">
       <div className="max-w-4xl mx-auto text-center">
         <motion.p
           initial={{ opacity: 0, y: 10 }}

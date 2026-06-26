@@ -9,12 +9,14 @@ export default function StickyCTA() {
   const [showSticky, setShowSticky] = useState(false);
 
   useEffect(() => {
-    const heroBlock = document.querySelector('[data-cta-block]');
-    if (!heroBlock) return;
+    const ctaBlocks = document.querySelectorAll('[data-cta-block]');
+    if (ctaBlocks.length === 0) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setShowSticky(!entry.isIntersecting);
+      (entries) => {
+        // Ocultar sticky si CUALQUIERA de los bloques CTA está visible
+        const anyVisible = entries.some(entry => entry.isIntersecting);
+        setShowSticky(!anyVisible);
       },
       { 
         threshold: 0,
@@ -22,7 +24,7 @@ export default function StickyCTA() {
       }
     );
 
-    observer.observe(heroBlock);
+    ctaBlocks.forEach(block => observer.observe(block));
     return () => observer.disconnect();
   }, []);
 

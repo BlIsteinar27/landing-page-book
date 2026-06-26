@@ -46,7 +46,7 @@ const heroSocialProofVariants = {
 export default function HeroSection() {
   return (
     <section
-      className="relative min-h-screen flex flex-col justify-center overflow-hidden px-5 pt-16 pb-28 md:pb-20 bg-surface-base"
+      className="relative min-h-screen flex flex-col justify-center overflow-hidden px-6 md:px-8 pt-16 pb-28 md:pb-20 bg-surface-base"
     >
       {/* Glow de acento — único, fijo, sin blur-orbs aleatorios */}
       <div

@@ -4,7 +4,7 @@ import SinopsisSectionClient from './SinopsisSection-client';
 
 export default function SobreLibroSection() {
   return (
-    <section className="relative py-24 md:py-32 px-5 bg-surface-1">
+    <section className="relative py-24 md:py-32 px-6 md:px-8 bg-surface-1">
       <div className="max-w-6xl mx-auto">
         <p className="text-xs tracking-[0.25em] uppercase text-accent mb-8 text-center">
           El Primer Libro

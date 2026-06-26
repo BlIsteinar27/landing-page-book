@@ -7,7 +7,7 @@ import InstagramIcon from '@/components/icons/InstagramIcon';
 
 export default function ContactoSection() {
   return (
-    <section className="relative py-24 px-5 bg-surface-1">
+    <section className="relative py-24 px-6 md:px-8 bg-surface-1">
       <div className="max-w-2xl mx-auto text-center">
         <motion.p
           initial={{ opacity: 0, y: 10 }}

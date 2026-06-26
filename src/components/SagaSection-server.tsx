@@ -13,7 +13,7 @@ const libros = [
 
 export default function SagaSection() {
   return (
-    <section className="relative py-24 md:py-32 px-5 overflow-hidden bg-surface-1">
+    <section className="relative py-24 md:py-32 px-6 md:px-8 overflow-hidden bg-surface-1">
       <div className="absolute inset-0 opacity-20">
         <Image
           src="/landing-book-victoria/Mapa de galaxias arreglado_20260622_174207_0000 (1).svg"

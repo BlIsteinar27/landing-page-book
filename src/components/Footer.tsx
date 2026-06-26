@@ -8,7 +8,7 @@ import { SOCIAL_LINKS } from '@/config/links';
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden px-5 pt-24 pb-16 bg-surface-2">
+    <footer className="relative overflow-hidden px-6 md:px-8 pt-24 pb-16 bg-surface-2">
       {/* Separador superior */}
       <div className="absolute top-0 left-0 right-0 h-px bg-border-subtle" />
 
