@@ -1,9 +1,32 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
 
+const personajes = [
+  {
+    id: 1,
+    src: '/landing-book-victoria/prota-libro-1-con-fondo.PNG',
+    alt: 'Primera pareja de protagonistas de Los Dos Reinos',
+  },
+  {
+    id: 2,
+    src: '/landing-book-victoria/prota-2-libro-1-con-fondo.jpg',
+    alt: 'Segunda pareja de protagonistas de Los Dos Reinos',
+  },
+];
+
 export default function PersonajesSectionClient() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % personajes.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <motion.p
@@ -32,15 +55,67 @@ export default function PersonajesSectionClient() {
         className="relative mx-auto max-w-2xl"
       >
         <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
-          <Image
-            src="/landing-book-victoria/prota-libro-1-sin-fondo.PNG"
-            alt="Personajes principales de Los Dos Reinos"
-            fill
-            loading="lazy"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-contain"
+          {/* Glow pulsante de fondo */}
+          <motion.div
+            animate={{
+              opacity: [0.4, 0.7, 0.4],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="absolute inset-0 bg-gradient-radial from-accent/20 via-transparent to-transparent blur-3xl"
           />
+
+          {/* Carrusel con crossfade suave */}
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={personajes[currentIndex].id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: 0.8,
+                ease: [0.4, 0, 0.2, 1],
+              }}
+              className="absolute inset-0"
+            >
+              <div className="relative w-full h-full">
+                <Image
+                  src={personajes[currentIndex].src}
+                  alt={personajes[currentIndex].alt}
+                  fill
+                  loading="lazy"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-contain"
+                  style={{
+                    filter: 'brightness(1.05) contrast(1.02)',
+                  }}
+                />
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Glow inferior */}
           <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-accent-glow blur-2xl" />
+        </div>
+
+        {/* Indicadores de navegación */}
+        <div className="flex justify-center gap-2 mt-6">
+          {personajes.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              aria-label={`Ver personajes ${index + 1}`}
+              className={`w-2 h-2 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base ${
+                index === currentIndex
+                  ? 'bg-accent w-6'
+                  : 'bg-ink-muted hover:bg-ink-tertiary'
+              }`}
+            />
+          ))}
         </div>
       </motion.div>
       
