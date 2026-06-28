@@ -381,7 +381,7 @@ const { containerRef, activeIndex, scrollToIndex, isInSection } = useScrollSnap(
 - Usa `IntersectionObserver` con `root: null` (viewport)
 - Observa elementos con `data-snap-point`
 - Threshold: 0.5 (50% de visibilidad)
-- Haptic feedback al cambiar de realm
+- Sin haptic feedback en scroll: `navigator.vibrate()` requiere un user gesture (tap/click) y es bloqueado por Chrome durante el scroll
 
 ### useTouchGestures Hook
 

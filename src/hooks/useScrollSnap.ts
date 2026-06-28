@@ -22,10 +22,6 @@ export function useScrollSnap({ snapPoints }: UseScrollSnapOptions) {
             const index = parseInt(entry.target.getAttribute('data-index') || '0');
             setActiveIndex(index);
             
-            // Haptic feedback al cambiar de nivel
-            if (index !== previousIndexRef.current && 'vibrate' in navigator) {
-              navigator.vibrate(10);
-            }
             previousIndexRef.current = index;
           }
         });
