@@ -113,7 +113,7 @@ export default function HeroSection() {
                 <span className="text-accent font-bold">7</span> libros en la saga
               </span>
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-2 border border-border-subtle text-sm font-medium text-ink-secondary">
-                Miles de lectores en <span className="font-semibold text-ink-primary">Wattpad</span>
+                Miles de lecturas en <span className="font-semibold text-ink-primary">Wattpad</span>
               </span>
             </motion.div>
 
@@ -145,6 +145,31 @@ export default function HeroSection() {
             </motion.div>
 
             {/* Social proof eliminado — libro no lanzado aún */}
+
+            {/* Botón para explorar el mapa */}
+            <motion.button
+              variants={heroSocialProofVariants}
+              onClick={() => {
+                const mapaSection = document.getElementById('mapa-interactivo');
+                if (mapaSection) {
+                  mapaSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="group flex flex-col items-center gap-2 mx-auto lg:mx-0 mt-4 cursor-pointer"
+            >
+              <span className="text-sm text-ink-secondary group-hover:text-accent transition-colors">
+                Explora el universo
+              </span>
+              <motion.div
+                animate={{ y: [0, 6, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                className="text-accent"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </motion.div>
+            </motion.button>
           </motion.div>
 
           {/* ——— Mockup del libro (SECUNDARIO) ——— */}

@@ -1,7 +1,7 @@
 import HeroSection from '@/components/HeroSection';
 import SobreLibroSection from '@/components/SinopsisSection-server';
 import PersonajesSection from '@/components/PersonajesSection-server';
-import SagaSection from '@/components/SagaSection-server';
+import InteractiveMapSection from '@/components/InteractiveMapSection-server';
 import SobreAutoraSection from '@/components/SobreAutoraSection-server';
 import ComunidadSection from '@/components/ComunidadSection';
 import ContactoSection from '@/components/ContactoSection';
@@ -18,7 +18,7 @@ export default function Home() {
       <HeroSection />
       <SobreLibroSection />
       <PersonajesSection />
-      <SagaSection />
+      <InteractiveMapSection />
       <SobreAutoraSection />
       <ComunidadSection />
       <ContactoSection />

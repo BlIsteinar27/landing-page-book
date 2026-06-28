@@ -1,0 +1,12 @@
+# robots.txt para Victoria Querales - Autora de Dioses Universales
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://landing-page-book-gold.vercel.app/sitemap.xml
+
+# Bloquear rutas de desarrollo
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/

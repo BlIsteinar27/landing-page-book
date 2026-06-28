@@ -32,8 +32,8 @@ const inter = Inter({
   display: "swap",
 });
 
-const META_TITLE = "Victoria Querales | Autora de Fantasía Oscura - Dioses Universales";
-const META_DESCRIPTION = "Descubre Los Dos Reinos, el primer libro de la saga Dioses Universales por Victoria Querales. Fantasía oscura, política y romántica. 11+ años construyendo universos. Lanzamiento octubre 2026.";
+const META_TITLE = "Victoria Querales | Autora de Fantasía Oscura - Saga Dioses Universales";
+const META_DESCRIPTION = "Victoria Querales, autora venezolana de fantasía oscura. Descubre Los Dos Reinos, primer libro de la saga Dioses Universales. Romance político, mitología y traición. Lanzamiento octubre 2026.";
 const KEYWORDS = [
   "Victoria Querales",
   "Dioses Universales",
@@ -48,6 +48,7 @@ const KEYWORDS = [
 ];
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: META_TITLE,
     template: "%s | Victoria Querales",
