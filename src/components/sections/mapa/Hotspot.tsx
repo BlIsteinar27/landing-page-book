@@ -86,7 +86,7 @@ export default function Hotspot({
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className={`absolute rounded-full motion-reduce:animate-none ${
+          className={`absolute rounded-full ${
             hotspot.isProminent ? "bg-accent" : "bg-accent/70"
           }`}
           style={{
@@ -97,13 +97,13 @@ export default function Hotspot({
 
         {/* Hotspot Dot */}
         <div
-          className={`relative rounded-full border-2 border-white shadow-lg ${
+          className={`relative rounded-full border-2 border-ink-primary shadow-lg ${
             hotspot.isProminent ? "w-8 h-8 bg-accent" : "w-6 h-6 bg-accent"
           }`}
         >
           {hotspot.isProminent && (
             <svg
-              className="w-4 h-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              className="w-4 h-4 text-surface-base absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

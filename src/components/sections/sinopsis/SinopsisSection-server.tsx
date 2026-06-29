@@ -12,11 +12,7 @@ export default function SobreLibroSection() {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
-            <div className="relative w-48 sm:w-56 md:w-64 aspect-[2/3] rounded-lg overflow-hidden"
-              style={{
-                border: '1px solid var(--accent-glow)',
-                boxShadow: '4px 8px 40px rgba(0,0,0,0.8)',
-              }}
+            <div className="relative w-48 sm:w-56 md:w-64 aspect-[2/3] rounded-lg overflow-hidden border-[1px_solid_var(--accent-glow)] shadow-[4px_8px_40px_rgba(0,0,0,0.8)]"
             >
               <Image
                 src="/landing-book-victoria/portada-libro-1.png"

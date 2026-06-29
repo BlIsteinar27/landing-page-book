@@ -33,6 +33,10 @@
   /* Semánticos */
   --color-success: #3a7a35;
 
+  /* WhatsApp brand color */
+  --color-whatsapp: #25D366;
+  --color-whatsapp-dark: #20bd5a;
+
   /* Tipografía — Victoria Querales Brand */
   --font-display: "Starlight Rune", "Cinzel Decorative", "Playfair Display", Georgia, serif;
   --font-serif: "Playfair Display", Georgia, serif;
@@ -110,45 +114,9 @@ body::before {
   opacity: 0.35;
 }
 
-/* Shimmer effect para cards */
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-.shimmer-card {
-  background: linear-gradient(
-    105deg,
-    var(--surface-2) 40%,
-    var(--surface-3) 50%,
-    var(--surface-2) 60%
-  );
-  background-size: 200% auto;
-}
-
-.shimmer-card:hover {
-  animation: shimmer 1.8s linear;
-}
-
-/* Accesibilidad — respeta preferencia de movimiento reducido */
-@media (prefers-reduced-motion: reduce) {
-  .shimmer-card:hover {
-    animation: none;
-  }
-}
-
 /* Gradiente radial para efectos de glow */
 .bg-gradient-radial {
   background: radial-gradient(circle at center, var(--tw-gradient-stops));
-}
-
-/* Scroll Snap */
-.snap-y {
-  scroll-snap-type: y mandatory;
-}
-
-.snap-start {
-  scroll-snap-align: start;
 }
 
 /* Hide Scrollbar but keep functionality */

@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import ZoomableOverlay from "./ZoomableOverlay";
+import RealmInfoPanel from "./RealmInfoPanel";
+import { RealmLore } from "@/config/realms-data";
 
 interface DualOverlayProps {
   isVisible: boolean;
@@ -13,6 +15,7 @@ interface DualOverlayProps {
   rightImagePath: string;
   leftTitle: string;
   rightTitle: string;
+  lore?: RealmLore;
 }
 
 type ViewMode = "dual" | "single-left" | "single-right";
@@ -24,6 +27,7 @@ export default function DualOverlay({
   rightImagePath,
   leftTitle,
   rightTitle,
+  lore,
 }: DualOverlayProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("dual");
 
@@ -54,12 +58,11 @@ export default function DualOverlay({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain"
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain touch-none"
           onClick={(e) => {
             e.stopPropagation();
             onClose();
           }}
-          style={{ touchAction: "none", overscrollBehavior: "contain" }}
         >
           {/* Close Button - siempre visible */}
           <div className="absolute inset-0 pointer-events-none z-20">
@@ -68,7 +71,7 @@ export default function DualOverlay({
                 e.stopPropagation();
                 onClose();
               }}
-              className="absolute top-4 right-4 w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black pointer-events-auto"
+              className="absolute top-4 right-4 w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black pointer-events-auto"
             >
               <svg
                 className="w-6 h-6 text-ink-primary"
@@ -93,6 +96,13 @@ export default function DualOverlay({
                 </p>
               </div>
             )}
+
+            {/* Info button - solo en vista dual; describe ambos mapas juntos */}
+            {viewMode === "dual" && lore && (
+              <div className="absolute top-4 right-16 pointer-events-auto">
+                <RealmInfoPanel lore={lore} />
+              </div>
+            )}
           </div>
 
           {/* Vista Dual o Individual */}
@@ -115,11 +125,7 @@ export default function DualOverlay({
                     e.stopPropagation();
                     handleImageClick("left");
                   }}
-                  className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer transition-colors"
-                  style={{
-                    boxShadow:
-                      "0 0 0 2px #3d1f5c, 0 0 0 4px #ffc667, 0 8px 32px rgba(61, 31, 92, 0.4)",
-                  }}
+                  className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer transition-colors shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)]"
                 >
                   <Image
                     src={leftImagePath}
@@ -128,11 +134,11 @@ export default function DualOverlay({
                     className="object-contain p-2"
                     sizes="50vw"
                   />
-                  <div className="absolute top-4 left-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-[#ffc667] z-10 shadow-lg">
+                  <div className="absolute top-4 left-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-accent z-10 shadow-lg">
                     <p className="text-sm font-medium text-ink-primary">
                       {leftTitle}
                     </p>
-                    <p className="text-[10px] text-[#ffc667] mt-0.5">
+                    <p className="text-[10px] text-accent mt-0.5">
                       Toca para ampliar
                     </p>
                   </div>
@@ -146,11 +152,7 @@ export default function DualOverlay({
                     e.stopPropagation();
                     handleImageClick("right");
                   }}
-                  className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer transition-colors"
-                  style={{
-                    boxShadow:
-                      "0 0 0 2px #3d1f5c, 0 0 0 4px #ffc667, 0 8px 32px rgba(61, 31, 92, 0.4)",
-                  }}
+                  className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer transition-colors shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)]"
                 >
                   <Image
                     src={rightImagePath}
@@ -159,11 +161,11 @@ export default function DualOverlay({
                     className="object-contain p-2"
                     sizes="50vw"
                   />
-                  <div className="absolute bottom-4 right-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-[#ffc667] z-10 shadow-lg">
+                  <div className="absolute bottom-4 right-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-accent z-10 shadow-lg">
                     <p className="text-sm font-medium text-ink-primary">
                       {rightTitle}
                     </p>
-                    <p className="text-[10px] text-[#ffc667] mt-0.5">
+                    <p className="text-[10px] text-accent mt-0.5">
                       Toca para ampliar
                     </p>
                   </div>
@@ -182,8 +184,7 @@ export default function DualOverlay({
                 header={
                   <div className="absolute top-0 left-36 right-16 md:left-40 md:right-20 z-30 pointer-events-none flex justify-center p-4">
                     <div
-                      className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-[#ffc667] shadow-lg"
-                      style={{ borderTop: "2px solid #3d1f5c" }}
+                      className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]"
                     >
                       <h2 className="text-lg md:text-xl font-semibold text-ink-primary">
                         {currentTitle}
@@ -200,7 +201,7 @@ export default function DualOverlay({
                       e.stopPropagation();
                       handleBackToDual();
                     }}
-                    className="absolute top-4 left-4 flex items-center gap-2 bg-surface-1 rounded-full px-4 py-2 border border-border-default hover:bg-surface-2 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black pointer-events-auto"
+                    className="absolute top-4 left-4 flex items-center gap-2 bg-surface-1 rounded-full px-4 py-2 border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black pointer-events-auto"
                   >
                     <svg
                       className="w-5 h-5 text-ink-primary"

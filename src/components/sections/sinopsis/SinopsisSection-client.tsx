@@ -2,8 +2,10 @@
 
 import { motion } from 'motion/react';
 import CTAButton from '@/components/ui/CTAButton';
+import { useRegisterCTA } from '@/hooks/useRegisterCTA';
 
 export default function SinopsisSectionClient() {
+  const ref = useRegisterCTA('sinopsis-cta');
   return (
     <motion.div
       initial={{ opacity: 0, x: 30 }}
@@ -44,8 +46,10 @@ export default function SinopsisSectionClient() {
         📅 Lanzamiento: Octubre 2026
       </p>
       
-      <div className="flex flex-col sm:flex-row gap-3 pt-4">
+      <div ref={ref} className="flex flex-col sm:flex-row gap-3 pt-4">
         <CTAButton variant="whatsapp" text="Reserva Los Dos Reinos" />
+        {/* Amazon comentado hasta tener el enlace oficial del producto */}
+        {/* <CTAButton variant="primary" text="Comprar en Amazon" /> */}
       </div>
     </motion.div>
   );

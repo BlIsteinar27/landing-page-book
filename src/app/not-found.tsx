@@ -15,8 +15,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/"
-          className="inline-flex items-center justify-center gap-2.5 px-7 py-4 font-semibold text-sm rounded-2xl bg-accent text-white hover:opacity-90 transition-opacity"
-          style={{ boxShadow: '0 0 24px var(--accent-glow)' }}
+          className="inline-flex items-center justify-center gap-2.5 px-7 py-4 font-semibold text-sm rounded-2xl bg-accent text-surface-base hover:opacity-90 transition-opacity shadow-[0_0_24px_var(--accent-glow)]"
         >
           Volver al inicio
         </Link>

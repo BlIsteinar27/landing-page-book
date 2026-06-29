@@ -40,7 +40,8 @@ InteractiveMapSection-server.tsx (Server Component)
     ├── Hotspot.tsx (hotspots interactivos)
     ├── ZoomableOverlay.tsx (base reutilizable para overlays con zoom)
     ├── ImageOverlay.tsx (overlay imagen individual, usa ZoomableOverlay)
-    └── DualOverlay.tsx (overlay dual con navegación entre vistas)
+    ├── DualOverlay.tsx (overlay dual con navegación entre vistas)
+    └── RealmInfoPanel.tsx (panel modal de lore/sinopsis de cada reino)
 ```
 
 ### Archivos Principales
@@ -54,6 +55,7 @@ InteractiveMapSection-server.tsx (Server Component)
 | `ZoomableOverlay.tsx`              | Client Component | Base reutilizable con zoom, pan, cerrar y ayuda        |
 | `ImageOverlay.tsx`                 | Client Component | Overlay genérico para imágenes con zoom                |
 | `DualOverlay.tsx`                  | Client Component | Overlay dual con navegación entre vistas               |
+| `RealmInfoPanel.tsx`               | Client Component | Botón de info y modal de lore/sinopsis de reinos       |
 | `useScrollSnap.ts`                 | Custom Hook      | Maneja scroll snap y detección de realm activo         |
 | `useTouchGestures.ts`              | Custom Hook      | Detecta long press y pinch-to-zoom                     |
 | `realms-data.ts`                   | Config           | Datos de reinos y hotspots                             |
@@ -117,6 +119,17 @@ InteractiveMapSection-server.tsx (Server Component)
 - **Ubicación**: HeroSection.tsx
 - **Texto**: "Explora el universo"
 - **Comportamiento**: Scroll suave a `#mapa-interactivo`
+
+#### 7. Panel de Lore/Sinopsis en Overlays
+
+- **Estado**: Funcional
+- **Componente**: `RealmInfoPanel.tsx`
+- **Ubicación**: `ImageOverlay` (Reino de la Luz, Reino Central) y `DualOverlay` vista dual (Reino Oscuro + Mapa de Galaxias)
+- **Botón**: Icono de información (i) en círculo con estilo púrpura oscuro `#3d1f5c`, borde dorado `#ffc667` y glow dorado sutil. Posicionado en el header del overlay (esquina superior) para evitar quedar en el borde inferior de la pantalla y facilitar el clic en desktop
+- **Modal**: Panel centrado responsive con animación suave, fondo degradado púrpura, marco dorado doble, título en `font-display`, viñetas con los símbolos originales (◆, +, \*)
+- **Datos**: Campo `lore` en `realms-data.ts` con `title`, `subtitle` y `points` por reino
+- **Comportamiento**: Se abre al tocar el botón, se cierra con backdrop, tecla Escape o botón de cerrar; bloquea scroll del fondo vía `z-[60]` y backdrop
+- **Responsivo**: Mismo modal centrado funciona en móvil y desktop con `max-w-md` y `max-h-[80vh]`
 
 ---
 
@@ -264,6 +277,27 @@ InteractiveMapSection-server.tsx (Server Component)
 - **Archivos**: `NavigationDots.tsx`, `InteractiveMapSection-client.tsx`
 - **Fecha**: 29 de junio de 2026
 
+### 22. Pinch-to-Zoom No Respondía Correctamente en Móvil
+
+- **Problema**: El gesto de pinza con dos dedos en móvil no controlaba el zoom de los overlays. Los eventos touch se registraban como pasivos cuando no había pan activo (es decir, cuando `scale === 1`), lo que impedía llamar `preventDefault()` y dejaba que el navegador interpretara el pinch como zoom nativo de la página. Además, el `motion.div` de `ZoomableOverlay` animaba el zoom y el pan con spring, lo que introducía un retraso elástico mientras el usuario arrastraba o estiraba los dedos
+- **Solución**: En `useTouchGestures.ts`, registrar los eventos touch como **non-passive** siempre que estén activos `onPinch` o `onPan`, llamar `e.preventDefault()` durante el pinch para evitar el zoom nativo del navegador, y resetear el estado inicial del pinch al levantar los dedos. En `ZoomableOverlay.tsx`, separar la animación de entrada del transform de zoom/pan: el `motion.div` solo maneja la animación de entrada/salida, mientras que un contenedor interno aplica `translate` y `scale` mediante CSS directo para respuesta inmediata
+- **Archivos**: `useTouchGestures.ts`, `ZoomableOverlay.tsx`
+- **Fecha**: 29 de junio de 2026
+
+### 23. Integración de Leyendas/Sinopsis en Overlays
+
+- **Problema**: Se requería mostrar los textos de leyenda/sinopsis de cada reino dentro de los overlays de mapa de forma elegante, alineada a la identidad gráfica de Victoria Querales y funcional tanto en móvil como en desktop
+- **Solución**: Crear componente `RealmInfoPanel.tsx` con botón de información (i) estilizado en púrpura/dorado y un modal centrado responsive. Agregar estructura `RealmLore` a `realms-data.ts` con `title`, `subtitle` y `points` (con iconos `diamond`, `plus`, `asterisk`). Integrar el botón en `ImageOverlay` (pasa `lore` del reino seleccionado) y en `DualOverlay` solo en vista dual (pasa `lore` del `realm-dark` porque describe ambos mapas juntos)
+- **Archivos**: `RealmInfoPanel.tsx` (nuevo), `realms-data.ts`, `ImageOverlay.tsx`, `DualOverlay.tsx`, `InteractiveMapSection-client.tsx`
+- **Fecha**: 29 de junio de 2026
+
+### 24. Botón de Info Quedaba en el Borde Inferior de la Pantalla
+
+- **Problema**: En desktop, el botón de información estaba posicionado en la esquina inferior derecha de los overlays, lejos del contenido, lo que hacía difícil clickearlo; al mover el cursor hacia el botón se podía salir del overlay y cerrarlo accidentalmente
+- **Solución**: Mover el botón de información al header del overlay. En `ImageOverlay` se pasó un header personalizado con el botón de info a la izquierda y el título centrado. En `DualOverlay` vista dual se posicionó el botón en `top-4 right-16`, junto al botón de cerrar
+- **Archivos**: `ImageOverlay.tsx`, `DualOverlay.tsx`
+- **Fecha**: 29 de junio de 2026
+
 ---
 
 ## Configuración de Datos
@@ -271,6 +305,30 @@ InteractiveMapSection-server.tsx (Server Component)
 ### `realms-data.ts`
 
 ```typescript
+export type LoreBulletIcon = "diamond" | "plus" | "asterisk";
+
+export interface LorePoint {
+  text: string;
+  icon?: LoreBulletIcon;
+}
+
+export interface RealmLore {
+  title: string;
+  subtitle: string;
+  points: LorePoint[];
+}
+
+export interface Realm {
+  id: string;
+  name: string;
+  title: string;
+  description: string;
+  backgroundImage: string;
+  order: number;
+  hotspots?: Hotspot[];
+  lore?: RealmLore;
+}
+
 export const realms: Realm[] = [
   {
     id: "realm-light",
@@ -290,6 +348,23 @@ export const realms: Realm[] = [
         isProminent: true,
       },
     ],
+    lore: {
+      title: "El Reino de la Luz",
+      subtitle: "Hogar de los dragones",
+      points: [
+        {
+          icon: "diamond",
+          text: "El reino más rico, creador del concepto del dinero.",
+        },
+        { icon: "diamond", text: "Rico en tierras y minerales." },
+        { icon: "diamond", text: "El reino pacífico." },
+        { icon: "diamond", text: "Cuna del arte." },
+        {
+          icon: "diamond",
+          text: "Elitistas por excelencia, clasistas, engreídos (pero algunos son cheveres).",
+        },
+      ],
+    },
   },
   {
     id: "realm-central",
@@ -309,6 +384,25 @@ export const realms: Realm[] = [
         isProminent: true,
       },
     ],
+    lore: {
+      title: "El Reino Central",
+      subtitle: "El corazón del universo",
+      points: [
+        { icon: "diamond", text: "Está exactamente en el universo." },
+        {
+          icon: "diamond",
+          text: "Proteccionistas de la naturaleza, el océano y toda criatura viviente.",
+        },
+        {
+          icon: "plus",
+          text: "Los seres centrales están conectados con la naturaleza y con los sentimientos.",
+        },
+        {
+          icon: "plus",
+          text: "Son amables, pero fuertes; no dejarse engañar por ellos o tus cosechas pagarán el precio.",
+        },
+      ],
+    },
   },
   {
     id: "realm-dark",
@@ -329,6 +423,27 @@ export const realms: Realm[] = [
         isProminent: true,
       },
     ],
+    lore: {
+      title: "El Reino Oscuro",
+      subtitle: "La base del cono cósmico",
+      points: [
+        { icon: "diamond", text: "Viven criaturas monstruosas de todo tipo." },
+        { icon: "diamond", text: "En constantes guerras territoriales." },
+        {
+          icon: "diamond",
+          text: "Se prioriza la razón por encima de los sentimientos.",
+        },
+        {
+          icon: "plus",
+          text: "Hay más dioses, por lo tanto son los que empiezan las guerras.",
+        },
+        {
+          icon: "diamond",
+          text: "Gobernado por los dioses Seth (Dios de la Muerte & el Inframundo) y Laila (Diosa de la Oscuridad).",
+        },
+        { icon: "asterisk", text: "Reino de mayor extensión de territorio..." },
+      ],
+    },
   },
 ];
 ```
@@ -554,5 +669,5 @@ Antes de hacer cambios, verificar:
 
 ---
 
-**Última actualización**: 29 de junio de 2026 (consolidación de overlays en `ZoomableOverlay.tsx`, eliminación de `GalaxyOverlay.tsx` del árbol de componentes, corrección de caja de ayuda duplicada en vista individual de `DualOverlay`, navegación por dots vertical en el mapa interactivo con tooltips a la izquierda, documentación actualizada para reflejar la arquitectura actual)
+**Última actualización**: 29 de junio de 2026 (integración de leyendas/sinopsis de reinos en overlays mediante `RealmInfoPanel.tsx`, estructura `RealmLore` en `realms-data.ts`, botón de información en `ImageOverlay` y `DualOverlay` vista dual, modal centrado responsive en móvil y desktop)
 **Estado**: Funcional, build exitoso, sin errores críticos

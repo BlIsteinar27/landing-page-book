@@ -23,13 +23,13 @@ export default function SocialLinkCard({ nombre, handle, url, icon, index = 0 }:
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
       whileHover={{ y: motionTokens.translate.cardHover }}
-      className="relative group"
+      className="relative group focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base rounded-xl outline-none"
     >
       {/* Glow effect */}
       <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-accent/20 to-transparent opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
       
       {/* Card */}
-      <div className="relative flex items-center gap-4 px-8 py-5 rounded-xl bg-surface-2 border border-border-subtle group-hover:border-accent/50 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base">
+      <div className="relative flex items-center gap-4 px-8 py-5 rounded-xl bg-surface-2 border border-border-subtle group-hover:border-accent/50 transition-all duration-300">
         {/* Icon container con efecto cósmico */}
         <div className="relative">
           <div className="absolute inset-0 rounded-full bg-accent/20 blur-md group-hover:bg-accent/30 transition-colors" />

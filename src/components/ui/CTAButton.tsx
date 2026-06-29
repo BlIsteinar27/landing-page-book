@@ -29,8 +29,7 @@ export default function CTAButton({ variant, className = '', text }: CTAButtonPr
         target="_blank"
         rel="noopener noreferrer"
         {...sharedMotion}
-        className={`inline-flex items-center justify-center gap-2.5 px-7 py-4 font-semibold text-sm rounded-2xl bg-accent text-surface-base hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-accent ${className}`}
-        style={{ boxShadow: '0 0 24px var(--accent-glow)' }}
+        className={`inline-flex items-center justify-center gap-2.5 px-7 py-4 font-semibold text-sm rounded-2xl bg-accent text-surface-base hover:opacity-90 transition-opacity shadow-[0_0_24px_var(--accent-glow)] focus-visible:ring-2 focus-visible:ring-accent ${className}`}
       >
         <ShoppingBag className="w-4 h-4" />
         {text || 'Comprar en Amazon'}
@@ -45,7 +44,7 @@ export default function CTAButton({ variant, className = '', text }: CTAButtonPr
         target="_blank"
         rel="noopener noreferrer"
         {...sharedMotion}
-        className={`inline-flex items-center justify-center gap-2.5 px-7 py-4 font-semibold text-sm rounded-2xl bg-[#25D366] text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-[#25D366] ${className}`}
+        className={`inline-flex items-center justify-center gap-2.5 px-7 py-4 font-semibold text-sm rounded-2xl bg-whatsapp text-white hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-whatsapp ${className}`}
       >
         <MessageCircle className="w-4 h-4" />
         {text || 'Reservar ahora'}
@@ -61,7 +60,7 @@ export default function CTAButton({ variant, className = '', text }: CTAButtonPr
       {...sharedMotion}
       className={`inline-flex items-center justify-center gap-2.5 px-7 py-4 font-medium text-sm rounded-2xl bg-surface-2 text-ink-primary border border-border-emphasis hover:bg-surface-3 transition-colors ${className}`}
     >
-      <MessageCircle className="w-4 h-4 text-[#25D366]" />
+      <MessageCircle className="w-4 h-4 text-whatsapp" />
       {text || 'Reserva por WhatsApp'}
     </motion.a>
   );

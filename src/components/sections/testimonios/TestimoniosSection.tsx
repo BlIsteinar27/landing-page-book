@@ -62,8 +62,12 @@ export default function TestimoniosSection() {
             <motion.div
               key={t.nombre}
               variants={cardVariants}
-              whileHover={{ y: -4 }}
-              className="shimmer-card flex flex-col gap-5 rounded-2xl p-6 border border-border-default transition-colors duration-300"
+              whileHover={{ y: -4, backgroundPositionX: '200%' }}
+              transition={{
+                y: { duration: 0.3, ease: 'easeOut' },
+                backgroundPositionX: { duration: 1.8, ease: 'linear' },
+              }}
+              className="flex flex-col gap-5 rounded-2xl p-6 border border-border-default transition-colors duration-300 bg-[linear-gradient(105deg,var(--surface-2)_40%,var(--surface-3)_50%,var(--surface-2)_60%)] [background-size:200%_auto] [background-position-x:-200%]"
             >
               {/* Estrellas */}
               <div className="flex gap-1">
@@ -100,7 +104,7 @@ export default function TestimoniosSection() {
       </div>
 
       {/* Marquee de palabras clave — Motion */}
-      <div className="relative overflow-hidden py-6 border-t border-border-subtle border-b">
+      <div className="relative overflow-hidden py-6 border-y border-border-subtle">
         <motion.div
           className="flex gap-8 whitespace-nowrap w-max"
           animate={{ x: ['0%', '-50%'] }}

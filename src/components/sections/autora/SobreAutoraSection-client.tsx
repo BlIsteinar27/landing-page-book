@@ -2,10 +2,6 @@
 
 import { motion, type Transition } from 'motion/react';
 import Image from 'next/image';
-import SocialLinkCard from '@/components/ui/SocialLinkCard';
-import { SOCIAL_LINKS_FLAT } from '@/config/links';
-import InstagramIcon from '@/components/icons/InstagramIcon';
-import TikTokIcon from '@/components/icons/TikTokIcon';
 
 const credencialesContainerVariants = {
   hidden: { opacity: 0 },
@@ -51,18 +47,10 @@ export default function SobreAutoraSectionClient() {
         >
           <div className="relative">
             <div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: `conic-gradient(var(--accent) 0%, transparent 60%, var(--accent) 100%)`,
-                padding: '2px',
-                borderRadius: '50%',
-              }}
+              className="absolute inset-0 rounded-full bg-[conic-gradient(var(--accent)_0%,transparent_60%,var(--accent)_100%)] p-[2px]"
             />
             <div
-              className="relative w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60 rounded-full overflow-hidden border-2 border-border-emphasis"
-              style={{
-                boxShadow: '0 0 40px var(--accent-glow)',
-              }}
+              className="relative w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60 rounded-full overflow-hidden border-2 border-border-emphasis shadow-[0_0_40px_var(--accent-glow)]"
             >
               <Image
                 src="/landing-book-victoria/foto-escritora.jpg"
@@ -139,31 +127,6 @@ export default function SobreAutoraSectionClient() {
             ))}
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="mt-8 pt-6 border-t border-border-subtle"
-          >
-            <p className="text-sm text-ink-secondary mb-4 text-center md:text-left">
-              Sigue el viaje de creación
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <SocialLinkCard
-                nombre="Instagram"
-                handle={SOCIAL_LINKS_FLAT.instagramHandle}
-                url={SOCIAL_LINKS_FLAT.instagram}
-                icon={<InstagramIcon className="w-4 h-4" />}
-              />
-              <SocialLinkCard
-                nombre="TikTok"
-                handle={SOCIAL_LINKS_FLAT.tiktokHandle}
-                url={SOCIAL_LINKS_FLAT.tiktok}
-                icon={<TikTokIcon className="w-4 h-4" />}
-              />
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </>

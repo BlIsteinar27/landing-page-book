@@ -8,6 +8,19 @@ export interface Hotspot {
   isProminent?: boolean; // Si true, hotspot más visible y destacado
 }
 
+export type LoreBulletIcon = 'diamond' | 'plus' | 'asterisk';
+
+export interface LorePoint {
+  text: string;
+  icon?: LoreBulletIcon;
+}
+
+export interface RealmLore {
+  title: string;
+  subtitle: string;
+  points: LorePoint[];
+}
+
 export interface Realm {
   id: string;
   name: string;
@@ -16,6 +29,7 @@ export interface Realm {
   backgroundImage: string;
   order: number; // 1 = Luz, 2 = Central, 3 = Oscuro
   hotspots?: Hotspot[];
+  lore?: RealmLore;
 }
 
 export const realms: Realm[] = [
@@ -35,7 +49,18 @@ export const realms: Realm[] = [
         description: 'Explora el reino donde habitan los dioses de mayor jerarquía',
         isProminent: true
       }
-    ]
+    ],
+    lore: {
+      title: 'El Reino de la Luz',
+      subtitle: 'Hogar de los dragones',
+      points: [
+        { icon: 'diamond', text: 'El reino más rico, creador del concepto del dinero.' },
+        { icon: 'diamond', text: 'Rico en tierras y minerales.' },
+        { icon: 'diamond', text: 'El reino pacífico.' },
+        { icon: 'diamond', text: 'Cuna del arte.' },
+        { icon: 'diamond', text: 'Elitistas por excelencia, clasistas, engreídos (pero algunos son cheveres).' }
+      ]
+    }
   },
   {
     id: 'realm-central',
@@ -53,7 +78,17 @@ export const realms: Realm[] = [
         description: 'Explora el punto medio del universo, equilibrio entre luz y oscuridad',
         isProminent: true
       }
-    ]
+    ],
+    lore: {
+      title: 'El Reino Central',
+      subtitle: 'El corazón del universo',
+      points: [
+        { icon: 'diamond', text: 'Está exactamente en el universo.' },
+        { icon: 'diamond', text: 'Proteccionistas de la naturaleza, el océano y toda criatura viviente.' },
+        { icon: 'plus', text: 'Los seres centrales están conectados con la naturaleza y con los sentimientos.' },
+        { icon: 'plus', text: 'Son amables, pero fuertes; no dejarse engañar por ellos o tus cosechas pagarán el precio.' }
+      ]
+    }
   },
   {
     id: 'realm-dark',
@@ -72,6 +107,18 @@ export const realms: Realm[] = [
         image: '/landing-book-victoria/Mapa de galaxias arreglado_20260622_174207_0000 (1).svg',
         isProminent: true
       }
-    ]
+    ],
+    lore: {
+      title: 'El Reino Oscuro',
+      subtitle: 'La base del cono cósmico',
+      points: [
+        { icon: 'diamond', text: 'Viven criaturas monstruosas de todo tipo.' },
+        { icon: 'diamond', text: 'En constantes guerras territoriales.' },
+        { icon: 'diamond', text: 'Se prioriza la razón por encima de los sentimientos.' },
+        { icon: 'plus', text: 'Hay más dioses, por lo tanto son los que empiezan las guerras.' },
+        { icon: 'diamond', text: 'Gobernado por los dioses Seth (Dios de la Muerte & el Inframundo) y Laila (Diosa de la Oscuridad).' },
+        { icon: 'asterisk', text: 'Reino de mayor extensión de territorio. Donde no solo están los reinos principales (Norte, Este, Oeste, Sur), sino el territorio de las galaxias, donde viven criaturas grandiosas como peligrosas. Al igual, abundancia en recursos tecnológicos, minerales y mágicos.' }
+      ]
+    }
   }
 ];

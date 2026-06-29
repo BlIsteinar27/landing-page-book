@@ -28,7 +28,11 @@ export default function RealmLevel({ realm, isActive, index, onImageClick }: Rea
     >
       {/* Skeleton Loader */}
       {!isLoaded && (
-        <div className="absolute inset-0 bg-surface-2 animate-pulse" />
+        <motion.div
+          animate={{ opacity: [1, 0.5, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute inset-0 bg-surface-2"
+        />
       )}
 
       {/* Error Fallback */}

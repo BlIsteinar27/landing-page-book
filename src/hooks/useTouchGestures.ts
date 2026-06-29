@@ -28,26 +28,33 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
   const startYRef = useRef(0);
 
   const handleTouchStart = useCallback((e: TouchEvent) => {
-    if (enablePan && onPan && e.touches.length === 1) {
-      e.preventDefault(); // Bloquear scroll de fondo
+    const touchCount = e.touches.length;
+
+    // Prevenir zoom nativo del navegador durante pinch o pan
+    if ((onPinch && touchCount === 2) || (enablePan && onPan && touchCount === 1)) {
+      e.preventDefault();
+    }
+
+    if (enablePan && onPan && touchCount === 1) {
       isDraggingRef.current = true;
       startXRef.current = e.touches[0].clientX;
       startYRef.current = e.touches[0].clientY;
     }
-    
+
     if (onLongPress) {
       longPressTimerRef.current = setTimeout(() => {
         setIsLongPressing(true);
         onLongPress(e);
       }, longPressDelay);
     }
-  }, [onLongPress, longPressDelay, enablePan, onPan]);
+  }, [onLongPress, longPressDelay, enablePan, onPan, onPinch]);
 
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
       const touchCount = e.touches.length;
 
       if (touchCount === 2 && onPinch) {
+        e.preventDefault(); // Evitar que el navegador haga zoom nativo de la página
         const distance = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY,
@@ -83,7 +90,9 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
 
   const handleTouchEnd = useCallback(() => {
     isDraggingRef.current = false;
-    
+    initialDistanceRef.current = 0;
+    initialScaleRef.current = 1;
+
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
     }
@@ -131,12 +140,13 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
     const element = elementRef.current;
     if (!element) return;
 
-    // Touch events - non-passive cuando enablePan está activo para poder usar preventDefault
+    // Touch events - non-passive cuando hay pinch o pan activo para poder usar preventDefault
+    const needsActiveTouch = !!(enablePan || onPinch);
     element.addEventListener('touchstart', handleTouchStart, {
-      passive: !enablePan,
+      passive: !needsActiveTouch,
     });
     element.addEventListener('touchmove', handleTouchMove, {
-      passive: !enablePan,
+      passive: !needsActiveTouch,
     });
     element.addEventListener('touchend', handleTouchEnd);
 

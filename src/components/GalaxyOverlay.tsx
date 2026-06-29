@@ -49,16 +49,15 @@ export default function GalaxyOverlay({ isVisible, onClose, svgPath, title = 'Ma
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain"
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain touch-none"
           onClick={onClose}
-          style={{ touchAction: 'none', overscrollBehavior: 'contain' }}
         >
           {/* Contenedor de controles - fuera del contenedor que escala */}
           <div className="absolute inset-0 pointer-events-none z-20">
             {/* Close Button */}
             <button
               onClick={(e) => { e.stopPropagation(); onClose(); }}
-              className="absolute top-4 right-4 w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black pointer-events-auto"
+              className="absolute top-4 right-4 w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black pointer-events-auto"
             >
               <svg className="w-6 h-6 text-ink-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -69,7 +68,7 @@ export default function GalaxyOverlay({ isVisible, onClose, svgPath, title = 'Ma
             <div className="absolute bottom-4 right-4 flex flex-col gap-2 pointer-events-auto">
               <button
                 onClick={(e) => { e.stopPropagation(); setScale(s => Math.min(s + 0.2, 3)); }}
-                className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black"
+                className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               >
                 <svg className="w-6 h-6 text-ink-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -77,7 +76,7 @@ export default function GalaxyOverlay({ isVisible, onClose, svgPath, title = 'Ma
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); setScale(s => Math.max(s - 0.2, 0.5)); }}
-                className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black"
+                className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               >
                 <svg className="w-6 h-6 text-ink-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
@@ -112,13 +111,8 @@ export default function GalaxyOverlay({ isVisible, onClose, svgPath, title = 'Ma
             }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ type: "spring", damping: 25 }}
-            className="relative w-full h-full max-w-4xl max-h-[80vh] flex items-center justify-center p-3 md:p-4"
+            className={`relative w-full h-full max-w-4xl max-h-[80vh] flex items-center justify-center p-3 md:p-4 ${scale > 1 ? 'cursor-grab' : 'cursor-default'} shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] bg-[linear-gradient(135deg,rgba(61,31,92,0.3)_0%,rgba(20,10,30,0.5)_100%)]`}
             onClick={(e) => e.stopPropagation()}
-            style={{
-              cursor: scale > 1 ? 'grab' : 'default',
-              boxShadow: '0 0 0 2px #3d1f5c, 0 0 0 4px #ffc667, 0 8px 32px rgba(61, 31, 92, 0.4)',
-              background: 'linear-gradient(135deg, rgba(61, 31, 92, 0.3) 0%, rgba(20, 10, 30, 0.5) 100%)'
-            }}
           >
             <Image
               src={svgPath}

@@ -165,6 +165,7 @@ export default function InteractiveMapSectionClient() {
         onClose={closeOverlay}
         imagePath={selectedRealm?.backgroundImage || ''}
         title={selectedRealm?.title || ''}
+        lore={selectedRealm?.lore}
       />
 
       {/* Dual Overlay para Reino Oscuro + Mapa de Galaxias */}
@@ -175,6 +176,7 @@ export default function InteractiveMapSectionClient() {
         rightImagePath="/landing-book-victoria/reino-oscuro.png"
         leftTitle="Mapa de Galaxias"
         rightTitle="Reino Oscuro"
+        lore={realms.find(r => r.id === 'realm-dark')?.lore}
       />
     </>
   );
