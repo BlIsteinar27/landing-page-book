@@ -1,11 +1,12 @@
-import HeroSection from '@/components/HeroSection';
-import SobreLibroSection from '@/components/SinopsisSection-server';
-import PersonajesSection from '@/components/PersonajesSection-server';
-import InteractiveMapSection from '@/components/InteractiveMapSection-server';
-import SobreAutoraSection from '@/components/SobreAutoraSection-server';
-import ComunidadSection from '@/components/ComunidadSection';
-import ContactoSection from '@/components/ContactoSection';
-import Footer from '@/components/Footer';
+import HeroSection from '@/components/sections/hero/HeroSection';
+import SobreLibroSection from '@/components/sections/sinopsis/SinopsisSection-server';
+import PersonajesSection from '@/components/sections/personajes/PersonajesSection-server';
+import InteractiveMapSection from '@/components/sections/mapa/InteractiveMapSection-server';
+import SagaSection from '@/components/sections/saga/SagaSection-server';
+import SobreAutoraSection from '@/components/sections/autora/SobreAutoraSection-server';
+// import ComunidadSection from '@/components/sections/comunidad/ComunidadSection';
+import ContactoSection from '@/components/sections/contacto/ContactoSection';
+import Footer from '@/components/sections/footer/Footer';
 import StickyCTA from '@/components/StickyCTA';
 import SchemaMarkup from '@/components/SchemaMarkup';
 
@@ -19,8 +20,10 @@ export default function Home() {
       <SobreLibroSection />
       <PersonajesSection />
       <InteractiveMapSection />
+      <SagaSection />
       <SobreAutoraSection />
-      <ComunidadSection />
+      {/* <ComunidadSection /> */}
+      {/* <TestimoniosSection /> */}
       <ContactoSection />
       <Footer />
       <StickyCTA />

@@ -43,21 +43,43 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
     }
   }, [onLongPress, longPressDelay, enablePan, onPan]);
 
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (enablePan && onPan && isDraggingRef.current && e.touches.length === 1) {
-      e.preventDefault(); // Bloquear scroll de fondo
-      const deltaX = e.touches[0].clientX - startXRef.current;
-      const deltaY = e.touches[0].clientY - startYRef.current;
-      onPan(deltaX, deltaY);
-      startXRef.current = e.touches[0].clientX;
-      startYRef.current = e.touches[0].clientY;
-    }
-    
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-    }
-    setIsLongPressing(false);
-  }, [enablePan, onPan]);
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      const touchCount = e.touches.length;
+
+      if (touchCount === 2 && onPinch) {
+        const distance = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY,
+        );
+        if (initialDistanceRef.current === 0) {
+          initialDistanceRef.current = distance;
+          initialScaleRef.current = currentScale;
+        }
+        const newScale =
+          initialScaleRef.current * (distance / initialDistanceRef.current);
+        onPinch(newScale);
+      } else if (
+        touchCount === 1 &&
+        enablePan &&
+        onPan &&
+        isDraggingRef.current
+      ) {
+        e.preventDefault();
+        const deltaX = e.touches[0].clientX - startXRef.current;
+        const deltaY = e.touches[0].clientY - startYRef.current;
+        onPan(deltaX, deltaY);
+        startXRef.current = e.touches[0].clientX;
+        startYRef.current = e.touches[0].clientY;
+      }
+
+      if (longPressTimerRef.current) {
+        clearTimeout(longPressTimerRef.current);
+      }
+      setIsLongPressing(false);
+    },
+    [enablePan, onPan, onPinch, currentScale],
+  );
 
   const handleTouchEnd = useCallback(() => {
     isDraggingRef.current = false;
@@ -71,29 +93,6 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
   // Pinch zoom logic
   const initialDistanceRef = useRef<number>(0);
   const initialScaleRef = useRef<number>(1);
-  
-  const handlePinch = useCallback((e: TouchEvent) => {
-    if (e.touches.length === 2 && onPinch) {
-      const distance = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
-      );
-      
-      // Si es el inicio del pinch, guardar distancia inicial y escala actual
-      if (initialDistanceRef.current === 0) {
-        initialDistanceRef.current = distance;
-        // NO resetear a 1 - mantener la escala actual del componente
-        initialScaleRef.current = currentScale; // scale debe venir del estado del componente
-      }
-      
-      // Calcular delta de escala basado en la distancia inicial
-      const newScale = initialScaleRef.current * (distance / initialDistanceRef.current);
-      onPinch(newScale);
-    } else {
-      // Reset cuando no hay 2 dedos
-      initialDistanceRef.current = 0;
-    }
-  }, [onPinch, currentScale]); // Agregar currentScale como dependencia
 
   // Mouse handlers para arrastre
   const handleMouseDown = useCallback((e: MouseEvent) => {
@@ -133,10 +132,13 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
     if (!element) return;
 
     // Touch events - non-passive cuando enablePan está activo para poder usar preventDefault
-    element.addEventListener('touchstart', handleTouchStart, { passive: !enablePan });
-    element.addEventListener('touchmove', handleTouchMove, { passive: !enablePan });
+    element.addEventListener('touchstart', handleTouchStart, {
+      passive: !enablePan,
+    });
+    element.addEventListener('touchmove', handleTouchMove, {
+      passive: !enablePan,
+    });
     element.addEventListener('touchend', handleTouchEnd);
-    element.addEventListener('touchmove', handlePinch, { passive: !enablePan });
 
     // Mouse events (solo si enablePan está activo)
     if (enablePan) {
@@ -150,8 +152,7 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
       element.removeEventListener('touchstart', handleTouchStart);
       element.removeEventListener('touchmove', handleTouchMove);
       element.removeEventListener('touchend', handleTouchEnd);
-      element.removeEventListener('touchmove', handlePinch);
-      
+
       if (enablePan) {
         element.removeEventListener('mousedown', handleMouseDown);
         element.removeEventListener('mousemove', handleMouseMove);
@@ -159,7 +160,15 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
         element.removeEventListener('mouseleave', handleMouseUp);
       }
     };
-  }, [handleTouchStart, handleTouchMove, handleTouchEnd, handlePinch, handleMouseDown, handleMouseMove, handleMouseUp, enablePan]);
+  }, [
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    enablePan,
+  ]);
 
   return { elementRef, isLongPressing };
 }

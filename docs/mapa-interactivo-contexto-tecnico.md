@@ -38,9 +38,9 @@ InteractiveMapSection-server.tsx (Server Component)
     ├── RealmLevel.tsx (x3 - uno por realm)
     │   └── Image (Next.js)
     ├── Hotspot.tsx (hotspots interactivos)
-    ├── GalaxyOverlay.tsx (overlay SVG mapa galaxias)
-    ├── ImageOverlay.tsx (overlay imagen individual)
-    └── DualOverlay.tsx (overlay dual con navegación)
+    ├── ZoomableOverlay.tsx (base reutilizable para overlays con zoom)
+    ├── ImageOverlay.tsx (overlay imagen individual, usa ZoomableOverlay)
+    └── DualOverlay.tsx (overlay dual con navegación entre vistas)
 ```
 
 ### Archivos Principales
@@ -51,12 +51,13 @@ InteractiveMapSection-server.tsx (Server Component)
 | `InteractiveMapSection-client.tsx` | Client Component | Orquestador principal, estado de overlays, scroll snap |
 | `RealmLevel.tsx`                   | Client Component | Renderiza un realm individual con imagen y contenido   |
 | `Hotspot.tsx`                      | Client Component | Puntos interactivos con animación pulse y tooltip      |
-| `GalaxyOverlay.tsx`                | Client Component | Overlay para mapa de galaxias SVG con zoom             |
+| `ZoomableOverlay.tsx`              | Client Component | Base reutilizable con zoom, pan, cerrar y ayuda        |
 | `ImageOverlay.tsx`                 | Client Component | Overlay genérico para imágenes con zoom                |
 | `DualOverlay.tsx`                  | Client Component | Overlay dual con navegación entre vistas               |
 | `useScrollSnap.ts`                 | Custom Hook      | Maneja scroll snap y detección de realm activo         |
 | `useTouchGestures.ts`              | Custom Hook      | Detecta long press y pinch-to-zoom                     |
 | `realms-data.ts`                   | Config           | Datos de reinos y hotspots                             |
+| `NavigationDots.tsx`               | UI Component     | Dots de navegación con orientación y tooltip lateral   |
 
 ---
 
@@ -75,8 +76,10 @@ InteractiveMapSection-server.tsx (Server Component)
 #### 2. Overlays con Zoom
 
 - **Estado**: Funcional
-- **Componentes**: `ImageOverlay`, `GalaxyOverlay`, `DualOverlay`
+- **Componentes base**: `ZoomableOverlay` (reutilizable)
+- **Consumidores**: `ImageOverlay` (imágenes individuales), `DualOverlay` (vista individual)
 - **Zoom**: Pinch-to-zoom vía `useTouchGestures` + botones de zoom (+/-)
+- **Pan/Arrastre**: Disponible cuando `scale > 1`
 - **Reset de zoom**: Se resetea a 1 cuando el overlay se abre/cierra
 - **Eventos**: `e.stopPropagation()` en botones para evitar cierre accidental
 
@@ -93,10 +96,11 @@ InteractiveMapSection-server.tsx (Server Component)
 #### 4. Hotspots Interactivos
 
 - **Estado**: Funcional
-- **Ubicación**: Solo en realm-dark (Reino Oscuro)
-- **Hotspot**: "Mapa de Galaxias" en posición (0.5, 0.5)
-- **Animación**: Pulse effect centrado con el botón
-- **Trigger**: Abre DualOverlay
+- **Ubicación**: Todos los reinos (Luz, Central, Oscuro)
+- **Hotspots**: Cada realm tiene un hotspot prominente en posición (0.5, 0.5)
+- **Comportamiento**: Los overlays se abren exclusivamente vía hotspot una vez que este es visible; antes de eso, el click en la imagen también puede abrir el overlay
+- **Animación**: Pulse effect centrado con el botón; delay de 2 segundos en la primera aparición
+- **Trigger**: Hotspot de realm-dark abre DualOverlay; los demás abren ImageOverlay
 
 #### 5. Imágenes de Reinos
 
@@ -238,6 +242,27 @@ InteractiveMapSection-server.tsx (Server Component)
 - **Solución**: Aplicar marco de doble borde con púrpura oscuro (`#3d1f5c`) y dorado (`#ffc667`) con fondo degradado sutil a las imágenes de `ImageOverlay` y `GalaxyOverlay`. Agregar header centrado en la parte superior con el nombre del mapa en `ImageOverlay` y `GalaxyOverlay`. Reubicar labels en `DualOverlay` de forma diagonal: título de la imagen izquierda (`leftTitle`) en esquina superior izquierda, y título de la imagen derecha (`rightTitle`) en esquina inferior derecha. Agregar header en `DualOverlay` para la vista individual (`viewMode !== 'dual'`) mostrando `currentTitle` en la parte superior, posicionado con `left-36 right-16 md:left-40 md:right-20` para evitar solapamiento con el botón "Ver ambos" a la izquierda y el botón "Cerrar" a la derecha. Agregar prop `title` opcional a `GalaxyOverlay` con default "Mapa de Galaxias"
 - **Archivos**: `ImageOverlay.tsx`, `GalaxyOverlay.tsx`, `DualOverlay.tsx`
 - **Fecha**: 28 de junio de 2026
+
+### 19. Consolidación de Overlays en ZoomableOverlay
+
+- **Problema**: La arquitectura de overlays tenía componentes separados (`ImageOverlay`, `GalaxyOverlay`, `DualOverlay`) con lógica de zoom duplicada y mantenimiento disperso. `GalaxyOverlay.tsx` dejó de existir en el código pero seguía referenciado en la documentación
+- **Solución**: Crear `ZoomableOverlay.tsx` como base reutilizable que centraliza zoom, pan, cierre, bloqueo de scroll y caja de ayuda. `ImageOverlay` se convierte en un wrapper de `ZoomableOverlay`. `DualOverlay` usa `ZoomableOverlay` para su vista individual. Se elimina `GalaxyOverlay.tsx` del árbol de componentes
+- **Archivos**: `ZoomableOverlay.tsx` (nuevo), `ImageOverlay.tsx`, `DualOverlay.tsx`, `GalaxyOverlay.tsx` (eliminado)
+- **Fecha**: 29 de junio de 2026
+
+### 20. Caja de Ayuda Duplicada en Vista Individual de DualOverlay
+
+- **Problema**: En la vista individual de `DualOverlay` se mostraban dos cajas de ayuda superpuestas con el mismo texto de zoom/arrastre: una de `DualOverlay` y otra de `ZoomableOverlay`
+- **Solución**: Renderizar la caja de instrucciones de `DualOverlay` solo cuando `viewMode === 'dual'`. En vista individual, `ZoomableOverlay` provee únicamente la caja de ayuda correspondiente
+- **Archivos**: `DualOverlay.tsx`
+- **Fecha**: 29 de junio de 2026
+
+### 21. Navegación por Dots en el Mapa Interactivo
+
+- **Problema**: Los dots de navegación del mapa se renderizaban en un contenedor fijo a la derecha de la pantalla pero con disposición horizontal, lo que dificultaba su uso y hacía que los tooltips se desbordaran fuera del viewport
+- **Solución**: Añadir props `orientation` y `tooltipPosition` a `NavigationDots`. En el mapa interactivo se usa `orientation="vertical"` y `tooltipPosition="left"`, apilando los dots verticalmente y mostrando los tooltips hacia el centro de la pantalla
+- **Archivos**: `NavigationDots.tsx`, `InteractiveMapSection-client.tsx`
+- **Fecha**: 29 de junio de 2026
 
 ---
 
@@ -529,5 +554,5 @@ Antes de hacer cambios, verificar:
 
 ---
 
-**Última actualización**: 28 de junio de 2026 (corrección de alineación de hotspot, cambio de texto a "Reino Oscuro", advertencia obligatoria de actualización, implementación de hotspots en todos los reinos con interacción exclusiva, delay de 2 segundos en aparición de hotspots, interacción condicional de overlays según visibilidad de hotspots, intercambio de imágenes en DualOverlay: Mapa de Galaxias ahora a la izquierda, Reino Oscuro a la derecha, limpieza de hotspots visibles al cambiar de realm, título de sección "Explora el Universo" agregado, corrección de visibilidad de controles de overlay en móvil, funcionalidad de arrastre (pan) en overlays individuales con soporte mouse y touch, implementación de marcos elegantes en DualOverlay con identidad gráfica de Victoria Querales, corrección de bugs de arrastre: preventDefault para bloquear scroll de fondo, cursor grabbing en desktop, activación solo cuando scale > 1, implementación completa de arrastre en ImageOverlay y GalaxyOverlay con posición y enablePan cuando scale > 1, corrección de condición enablePan en DualOverlay para activarse siempre en vista individual sin requerir zoom, actualización de instrucciones contextuales en todos los overlays, **bloqueo total de scroll de fondo cuando cualquier overlay está abierto en desktop y móvil mediante hook useLockBodyScroll con overflow: hidden, touch-action: none, overscroll-behavior: none y compensación de scrollbar, marcos de doble borde púrpura/dorado en ImageOverlay y GalaxyOverlay, headers centrados con nombre del mapa en overlays individuales, labels diagonales en DualOverlay: título izquierdo arriba a la izquierda y título derecho abajo a la derecha, header en vista individual de DualOverlay mostrando currentTitle centrado con ancho ajustado para evitar solapamiento con botones Ver ambos y Cerrar**)
+**Última actualización**: 29 de junio de 2026 (consolidación de overlays en `ZoomableOverlay.tsx`, eliminación de `GalaxyOverlay.tsx` del árbol de componentes, corrección de caja de ayuda duplicada en vista individual de `DualOverlay`, navegación por dots vertical en el mapa interactivo con tooltips a la izquierda, documentación actualizada para reflejar la arquitectura actual)
 **Estado**: Funcional, build exitoso, sin errores críticos

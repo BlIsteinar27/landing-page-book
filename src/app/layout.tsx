@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import localFont from 'next/font/local';
+import localFont from "next/font/local";
 import "./globals.css";
-import { SITE_URL } from '@/config/links';
+import { SITE_CONFIG } from "@/config/site";
+import { CTAVisibilityProvider } from "@/components/CTAVisibilityProvider";
 
-// Configuración para fuente local Starlight Rune (Yudi-YqPny.ttf)
 const starlightRune = localFont({
-  src: [
-    {
-      path: '../fonts/Yudi-YqPny.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-  ],
-  display: 'swap',
-  variable: '--font-display',
+  src: [{ path: "../fonts/Yudi-YqPny.ttf", weight: "400", style: "normal" }],
+  display: "swap",
+  variable: "--font-display",
 });
 
 const playfair = Playfair_Display({
@@ -32,32 +26,14 @@ const inter = Inter({
   display: "swap",
 });
 
-const META_TITLE = "Victoria Querales | Autora de Fantasía Oscura - Saga Dioses Universales";
-const META_DESCRIPTION = "Victoria Querales, autora venezolana de fantasía oscura. Descubre Los Dos Reinos, primer libro de la saga Dioses Universales. Romance político, mitología y traición. Lanzamiento octubre 2026.";
-const KEYWORDS = [
-  "Victoria Querales",
-  "Dioses Universales",
-  "Los Dos Reinos",
-  "fantasía oscura",
-  "romance político",
-  "saga de fantasía",
-  "autora venezolana",
-  "libro fantasía 2026",
-  "Wattpad",
-  "dioses y mitología",
-];
-
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: META_TITLE,
-    template: "%s | Victoria Querales",
-  },
-  description: META_DESCRIPTION,
-  keywords: KEYWORDS,
-  authors: [{ name: "Victoria Querales" }],
-  creator: "Victoria Querales",
-  publisher: "Victoria Querales",
+  metadataBase: new URL(SITE_CONFIG.url),
+  title: SITE_CONFIG.title,
+  description: SITE_CONFIG.description,
+  keywords: SITE_CONFIG.keywords,
+  authors: [{ name: SITE_CONFIG.author.name }],
+  creator: SITE_CONFIG.author.name,
+  publisher: SITE_CONFIG.publisher,
   robots: {
     index: true,
     follow: true,
@@ -71,29 +47,29 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "es_ES",
-    url: SITE_URL,
-    siteName: "Victoria Querales - Autora",
-    title: "Victoria Querales | Autora de Dioses Universales",
-    description: "Donde amar es un acto político capaz de cambiar por completo el universo. Descubre la saga Dioses Universales.",
+    locale: SITE_CONFIG.locale,
+    url: SITE_CONFIG.url,
+    siteName: `${SITE_CONFIG.author.name} - Autora`,
+    title: SITE_CONFIG.shortTitle,
+    description: SITE_CONFIG.ogDescription,
     images: [
       {
-        url: "/landing-book-victoria/portada-libro-1.png",
-        width: 1200,
-        height: 630,
-        alt: "Los Dos Reinos - Primer libro de Dioses Universales",
+        url: SITE_CONFIG.ogImage.url,
+        width: SITE_CONFIG.ogImage.width,
+        height: SITE_CONFIG.ogImage.height,
+        alt: SITE_CONFIG.ogImage.alt,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: META_TITLE,
-    description: META_DESCRIPTION,
-    creator: "@victoria_aql",
-    images: ["/landing-book-victoria/portada-libro-1.png"],
+    title: SITE_CONFIG.title.default,
+    description: SITE_CONFIG.description,
+    creator: SITE_CONFIG.twitterCreator,
+    images: [SITE_CONFIG.ogImage.url],
   },
   alternates: {
-    canonical: SITE_URL,
+    canonical: SITE_CONFIG.url,
   },
 };
 
@@ -103,12 +79,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`h-full antialiased ${starlightRune.variable} ${playfair.variable} ${inter.variable}`}>
+    <html
+      lang="es"
+      className={`h-full antialiased ${starlightRune.variable} ${playfair.variable} ${inter.variable}`}
+    >
       <body className="min-h-full flex flex-col">
-        <a href="#main-content" className="skip-link">
-          Saltar al contenido principal
-        </a>
-        <main id="main-content">{children}</main>
+        <CTAVisibilityProvider>
+          <a href="#main-content" className="skip-link">
+            Saltar al contenido principal
+          </a>
+          <main id="main-content">{children}</main>
+        </CTAVisibilityProvider>
       </body>
     </html>
   );

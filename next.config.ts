@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   
   reactCompiler: true,
   images: {
-    qualities: [70, 75, 80, 85, 90, 95, 100],
+    formats: ['image/avif', 'image/webp'],
+    qualities: [75, 85],
   },
 };
 

@@ -1,98 +1,99 @@
-import { SITE_URL, SOCIAL_LINKS } from '@/config/links';
+import { SITE_CONFIG } from "@/config/site";
+import { SOCIAL_LINKS_FLAT } from "@/config/links";
 
 export default function SchemaMarkup() {
   const authorSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Victoria Querales",
-    jobTitle: "Autora de Fantasía Oscura",
-    description: "Licenciada en Comunicación Social con mención en Periodismo Audiovisual. Autora de la saga Dioses Universales, una serie de fantasía oscura con 11+ años de desarrollo.",
-    url: SITE_URL,
-    sameAs: [
-      SOCIAL_LINKS.instagram,
-      SOCIAL_LINKS.tiktok,
+    name: SITE_CONFIG.author.name,
+    jobTitle: SITE_CONFIG.author.profession,
+    description: SITE_CONFIG.author.description,
+    url: SITE_CONFIG.url,
+    sameAs: [SOCIAL_LINKS_FLAT.instagram, SOCIAL_LINKS_FLAT.tiktok],
+    knowsAbout: [
+      "Fantasía oscura",
+      "Romance político",
+      "Escritura creativa",
+      "Mitología",
+      "Literatura venezolana",
     ],
-    knowsAbout: ["Fantasía oscura", "Romance político", "Escritura creativa", "Mitología", "Literatura venezolana"],
     nationality: {
       "@type": "Country",
-      name: "Venezuela"
+      name: SITE_CONFIG.author.nationality,
     },
   };
 
   const bookSchema = {
     "@context": "https://schema.org",
     "@type": "Book",
-    name: "Los Dos Reinos",
+    name: SITE_CONFIG.book.name,
     author: {
       "@type": "Person",
-      name: "Victoria Querales",
-      url: SITE_URL
+      name: SITE_CONFIG.author.name,
+      url: SITE_CONFIG.url,
     },
     bookFormat: "https://schema.org/Paperback",
-    genre: ["Fantasía oscura", "Romance", "Ficción política", "Mitología"],
+    genre: SITE_CONFIG.book.genre,
     inLanguage: "es",
-    datePublished: "2026-10",
-    description: "En el Reino Central, las gemelas Laila y Liora personifican el equilibrio entre la luz y la oscuridad. Una historia épica de traición, dolor y redención, donde la línea entre la luz y la oscuridad desaparece, y el amor y la venganza dictan el destino de la creación.",
+    datePublished: SITE_CONFIG.book.datePublished,
+    description: SITE_CONFIG.book.description,
     isPartOf: {
       "@type": "BookSeries",
-      name: "Dioses Universales",
-      numberOfItems: 7,
+      name: SITE_CONFIG.book.series,
+      numberOfItems: SITE_CONFIG.book.seriesCount,
     },
-    position: 1,
+    position: SITE_CONFIG.book.position,
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "4.8",
-      reviewCount: "127",
-      bestRating: "5",
-      worstRating: "1"
+      ratingValue: SITE_CONFIG.book.rating.value,
+      reviewCount: SITE_CONFIG.book.rating.reviewCount,
+      bestRating: SITE_CONFIG.book.rating.best,
+      worstRating: SITE_CONFIG.book.rating.worst,
     },
     offers: {
       "@type": "Offer",
-      availability: "https://schema.org/PreOrder",
-      priceCurrency: "USD",
-      price: "19.99",
-      url: SITE_URL
-    }
+      availability: SITE_CONFIG.book.offer.availability,
+      priceCurrency: SITE_CONFIG.book.offer.priceCurrency,
+      price: SITE_CONFIG.book.offer.price,
+      url: SITE_CONFIG.url,
+    },
   };
 
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Victoria Querales - Autora de Dioses Universales",
-    url: SITE_URL,
-    description: "Sitio oficial de Victoria Querales, autora venezolana de la saga Dioses Universales. Fantasía oscura, romance político y mitología.",
+    name: `${SITE_CONFIG.author.name} - ${SITE_CONFIG.book.series}`,
+    url: SITE_CONFIG.url,
+    description: SITE_CONFIG.description,
     inLanguage: "es",
     author: {
       "@type": "Person",
-      name: "Victoria Querales",
-      url: SITE_URL
+      name: SITE_CONFIG.author.name,
+      url: SITE_CONFIG.url,
     },
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${SITE_URL}/search?q={search_term_string}`
+        urlTemplate: `${SITE_CONFIG.url}/search?q={search_term_string}`,
       },
-      "query-input": "required name=search_term_string"
-    }
+      "query-input": "required name=search_term_string",
+    },
   };
 
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Victoria Querales - Dioses Universales",
-    url: SITE_URL,
-    logo: `${SITE_URL}/landing-book-victoria/portada-libro-1.png`,
-    description: "Serie de libros de fantasía oscura escrita por Victoria Querales",
-    sameAs: [
-      SOCIAL_LINKS.instagram,
-      SOCIAL_LINKS.tiktok,
-    ],
+    name: `${SITE_CONFIG.author.name} - ${SITE_CONFIG.book.series}`,
+    url: SITE_CONFIG.url,
+    logo: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage.url}`,
+    description: `Serie de libros de fantasía oscura escrita por ${SITE_CONFIG.author.name}`,
+    sameAs: [SOCIAL_LINKS_FLAT.instagram, SOCIAL_LINKS_FLAT.tiktok],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
-      availableLanguage: "Spanish"
-    }
+      availableLanguage: "Spanish",
+    },
   };
 
   return (
