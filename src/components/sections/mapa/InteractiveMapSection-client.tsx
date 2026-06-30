@@ -172,7 +172,7 @@ export default function InteractiveMapSectionClient() {
       <DualOverlay
         isVisible={showDualOverlay}
         onClose={closeOverlay}
-        leftImagePath="/landing-book-victoria/Mapa de galaxias arreglado_20260622_174207_0000 (1).svg"
+        leftImagePath="/landing-book-victoria/mapa-galaxias.svg"
         rightImagePath="/landing-book-victoria/reino-oscuro.png"
         leftTitle="Mapa de Galaxias"
         rightTitle="Reino Oscuro"
