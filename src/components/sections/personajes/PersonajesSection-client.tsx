@@ -11,12 +11,12 @@ const DivineParticles = dynamic(() => import('./DivineParticles'), { ssr: false 
 const personajes = [
   {
     id: 1,
-    src: '/landing-book-victoria/prota-2-libro-1-sin-fondo.PNG',
+    src: '/landing-book-victoria/prota-2-libro-1-sin-fondo.png',
     alt: 'Primera pareja de protagonistas de Los Dos Reinos',
   },
   {
     id: 2,
-    src: '/landing-book-victoria/prota-libro-1-sin-fondo.png',
+    src: '/landing-book-victoria/prota-libro-1-sin-fondo.PNG',
     alt: 'Segunda pareja de protagonistas de Los Dos Reinos',
   },
 ];
