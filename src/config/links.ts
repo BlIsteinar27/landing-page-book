@@ -2,7 +2,7 @@ import { formatWhatsAppLink } from '@/utils/whatsapp'
 import { RedSocial } from '@/types/red-social'
 
 // ========== URL DEL SITIO ==========
-export const SITE_URL = 'https://landing-page-book-gold.vercel.app'
+export const SITE_URL = 'https://victoriaquerales.com'
 
 // ========== WHATSAPP ==========
 export const WHATSAPP_NUMBER = '584247203076'
