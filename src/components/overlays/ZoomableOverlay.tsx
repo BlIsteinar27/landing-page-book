@@ -33,7 +33,7 @@ export default function ZoomableOverlay({
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
-  useLockBodyScroll(isVisible);
+  useLockBodyScroll(isVisible && !renderInline);
 
   const { elementRef } = useTouchGestures({
     onPinch: enableZoom

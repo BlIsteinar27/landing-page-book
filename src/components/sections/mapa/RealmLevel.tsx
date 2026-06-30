@@ -60,6 +60,8 @@ export default function RealmLevel({ realm, isActive, index, onImageClick }: Rea
           quality={85}
           className="object-cover"
           sizes="100vw"
+          placeholder="blur"
+          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
           onLoad={() => setIsLoaded(true)}
           onError={() => setHasError(true)}
         />

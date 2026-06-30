@@ -150,12 +150,12 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
     });
     element.addEventListener('touchend', handleTouchEnd);
 
-    // Mouse events (solo si enablePan está activo)
+    // Mouse events: mousedown en el elemento, move/up en document
+    // para no perder el drag si el cursor sale del elemento
     if (enablePan) {
       element.addEventListener('mousedown', handleMouseDown);
-      element.addEventListener('mousemove', handleMouseMove);
-      element.addEventListener('mouseup', handleMouseUp);
-      element.addEventListener('mouseleave', handleMouseUp);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
     }
 
     return () => {
@@ -165,9 +165,8 @@ export function useTouchGestures(options: UseTouchGesturesOptions = {}) {
 
       if (enablePan) {
         element.removeEventListener('mousedown', handleMouseDown);
-        element.removeEventListener('mousemove', handleMouseMove);
-        element.removeEventListener('mouseup', handleMouseUp);
-        element.removeEventListener('mouseleave', handleMouseUp);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
       }
     };
   }, [

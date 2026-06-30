@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
 import NavigationDots from '@/components/ui/NavigationDots';
+
+const DivineParticles = dynamic(() => import('./DivineParticles'), { ssr: false });
 
 const personajes = [
   {
@@ -18,45 +21,6 @@ const personajes = [
   },
 ];
 
-// Componente de partículas doradas flotantes
-function DivineParticles() {
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 3 + 1,
-    delay: Math.random() * 4,
-    duration: Math.random() * 3 + 4,
-  }));
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((particle) => (
-        <motion.div
-          key={particle.id}
-          className="absolute rounded-full bg-accent/30 blur-[1px]"
-          style={{
-            left: `${particle.x}%`,
-            top: `${particle.y}%`,
-            width: particle.size,
-            height: particle.size,
-          }}
-          animate={{
-            opacity: [0, 0.6, 0],
-            y: [0, -30, 0],
-            scale: [1, 1.5, 1],
-          }}
-          transition={{
-            duration: particle.duration,
-            repeat: Infinity,
-            delay: particle.delay,
-            ease: 'easeInOut',
-          }}
-        />
-      ))}
-    </div>
-  );
-}
 
 export default function PersonajesSectionClient() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -253,7 +217,7 @@ export default function PersonajesSectionClient() {
         className="mt-12 text-center max-w-2xl mx-auto flex flex-col gap-3"
       >
         <p className="text-base text-ink-secondary leading-relaxed">
-          Dioses con poder de doblar el destino del universo. Decisiones que no solo 
+          Dioses con el poder de doblar el destino del universo. Decisiones que no solo 
           mueven reinos, sino que reescriben las leyes de lo divino.
         </p>
         <p className="text-sm text-ink-tertiary italic font-serif">
