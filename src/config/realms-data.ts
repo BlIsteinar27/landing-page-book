@@ -83,7 +83,7 @@ export const realms: Realm[] = [
       title: 'El Reino Central',
       subtitle: 'El corazón del universo',
       points: [
-        { icon: 'diamond', text: 'Está exactamente en el universo.' },
+        { icon: 'diamond', text: 'Está en el centro del universo.' },
         { icon: 'diamond', text: 'Proteccionistas de la naturaleza, el océano y toda criatura viviente.' },
         { icon: 'plus', text: 'Los seres centrales están conectados con la naturaleza y con los sentimientos.' },
         { icon: 'plus', text: 'Son amables, pero fuertes; no dejarse engañar por ellos o tus cosechas pagarán el precio.' }
