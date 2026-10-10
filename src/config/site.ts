@@ -4,13 +4,12 @@ import { Autor } from "@/types/autor";
 export const SITE_CONFIG = {
   url: SITE_URL,
   title: {
-    default:
-      "Victoria Querales | Autora de Fantasía Oscura - Saga Dioses Universales",
+    default: "Victoria Querales | Autora de Fantasía Oscura",
     template: "%s | Victoria Querales",
   },
   shortTitle: "Victoria Querales | Autora de Dioses Universales",
   description:
-    "Victoria Querales, autora venezolana de fantasía oscura. Descubre Los Dos Reinos, primer libro de la saga Dioses Universales. Romance político, mitología y traición. Lanzamiento octubre 2026.",
+    "Victoria Querales, autora venezolana de fantasía oscura. Descubre Los Dos Reinos, primer libro de la saga Dioses Universales. Octubre 2026.",
   ogDescription:
     "Donde amar es un acto político capaz de cambiar por completo el universo. Descubre la saga Dioses Universales.",
   keywords: [
@@ -37,7 +36,7 @@ export const SITE_CONFIG = {
   locale: "es_ES",
   twitterCreator: "@victoria_aql",
   ogImage: {
-    url: "/landing-book-victoria/portada-libro-1.png",
+    url: "/landing-book-victoria/og-image.jpg",
     width: 1200,
     height: 630,
     alt: "Los Dos Reinos - Primer libro de Dioses Universales",
@@ -51,7 +50,6 @@ export const SITE_CONFIG = {
     series: "Dioses Universales",
     seriesCount: 7,
     position: 1,
-    rating: { value: "4.8", reviewCount: "127", best: "5", worst: "1" },
     offer: {
       availability: "https://schema.org/PreOrder",
       priceCurrency: "USD",
