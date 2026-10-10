@@ -7,19 +7,21 @@ Landing page de venta para el libro "Los Dos Reinos" de Victoria. Diseño dark p
 - **Framework:** Next.js 16 (App Router) con React Compiler
 - **Lenguaje:** TypeScript
 - **Estilos:** Tailwind CSS v4 con tokens de diseño custom
-- **Animaciones:** Motion (motion/react) v12
-- **Iconos:** Lucide React
-- **Tipografía:** Syne (display), Playfair Display (serif), Inter (body)
+- **Animaciones:** Motion (motion/react) v14, con `MotionConfig reducedMotion="user"`
+- **Iconos:** Lucide React (iconos de interfaz) + SVG propios solo para logos de marca
+- **Tipografía:** Starlight Rune (display), Playfair Display (serif), Inter (body)
 
 ## Características Principales
 
 - **Mapa Interactivo de Reinos**: Sistema de scroll snap para navegar entre 3 reinos cósmicos (Reino de la Luz, Reino Central, Reino Oscuro)
-- **Overlays con Zoom y Pan**: Sistema de overlays para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan)
-- **Hotspots Interactivos**: Puntos de interés en cada reino que despliegan información detallada
-- **Carrusel de Personajes**: Sección de protagonistas con transiciones animadas y partículas doradas flotantes
+- **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan)
+- **Hotspots Interactivos**: Botones reales con teclado y lector de pantalla que despliegan el lore de cada reino
+- **Carrusel de Personajes**: Autoplay con pausa manual, pausa en hover/foco y respeto a `prefers-reduced-motion`
+- **CTAs de compra**: Reserva por WhatsApp y compra en Amazon (enlace oficial en `src/config/links.ts`)
+- **Movimiento reducido**: Toda la página respeta `prefers-reduced-motion` vía `MotionConfig` y `useEnterVariants`
 - **Optimización de Imágenes**: Configuración avanzada de Next.js Image con AVIF/WebP, lazy loading y placeholders blur
-- **SEO Schema Markup**: Datos estructurados para libros y autores
-- **Responsive Design**: Mobile-First con breakpoints optimizados
+- **SEO Schema Markup**: Datos estructurados JSON-LD para autora, libro, sitio y organización
+- **Responsive Design**: Mobile-First con breakpoints optimizados y `dvh` para viewport móvil
 - **Performance**: React Compiler habilitado para optimización automática
 
 ## Estructura
@@ -30,7 +32,11 @@ src/
 │   ├── globals.css              # Tokens de diseño (CSS custom properties)
 │   ├── layout.tsx               # Root layout con metadata SEO
 │   ├── page.tsx                 # Composición de secciones
+│   ├── icon.svg                 # Favicon (monograma VQ con Starlight Rune real)
+│   ├── icon.png                 # Favicon fallback 48px
+│   ├── apple-icon.png           # Icono iOS 180px
 │   ├── not-found.tsx            # Página 404 custom
+│   ├── sitemap.ts               # Sitemap dinámico (victoriaquerales.com)
 │   └── robots.ts                # Configuración de robots.txt
 ├── components/
 │   ├── sections/                # Secciones de la página
@@ -45,9 +51,9 @@ src/
 │   │   ├── sinopsis/            # Sinopsis del libro
 │   │   ├── autora/              # Sobre la autora
 │   │   ├── saga/                # Saga completa
-│   │   ├── comunidad/           # Comunidad de lectores
+│   │   ├── comunidad/           # Comunidad de lectores (comentada en page.tsx)
 │   │   ├── contacto/            # Formulario de contacto
-│   │   ├── testimonios/         # Testimonios de lectores
+│   │   ├── testimonios/         # Testimonios de lectores (comentada en page.tsx)
 │   │   └── footer/              # Footer con links
 │   ├── overlays/                # Sistema de overlays
 │   │   ├── DualOverlay.tsx      # Overlay dual (2 imágenes lado a lado)
@@ -58,13 +64,16 @@ src/
 │   │   ├── NavigationDots.tsx   # Indicadores de navegación
 │   │   ├── CTAButton.tsx        # Botón de llamada a acción
 │   │   └── ...
-│   ├── icons/                   # Iconos custom
-│   ├── GalaxyOverlay.tsx        # Overlay del mapa de galaxias
+│   ├── icons/                   # Logos de marca (Instagram, TikTok, WhatsApp)
+│   ├── Portal.tsx               # Portal para renderizar overlays fuera de <main>
+│   ├── MotionProvider.tsx       # MotionConfig con reducedMotion="user"
 │   ├── ImageErrorFallback.tsx   # Fallback para errores de imagen
-│   ├── SchemaMarkup.tsx         # Datos estructurados SEO
+│   ├── SchemaMarkup.tsx         # Datos estructurados SEO (JSON-LD)
 │   ├── StickyCTA.tsx            # CTA sticky en scroll
 │   └── CTAVisibilityProvider.tsx # Provider de visibilidad de CTA
 ├── hooks/
+│   ├── useDialog.ts             # Accesibilidad de diálogos (foco, Escape, inert)
+│   ├── useEnterVariants.ts      # Variantes de entrada con reduced motion
 │   ├── useLockBodyScroll.ts     # Hook para bloquear scroll del body
 │   ├── useScrollSnap.ts         # Hook para scroll snap del mapa
 │   ├── useTouchGestures.ts      # Hook para gestos táctiles (pinch, pan)
@@ -112,6 +121,8 @@ Abre [http://localhost:3000](http://localhost:3000) en desarrollo.
 ### Imágenes
 
 - Las imágenes deben estar en `public/landing-book-victoria/`
+- `og-image.jpg` (1200×630, ~55 KB) es la imagen dedicada para compartir en redes; se generó con `sharp` componiendo la portada sobre el gradiente de marca. Regenerar si cambia la portada o la identidad.
+- Los iconos de pestaña (`src/app/icon.svg`, `icon.png`, `apple-icon.png`) usan los glifos reales de Starlight Rune extraídos del TTF con `opentype.js` (devDependency de tooling, no se importa en la app).
 - Evitar nombres con espacios o caracteres especiales (causan 404 en producción)
 - Usar extensiones en minúscula (`.png` no `.PNG`) para compatibilidad Linux
 - Las imágenes above the fold deben tener `priority` y `loading="eager"`
@@ -123,10 +134,25 @@ Abre [http://localhost:3000](http://localhost:3000) en desarrollo.
 
 ### Overlays y Scroll
 
+- Los overlays se renderizan en un `Portal` fuera de `<main>` para que `inert` no los desactive
+- `useDialog` gestiona `role="dialog"`, foco inicial, Escape y devolución del foco al disparador
 - El hook `useLockBodyScroll` usa un contador global para manejar múltiples overlays apilados
 - Los gestos táctiles se registran en `document` para capturar drag fuera del elemento
 - `ZoomableOverlay` con `renderInline=true` no llama `useLockBodyScroll` (el padre ya lo hace)
 
+### Identidad gráfica
+
+- La paleta de `globals.css` es identidad de marca: no modificar valores, solo reutilizar tokens existentes
+- Los iconos de interfaz son Lucide (`nonScalingStroke`); los logos de marca son SVG propios en `components/icons/`
+
+### SEO
+
+- Toda la metadata (título, descripción, OG, Twitter, canonical) vive en `src/config/site.ts` — no hardcodear en componentes.
+- El schema JSON-LD (`SchemaMarkup.tsx`) se alimenta de `site.ts` y `links.ts`. No declarar datos que no existan (sin `aggregateRating` hasta tener reseñas reales, sin `SearchAction` — no hay página de búsqueda).
+- `offers.url` del schema apunta al link real de Amazon en `links.ts`.
+- El sitemap lo genera `src/app/sitemap.ts` — no crear `public/sitemap.xml` (quedaría en conflicto).
+- El dominio está verificado en Google Search Console (registro TXT en Spaceship).
+
 ## Documentación
 
-Ver [`docs/`](./docs/) para documentación adicional sobre diseño, arquitectura y decisiones técnicas.
+Ver [`docs/`](./docs/) para documentación adicional sobre diseño, arquitectura y decisiones técnicas. Las reglas del proyecto para agentes de IA están en [`AGENTS.md`](./AGENTS.md).
