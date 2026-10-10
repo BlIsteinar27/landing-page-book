@@ -40,7 +40,6 @@ export default function SchemaMarkup() {
     isPartOf: {
       "@type": "BookSeries",
       name: SITE_CONFIG.book.series,
-      numberOfItems: SITE_CONFIG.book.seriesCount,
       position: SITE_CONFIG.book.position,
     },
     offers: {
