@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface CTAVisibilityContextValue {
   register: (id: string) => void;
@@ -31,32 +25,27 @@ export function useCTAVisibility() {
 export function CTAVisibilityProvider({ children }: { children: ReactNode }) {
   const [visibility, setVisibility] = useState<Record<string, boolean>>({});
 
-  const register = useCallback(
-    (id: string) => setVisibility((prev) => ({ ...prev, [id]: false })),
-    [],
-  );
-  const unregister = useCallback(
-    (id: string) =>
-      setVisibility((prev) => {
-        const next = { ...prev };
-        delete next[id];
-        return next;
-      }),
-    [],
-  );
-  const setVisible = useCallback(
-    (id: string, visible: boolean) =>
-      setVisibility((prev) => ({ ...prev, [id]: visible })),
-    [],
-  );
+  // Visible por defecto: evita que la barra sticky parpadee antes de que el observer mida
+  const register = (id: string) =>
+    setVisibility((prev) => ({ ...prev, [id]: true }));
+  const unregister = (id: string) =>
+    setVisibility((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  const setVisible = (id: string, visible: boolean) =>
+    setVisibility((prev) => ({ ...prev, [id]: visible }));
 
-  const anyVisible = Object.values(visibility).some(Boolean);
+  // Sin CTAs registrados todavía (SSR / primer render) se asume visible
+  const states = Object.values(visibility);
+  const anyVisible = states.length === 0 || states.some(Boolean);
 
   return (
-    <CTAVisibilityContext.Provider
+    <CTAVisibilityContext
       value={{ register, unregister, setVisible, anyVisible }}
     >
       {children}
-    </CTAVisibilityContext.Provider>
+    </CTAVisibilityContext>
   );
 }

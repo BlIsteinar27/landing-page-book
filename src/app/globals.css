@@ -7,6 +7,7 @@
   --color-surface-2: #522d79;    /* Recalculado: +20% luminosidad */
   --color-surface-3: #5c3587;    /* Recalculado: +30% luminosidad */
   --color-surface-4: #673d96;    /* Recalculado: +40% luminosidad */
+  --color-surface-deep: #241038; /* Alias del valor ya usado en el degradado del panel de lore */
 
   /* Bordes — Con tinte dorado sutil */
   --color-border-subtle: rgba(255, 198, 103, 0.08);
@@ -68,8 +69,23 @@
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Evita que la barra sticky móvil tape el elemento enfocado */
+@media (max-width: 1023px) {
+  html {
+    scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Los controles ya dan su propio feedback de pulsación */
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -96,7 +112,12 @@ body {
   color: var(--ink-primary);
   padding: 8px 16px;
   z-index: 100;
-  transition: top 0.3s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skip-link {
+    transition: top 0.3s;
+  }
 }
 
 .skip-link:focus {

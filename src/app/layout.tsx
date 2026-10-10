@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { SITE_CONFIG } from "@/config/site";
 import { CTAVisibilityProvider } from "@/components/CTAVisibilityProvider";
+import MotionProvider from "@/components/MotionProvider";
 
 const starlightRune = localFont({
   src: [{ path: "../fonts/Yudi-YqPny.ttf", weight: "400", style: "normal" }],
@@ -65,12 +66,17 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_CONFIG.title.default,
     description: SITE_CONFIG.description,
+    site: SITE_CONFIG.twitterCreator,
     creator: SITE_CONFIG.twitterCreator,
     images: [SITE_CONFIG.ogImage.url],
   },
   alternates: {
     canonical: SITE_CONFIG.url,
   },
+};
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -84,12 +90,14 @@ export default function RootLayout({
       className={`h-full antialiased ${starlightRune.variable} ${playfair.variable} ${inter.variable}`}
     >
       <body className="min-h-full flex flex-col">
-        <CTAVisibilityProvider>
-          <a href="#main-content" className="skip-link">
-            Saltar al contenido principal
-          </a>
-          <main id="main-content">{children}</main>
-        </CTAVisibilityProvider>
+        <MotionProvider>
+          <CTAVisibilityProvider>
+            <a href="#main-content" className="skip-link">
+              Saltar al contenido principal
+            </a>
+            <main id="main-content">{children}</main>
+          </CTAVisibilityProvider>
+        </MotionProvider>
       </body>
     </html>
   );
