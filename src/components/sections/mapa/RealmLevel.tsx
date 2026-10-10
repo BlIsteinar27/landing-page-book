@@ -10,27 +10,30 @@ interface RealmLevelProps {
   realm: Realm;
   isActive: boolean;
   index: number;
-  onImageClick?: (realm: Realm) => void;
 }
 
-export default function RealmLevel({ realm, isActive, index, onImageClick }: RealmLevelProps) {
+export default function RealmLevel({
+  realm,
+  isActive,
+  index,
+}: RealmLevelProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ 
+      animate={{
         opacity: isActive ? 1 : 0.5,
-        scale: isActive ? 1 : 0.95
+        scale: isActive ? 1 : 0.95,
       }}
       transition={{ duration: 0.5 }}
-      className="relative h-screen w-full overflow-hidden"
+      className="relative h-dvh w-full overflow-hidden"
     >
       {/* Skeleton Loader */}
       {!isLoaded && (
         <motion.div
           animate={{ opacity: [1, 0.5, 1] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="absolute inset-0 bg-surface-2"
         />
       )}
@@ -40,16 +43,13 @@ export default function RealmLevel({ realm, isActive, index, onImageClick }: Rea
 
       {/* Background Image with Conditional Parallax */}
       <motion.div
-        animate={isActive ? {
-          y: [0, -10, 0],
-        } : {}}
-        transition={isActive ? {
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut"
-        } : {}}
-        className="absolute inset-0 cursor-pointer z-10"
-        onClick={() => onImageClick?.(realm)}
+        animate={isActive ? { y: [0, -10, 0] } : { y: 0 }}
+        transition={
+          isActive
+            ? { duration: 8, repeat: Infinity, ease: "easeInOut" }
+            : { duration: 0.3 }
+        }
+        className="absolute inset-0 z-10"
       >
         <Image
           src={realm.backgroundImage}
@@ -74,21 +74,21 @@ export default function RealmLevel({ realm, isActive, index, onImageClick }: Rea
       <div className="absolute inset-0 flex items-center justify-center p-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={{ 
+          animate={{
             opacity: isActive ? 1 : 0,
-            y: isActive ? 0 : 30
+            y: isActive ? 0 : 30,
           }}
           transition={{ delay: 0.2 }}
           className="text-center max-w-2xl"
         >
-          <motion.h2
+          <motion.h3
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 20 }}
             transition={{ delay: 0.3 }}
             className="text-4xl md:text-6xl font-display font-black text-ink-primary mb-4"
           >
             {realm.title}
-          </motion.h2>
+          </motion.h3>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: isActive ? 1 : 0 }}

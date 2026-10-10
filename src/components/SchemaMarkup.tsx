@@ -1,5 +1,5 @@
 import { SITE_CONFIG } from "@/config/site";
-import { SOCIAL_LINKS_FLAT } from "@/config/links";
+import { LINKS, SOCIAL_LINKS_FLAT } from "@/config/links";
 
 export default function SchemaMarkup() {
   const authorSchema = {
@@ -41,21 +41,14 @@ export default function SchemaMarkup() {
       "@type": "BookSeries",
       name: SITE_CONFIG.book.series,
       numberOfItems: SITE_CONFIG.book.seriesCount,
-    },
-    position: SITE_CONFIG.book.position,
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: SITE_CONFIG.book.rating.value,
-      reviewCount: SITE_CONFIG.book.rating.reviewCount,
-      bestRating: SITE_CONFIG.book.rating.best,
-      worstRating: SITE_CONFIG.book.rating.worst,
+      position: SITE_CONFIG.book.position,
     },
     offers: {
       "@type": "Offer",
       availability: SITE_CONFIG.book.offer.availability,
       priceCurrency: SITE_CONFIG.book.offer.priceCurrency,
       price: SITE_CONFIG.book.offer.price,
-      url: SITE_CONFIG.url,
+      url: LINKS.amazon,
     },
   };
 
@@ -70,14 +63,6 @@ export default function SchemaMarkup() {
       "@type": "Person",
       name: SITE_CONFIG.author.name,
       url: SITE_CONFIG.url,
-    },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${SITE_CONFIG.url}/search?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
     },
   };
 

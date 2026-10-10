@@ -1,40 +1,15 @@
 "use client";
 
-import { motion, type Transition } from "motion/react";
-
-const heroBadgeTransition: Transition = { duration: 0.5, ease: "easeOut" };
-const heroTitleTransition: Transition = { duration: 0.75, ease: [0.16, 1, 0.3, 1] };
-const heroSubtitleTransition: Transition = { duration: 0.65, ease: "easeOut" };
-
-const heroBadgeVariants = {
-  hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0, transition: heroBadgeTransition },
-};
-
-const heroTitleVariants = {
-  hidden: { opacity: 0, y: 24, filter: "blur(8px)" },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: heroTitleTransition,
-  },
-};
-
-const heroSubtitleVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: heroSubtitleTransition,
-  },
-};
+import { motion } from "motion/react";
+import { useEnterVariants } from "@/hooks/useEnterVariants";
 
 export default function HeroTitle() {
+  const enter = useEnterVariants();
+
   return (
     <>
       <motion.div
-        variants={heroBadgeVariants}
+        variants={enter}
         className="inline-flex items-center gap-2 justify-center lg:justify-start"
       >
         <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase border border-border-emphasis bg-accent-dim text-accent">
@@ -44,21 +19,21 @@ export default function HeroTitle() {
       </motion.div>
 
       <motion.h1
-        variants={heroTitleVariants}
+        variants={enter}
         className="text-[clamp(3rem,10vw,6.5rem)] leading-[0.95] tracking-tighter font-black font-display text-ink-primary"
       >
         Victoria <span className="block text-accent mt-1">Querales</span>
       </motion.h1>
 
       <motion.h2
-        variants={heroSubtitleVariants}
+        variants={enter}
         className="text-2xl sm:text-3xl leading-tight font-bold max-w-xl mx-auto lg:mx-0 text-ink-primary"
       >
         Autora de fantasía oscura, política y romántica
       </motion.h2>
 
       <motion.div
-        variants={heroSubtitleVariants}
+        variants={enter}
         className="flex flex-wrap gap-4 justify-center lg:justify-start"
       >
         <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-2 border border-border-subtle text-sm font-medium text-ink-secondary">
@@ -74,7 +49,7 @@ export default function HeroTitle() {
       </motion.div>
 
       <motion.div
-        variants={heroSubtitleVariants}
+        variants={enter}
         className="flex flex-col gap-3 p-6 rounded-2xl bg-gradient-to-br from-surface-2 to-surface-1 border border-accent/20 max-w-xl mx-auto lg:mx-0 shadow-lg shadow-accent/5"
       >
         <div className="flex items-start gap-3">

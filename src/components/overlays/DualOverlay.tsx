@@ -2,7 +2,11 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useId } from "react";
+import { ChevronLeft, X } from "lucide-react";
+import Portal from "@/components/Portal";
+import { motionTokens, exitTransition } from "@/config/motion-tokens";
+import { useDialog } from "@/hooks/useDialog";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import ZoomableOverlay from "./ZoomableOverlay";
 import RealmInfoPanel from "./RealmInfoPanel";
@@ -30,14 +34,10 @@ export default function DualOverlay({
   lore,
 }: DualOverlayProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("dual");
+  const titleId = useId();
 
   useLockBodyScroll(isVisible);
-
-  useEffect(() => {
-    if (isVisible) {
-      setViewMode("dual");
-    }
-  }, [isVisible]);
+  const dialogRef = useDialog<HTMLDivElement>(isVisible, onClose);
 
   const handleImageClick = (side: "left" | "right") => {
     setViewMode(side === "left" ? "single-left" : "single-right");
@@ -52,195 +52,227 @@ export default function DualOverlay({
   const currentTitle = viewMode === "single-left" ? leftTitle : rightTitle;
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain touch-none"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-        >
-          {/* Close Button - siempre visible */}
-          <div className="absolute inset-0 pointer-events-none z-20">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose();
-              }}
-              className="absolute top-4 right-4 w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black pointer-events-auto"
-            >
-              <svg
-                className="w-6 h-6 text-ink-primary"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-
-            {/* Instructions - solo en vista dual; en vista individual ZoomableOverlay las provee */}
+    <Portal>
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain touch-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+          >
+            {/* En vista individual el título lo aporta la cabecera de ZoomableOverlay */}
             {viewMode === "dual" && (
-              <div className="absolute bottom-4 left-4 bg-surface-1/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-border-default pointer-events-auto">
-                <p className="text-xs text-ink-secondary">
-                  Toca una imagen para ampliar
-                </p>
-              </div>
+              <h2 id={titleId} className="sr-only">
+                Mapas del Reino Oscuro
+              </h2>
             )}
 
-            {/* Info button - solo en vista dual; describe ambos mapas juntos */}
-            {viewMode === "dual" && lore && (
-              <div className="absolute top-4 right-16 pointer-events-auto">
-                <RealmInfoPanel lore={lore} />
-              </div>
-            )}
-          </div>
-
-          {/* Vista Dual o Individual */}
-          <AnimatePresence mode="wait">
-            {viewMode === "dual" ? (
-              <motion.div
-                key="dual-view"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: "spring", damping: 25 }}
-                className="relative w-full h-full max-w-7xl max-h-[85vh] grid grid-cols-1 md:grid-cols-2 gap-4 p-2"
-                onClick={(e) => e.stopPropagation()}
+            {/* Close Button - siempre visible */}
+            <div className="absolute inset-0 pointer-events-none z-20">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+                aria-label="Cerrar mapas"
+                className="absolute top-4 right-4 w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black pointer-events-auto"
               >
-                {/* Left Image */}
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleImageClick("left");
-                  }}
-                  className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer transition-colors shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)]"
-                >
-                  <Image
-                    src={leftImagePath}
-                    alt={leftTitle}
-                    fill
-                    className="object-contain p-2"
-                    sizes="50vw"
-                    loading="lazy"
-                    placeholder="blur"
-                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
-                  />
-                  <div className="absolute top-4 left-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-accent z-10 shadow-lg">
-                    <p className="text-sm font-medium text-ink-primary">
-                      {leftTitle}
-                    </p>
-                    <p className="text-[10px] text-accent mt-0.5">
-                      Toca para ampliar
-                    </p>
-                  </div>
-                </motion.div>
+                <X
+                  className="w-6 h-6 text-ink-primary"
+                  strokeWidth={2}
+                  nonScalingStroke
+                  aria-hidden
+                />
+              </button>
 
-                {/* Right Image */}
+              {/* Instructions - solo en vista dual; en vista individual ZoomableOverlay las provee */}
+              {viewMode === "dual" && (
+                <div className="absolute bottom-4 left-4 bg-surface-1/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-border-default pointer-events-auto">
+                  <p className="text-xs text-ink-secondary">
+                    <span className="pointer-coarse:hidden">
+                      Haz clic en una imagen para ampliarla
+                    </span>
+                    <span className="hidden pointer-coarse:inline">
+                      Toca una imagen para ampliarla
+                    </span>
+                  </p>
+                </div>
+              )}
+
+              {/* Info button - solo en vista dual; describe ambos mapas juntos */}
+              {viewMode === "dual" && lore && (
+                <div className="absolute top-4 right-16 pointer-events-auto">
+                  <RealmInfoPanel lore={lore} />
+                </div>
+              )}
+            </div>
+
+            {/* Vista Dual o Individual */}
+            <AnimatePresence mode="wait">
+              {viewMode === "dual" ? (
                 <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleImageClick("right");
+                  key="dual-view"
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{
+                    ...exitTransition.exit,
+                    transition: exitTransition.transition,
                   }}
-                  className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer transition-colors shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)]"
+                  transition={motionTokens.spring}
+                  className="relative w-full h-full max-w-7xl max-h-[85vh] grid grid-cols-1 md:grid-cols-2 gap-4 p-2"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <Image
-                    src={rightImagePath}
-                    alt={rightTitle}
-                    fill
-                    className="object-contain p-2"
-                    sizes="50vw"
-                    loading="lazy"
-                    placeholder="blur"
-                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
-                  />
-                  <div className="absolute bottom-4 right-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-accent z-10 shadow-lg">
-                    <p className="text-sm font-medium text-ink-primary">
-                      {rightTitle}
-                    </p>
-                    <p className="text-[10px] text-accent mt-0.5">
-                      Toca para ampliar
-                    </p>
-                  </div>
-                </motion.div>
-              </motion.div>
-            ) : (
-              /* Vista Individual delegada a ZoomableOverlay */
-              <ZoomableOverlay
-                key="single-view"
-                isVisible={isVisible}
-                onClose={onClose}
-                title={currentTitle}
-                className="max-w-5xl max-h-[85vh] overflow-hidden"
-                enablePan
-                renderInline
-                header={
-                  <div className="absolute top-0 left-36 right-16 md:left-40 md:right-20 z-30 pointer-events-none flex justify-center p-4">
-                    <div
-                      className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]"
-                    >
-                      <h2 className="text-lg md:text-xl font-semibold text-ink-primary">
-                        {currentTitle}
-                      </h2>
-                    </div>
-                  </div>
-                }
-                extraControls={
+                  {/* Left Image */}
                   <motion.button
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
+                    type="button"
+                    aria-label={`Ampliar ${leftTitle}`}
+                    whileHover={{ scale: motionTokens.scale.hover }}
+                    whileTap={{ scale: motionTokens.scale.tap }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleBackToDual();
+                      handleImageClick("left");
                     }}
-                    className="absolute top-4 left-4 flex items-center gap-2 bg-surface-1 rounded-full px-4 py-2 border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black pointer-events-auto"
+                    className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer border border-transparent shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
-                    <svg
-                      className="w-5 h-5 text-ink-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                    <span className="text-sm text-ink-primary">Ver ambos</span>
+                    <Image
+                      src={leftImagePath}
+                      alt={leftTitle}
+                      fill
+                      className="object-contain p-2"
+                      sizes="50vw"
+                      loading="lazy"
+                      placeholder="blur"
+                      blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
+                    />
+                    <span className="block text-left absolute top-4 left-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-accent z-10 shadow-lg">
+                      <span className="block text-sm font-medium text-ink-primary">
+                        {leftTitle}
+                      </span>
+                      <span className="block text-[10px] text-accent mt-0.5">
+                        <span className="pointer-coarse:hidden">
+                          Haz clic para ampliar
+                        </span>
+                        <span className="hidden pointer-coarse:inline">
+                          Toca para ampliar
+                        </span>
+                      </span>
+                    </span>
                   </motion.button>
-                }
-              >
-                <Image
-                  src={currentImagePath}
-                  alt={currentTitle}
-                  fill
-                  className="object-contain p-2"
-                  sizes="100vw"
-                  loading="lazy"
-                  placeholder="blur"
-                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
-                />
-              </ZoomableOverlay>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      )}
-    </AnimatePresence>
+
+                  {/* Right Image */}
+                  <motion.button
+                    type="button"
+                    aria-label={`Ampliar ${rightTitle}`}
+                    whileHover={{ scale: motionTokens.scale.hover }}
+                    whileTap={{ scale: motionTokens.scale.tap }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleImageClick("right");
+                    }}
+                    className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer border border-transparent shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  >
+                    <Image
+                      src={rightImagePath}
+                      alt={rightTitle}
+                      fill
+                      className="object-contain p-2"
+                      sizes="50vw"
+                      loading="lazy"
+                      placeholder="blur"
+                      blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
+                    />
+                    <span className="block text-left absolute bottom-4 right-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-accent z-10 shadow-lg">
+                      <span className="block text-sm font-medium text-ink-primary">
+                        {rightTitle}
+                      </span>
+                      <span className="block text-[10px] text-accent mt-0.5">
+                        <span className="pointer-coarse:hidden">
+                          Haz clic para ampliar
+                        </span>
+                        <span className="hidden pointer-coarse:inline">
+                          Toca para ampliar
+                        </span>
+                      </span>
+                    </span>
+                  </motion.button>
+                </motion.div>
+              ) : (
+                /* Vista Individual delegada a ZoomableOverlay */
+                <ZoomableOverlay
+                  key="single-view"
+                  isVisible={isVisible}
+                  onClose={onClose}
+                  title={currentTitle}
+                  titleId={titleId}
+                  className="max-w-5xl max-h-[85vh] overflow-hidden"
+                  enablePan
+                  renderInline
+                  header={
+                    <div className="absolute top-0 inset-x-0 z-30 pointer-events-none flex items-start gap-3 p-4">
+                      {/* hueco de "Ver ambos" */}
+                      <div className="w-[7.5rem] shrink-0" />
+                      <div className="min-w-0 flex-1 flex justify-center">
+                        <div className="max-w-full bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
+                          <h2
+                            id={titleId}
+                            className="text-lg md:text-xl font-semibold text-ink-primary"
+                          >
+                            {currentTitle}
+                          </h2>
+                        </div>
+                      </div>
+                      {/* hueco de cerrar */}
+                      <div className="w-10 shrink-0" />
+                    </div>
+                  }
+                  extraControls={
+                    <motion.button
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleBackToDual();
+                      }}
+                      className="absolute top-4 left-4 flex items-center gap-2 bg-surface-1 rounded-full px-4 py-2 border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black pointer-events-auto"
+                    >
+                      <ChevronLeft
+                        className="w-5 h-5 text-ink-primary"
+                        strokeWidth={2}
+                        nonScalingStroke
+                        aria-hidden
+                      />
+                      <span className="text-sm text-ink-primary">
+                        Ver ambos
+                      </span>
+                    </motion.button>
+                  }
+                >
+                  <Image
+                    src={currentImagePath}
+                    alt={currentTitle}
+                    fill
+                    className="object-contain p-2"
+                    sizes="100vw"
+                    loading="lazy"
+                    placeholder="blur"
+                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
+                  />
+                </ZoomableOverlay>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Portal>
   );
 }

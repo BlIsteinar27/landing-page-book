@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion } from 'motion/react';
+import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 
 export default function DivineParticles() {
   const [particles] = useState(() =>
@@ -12,8 +12,12 @@ export default function DivineParticles() {
       size: Math.random() * 3 + 1,
       delay: Math.random() * 4,
       duration: Math.random() * 3 + 4,
-    }))
+    })),
   );
+  const reduce = useReducedMotion();
+
+  // Partículas decorativas en bucle: fuera con reduced motion
+  if (reduce) return null;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -36,7 +40,7 @@ export default function DivineParticles() {
             duration: particle.duration,
             repeat: Infinity,
             delay: particle.delay,
-            ease: 'easeInOut',
+            ease: "easeInOut",
           }}
         />
       ))}

@@ -1,7 +1,11 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useId } from "react";
+import { Minus, Plus, X } from "lucide-react";
+import Portal from "@/components/Portal";
+import { motionTokens, exitTransition } from "@/config/motion-tokens";
+import { useDialog } from "@/hooks/useDialog";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { useTouchGestures } from "@/hooks/useTouchGestures";
 
@@ -13,6 +17,8 @@ interface ZoomableOverlayProps {
   enableZoom?: boolean;
   enablePan?: boolean;
   header?: ReactNode;
+  /** id del título dentro de un `header` custom, para `aria-labelledby` */
+  titleId?: string;
   extraControls?: ReactNode;
   className?: string;
   renderInline?: boolean;
@@ -26,14 +32,23 @@ export default function ZoomableOverlay({
   enableZoom = true,
   enablePan = true,
   header,
+  titleId: titleIdProp,
   extraControls,
   className = "",
   renderInline = false,
 }: ZoomableOverlayProps) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const generatedTitleId = useId();
+  const titleId = titleIdProp ?? generatedTitleId;
+  // Con header custom sin id no hay título que referenciar: se usa aria-label
+  const hasTitleElement = !header || titleIdProp !== undefined;
 
   useLockBodyScroll(isVisible && !renderInline);
+  const dialogRef = useDialog<HTMLDivElement>(
+    isVisible && !renderInline,
+    onClose,
+  );
 
   const { elementRef } = useTouchGestures({
     onPinch: enableZoom
@@ -47,11 +62,6 @@ export default function ZoomableOverlay({
     enablePan: enablePan && scale > 1,
   });
 
-  useEffect(() => {
-    setScale(1);
-    setPosition({ x: 0, y: 0 });
-  }, [isVisible]);
-
   const content = (
     <>
       <div className="absolute inset-0 pointer-events-none z-20">
@@ -60,22 +70,15 @@ export default function ZoomableOverlay({
             e.stopPropagation();
             onClose();
           }}
-          aria-label="Cerrar"
+          aria-label={`Cerrar ${title}`}
           className="absolute top-4 right-4 w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black pointer-events-auto"
         >
-          <svg
+          <X
             className="w-6 h-6 text-ink-primary"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+            strokeWidth={2}
+            nonScalingStroke
+            aria-hidden
+          />
         </button>
 
         {enableZoom && (
@@ -85,44 +88,30 @@ export default function ZoomableOverlay({
                 e.stopPropagation();
                 setScale((s) => Math.min(s + 0.2, 3));
               }}
-              aria-label="Zoom in"
+              aria-label="Acercar"
               className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              <svg
+              <Plus
                 className="w-6 h-6 text-ink-primary"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
+                strokeWidth={2}
+                nonScalingStroke
+                aria-hidden
+              />
             </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setScale((s) => Math.max(s - 0.2, 0.5));
               }}
-              aria-label="Zoom out"
+              aria-label="Alejar"
               className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              <svg
+              <Minus
                 className="w-6 h-6 text-ink-primary"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20 12H4"
-                />
-              </svg>
+                strokeWidth={2}
+                nonScalingStroke
+                aria-hidden
+              />
             </button>
           </div>
         )}
@@ -131,19 +120,29 @@ export default function ZoomableOverlay({
 
         <div className="absolute bottom-16 md:bottom-4 left-4 max-w-[70%] bg-surface-1/90 backdrop-blur-sm rounded-lg px-3 py-2 border border-border-default pointer-events-auto">
           <p className="text-xs text-ink-secondary leading-snug">
-            {scale > 1
-              ? "Arrastra para mover • Pinch para zoom"
-              : "Pinch para zoom • Tap para cerrar"}
+            {scale > 1 ? (
+              "Arrastra para mover · Usa + y − para acercar o alejar"
+            ) : (
+              <>
+                <span className="pointer-coarse:hidden">
+                  Usa + y − para acercar · Haz clic fuera del mapa para cerrar
+                </span>
+                <span className="hidden pointer-coarse:inline">
+                  Pellizca para acercar · Toca fuera del mapa para cerrar
+                </span>
+              </>
+            )}
           </p>
         </div>
       </div>
 
       {header ?? (
         <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none flex justify-center p-4">
-          <div
-            className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]"
-          >
-            <h2 className="text-lg md:text-xl font-semibold text-ink-primary">
+          <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
+            <h2
+              id={titleId}
+              className="text-lg md:text-xl font-semibold text-ink-primary"
+            >
               {title}
             </h2>
           </div>
@@ -154,9 +153,9 @@ export default function ZoomableOverlay({
         ref={elementRef}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ type: "spring", damping: 25 }}
-        className={`relative w-full h-full flex items-center justify-center ${scale > 1 ? 'cursor-grab' : 'cursor-default'} shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] bg-[linear-gradient(135deg,rgba(61,31,92,0.3)_0%,rgba(20,10,30,0.5)_100%)] ${className}`}
+        exit={{ ...exitTransition.exit, transition: exitTransition.transition }}
+        transition={motionTokens.spring}
+        className={`relative w-full h-full flex items-center justify-center ${scale > 1 ? "cursor-grab" : "cursor-default"} border border-transparent shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] bg-[linear-gradient(135deg,rgba(61,31,92,0.3)_0%,rgba(20,10,30,0.5)_100%)] ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div
@@ -176,18 +175,25 @@ export default function ZoomableOverlay({
   }
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain touch-none"
-          onClick={onClose}
-        >
-          {content}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <Portal>
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={hasTitleElement ? titleId : undefined}
+            aria-label={hasTitleElement ? undefined : title}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain touch-none"
+            onClick={onClose}
+          >
+            {content}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Portal>
   );
 }

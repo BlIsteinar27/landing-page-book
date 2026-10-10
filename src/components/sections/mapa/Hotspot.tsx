@@ -1,48 +1,26 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Eye } from "lucide-react";
 import { Hotspot as HotspotType } from "@/config/realms-data";
 import { useTouchGestures } from "@/hooks/useTouchGestures";
+import { motionTokens, exitTransition } from "@/config/motion-tokens";
 
 interface HotspotProps {
   hotspot: HotspotType;
   onShowDetail?: (hotspot: HotspotType) => void;
-  onVisible?: () => void;
 }
 
-export default function Hotspot({
-  hotspot,
-  onShowDetail,
-  onVisible,
-}: HotspotProps) {
+export default function Hotspot({ hotspot, onShowDetail }: HotspotProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [showLongPressHint, setShowLongPressHint] = useState(false);
-  const { elementRef } = useTouchGestures({
+  const { elementRef } = useTouchGestures<HTMLButtonElement>({
     onLongPress: () => {
       if (onShowDetail) {
         onShowDetail(hotspot);
       }
     },
   });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-      onVisible?.();
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(() => {
-        setShowLongPressHint(true);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isVisible]);
 
   const getTooltipTransform = () => {
     const x = hotspot.x;
@@ -56,93 +34,91 @@ export default function Hotspot({
 
   return (
     <>
-      <motion.div
+      <motion.button
+        type="button"
         ref={elementRef}
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 2, duration: 0.5 }}
+        aria-label={`Explorar ${hotspot.title}`}
         whileHover={{ scale: 1.2 }}
-        whileTap={{ scale: 0.9 }}
+        whileTap={{ scale: motionTokens.scale.tap }}
         onClick={() => {
           onShowDetail?.(hotspot);
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className="absolute cursor-pointer flex items-center justify-center"
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+        className="absolute cursor-pointer flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
         style={{
           left: `${hotspot.x * 100}%`,
           top: `${hotspot.y * 100}%`,
-          transform: "translate(-50%, -50%)",
+          // x/y como valores de motion: un transform en style anularía scale
+          x: "-50%",
+          y: "-50%",
         }}
       >
-        {/* Pulse Effect */}
-        <motion.div
-          animate={{
-            scale: [1, hotspot.isProminent ? 2 : 1.5, 1],
-            opacity: [0.8, 0, 0.8],
-          }}
-          transition={{
-            duration: hotspot.isProminent ? 1.5 : 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className={`absolute rounded-full ${
-            hotspot.isProminent ? "bg-accent" : "bg-accent/70"
-          }`}
-          style={{
-            width: hotspot.isProminent ? 32 : 24,
-            height: hotspot.isProminent ? 32 : 24,
-          }}
-        />
-
-        {/* Hotspot Dot */}
-        <div
-          className={`relative rounded-full border-2 border-ink-primary shadow-lg ${
-            hotspot.isProminent ? "w-8 h-8 bg-accent" : "w-6 h-6 bg-accent"
-          }`}
+        {/* Entrada retardada en un span interno para que hover/tap no hereden el delay */}
+        <motion.span
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 2, duration: 0.5 }}
+          className="relative flex items-center justify-center"
         >
-          {hotspot.isProminent && (
-            <svg
-              className="w-4 h-4 text-surface-base absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-              />
-            </svg>
-          )}
-        </div>
+          {/* Pulse Effect */}
+          <motion.span
+            animate={{
+              scale: [1, hotspot.isProminent ? 2 : 1.5, 1],
+              opacity: [0.8, 0, 0.8],
+            }}
+            transition={{
+              duration: hotspot.isProminent ? 1.5 : 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className={`absolute rounded-full ${
+              hotspot.isProminent ? "bg-accent" : "bg-accent/70"
+            }`}
+            style={{
+              width: hotspot.isProminent ? 32 : 24,
+              height: hotspot.isProminent ? 32 : 24,
+            }}
+          />
 
-        {/* Label visible para hotspots prominentes */}
-        {hotspot.isProminent && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute top-full mt-3 bg-surface-1/90 backdrop-blur-sm border border-border-default rounded-lg px-3 py-1.5 shadow-xl whitespace-nowrap"
+          {/* Hotspot Dot */}
+          <span
+            className={`block relative rounded-full border-2 border-ink-primary shadow-lg ${
+              hotspot.isProminent ? "w-8 h-8 bg-accent" : "w-6 h-6 bg-accent"
+            }`}
           >
-            <p className="text-xs font-medium text-ink-primary">
-              {hotspot.title}
-            </p>
-            <p className="text-[10px] text-accent mt-0.5">Toca para explorar</p>
-            {showLongPressHint && (
-              <p className="text-[9px] text-ink-tertiary mt-1 italic">
-                También puedes mantener presionado
-              </p>
+            {hotspot.isProminent && (
+              <Eye
+                className="w-4 h-4 text-surface-base absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                strokeWidth={2}
+                nonScalingStroke
+                aria-hidden
+              />
             )}
-          </motion.div>
-        )}
-      </motion.div>
+          </span>
+
+          {/* Label visible para hotspots prominentes */}
+          {hotspot.isProminent && (
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute top-full mt-3 bg-surface-1/90 backdrop-blur-sm border border-border-default rounded-lg px-3 py-1.5 shadow-xl whitespace-nowrap"
+            >
+              <span className="block text-xs font-medium text-ink-primary">
+                {hotspot.title}
+              </span>
+              <span className="block text-[10px] text-accent mt-0.5">
+                <span className="pointer-coarse:hidden">
+                  Haz clic para explorar
+                </span>
+                <span className="hidden pointer-coarse:inline">
+                  Toca para explorar
+                </span>
+              </span>
+            </motion.span>
+          )}
+        </motion.span>
+      </motion.button>
 
       {/* Tooltip on hover (desktop) */}
       <AnimatePresence>
@@ -150,12 +126,18 @@ export default function Hotspot({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
+            exit={{
+              ...exitTransition.exit,
+              transition: exitTransition.transition,
+            }}
+            // Compone el posicionamiento con el y animado (un transform en style lo anularía)
+            transformTemplate={(_, generated) =>
+              `${getTooltipTransform()} ${generated}`
+            }
             className="absolute bg-surface-1 border border-border-default rounded-lg p-3 shadow-xl max-w-xs z-50"
             style={{
               left: `${hotspot.x * 100}%`,
               top: `${hotspot.y * 100}%`,
-              transform: getTooltipTransform(),
             }}
           >
             <p className="text-sm font-medium text-ink-primary">

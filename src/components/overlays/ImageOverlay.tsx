@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useId } from "react";
 import ZoomableOverlay from "./ZoomableOverlay";
 import RealmInfoPanel from "./RealmInfoPanel";
 import { RealmLore } from "@/config/realms-data";
@@ -20,11 +21,14 @@ export default function ImageOverlay({
   title,
   lore,
 }: ImageOverlayProps) {
+  const titleId = useId();
+
   return (
     <ZoomableOverlay
       isVisible={isVisible}
       onClose={onClose}
       title={title}
+      titleId={titleId}
       className="max-w-6xl max-h-[85vh] p-3 md:p-4"
       header={
         <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none flex justify-between items-start p-4">
@@ -36,7 +40,10 @@ export default function ImageOverlay({
             <div />
           )}
           <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
-            <h2 className="text-lg md:text-xl font-semibold text-ink-primary">
+            <h2
+              id={titleId}
+              className="text-lg md:text-xl font-semibold text-ink-primary"
+            >
               {title}
             </h2>
           </div>
