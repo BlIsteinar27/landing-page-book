@@ -46,6 +46,16 @@ export default function InteractiveMapSectionClient() {
   const reduceMotion = useReducedMotion();
   // Progreso local del capítulo oscuro (rango [0.64, 1] del progreso global)
   const darkProgress = useTransform(scrollYProgress, [0.64, 1], [0, 1]);
+  // Visibilidad del starfield: el canvas se monta al entrar la sección (el
+  // chunk de three.js descarga y el WebGL queda caliente mucho antes del
+  // capítulo oscuro). Aquí solo entra con el mismo crossfade del capítulo
+  // (0.64→0.69) y sale con su outro (0.92→1), así las estrellas ya existen
+  // cuando el mapa aparece — sin el pop-in tardío de montarlo en activeIndex 2
+  const starsOpacity = useTransform(
+    scrollYProgress,
+    [0.64, 0.69, 0.92, 1],
+    [0, 1, 1, 0],
+  );
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [showImageOverlay, setShowImageOverlay] = useState(false);
@@ -265,11 +275,16 @@ export default function InteractiveMapSectionClient() {
             />
           ))}
 
-          {/* Starfield 3D: solo montado cerca del capítulo oscuro */}
-          {activeIndex === 2 && (
-            <div className="absolute inset-0 z-10 pointer-events-none">
+          {/* Starfield 3D: montado en cuanto la sección entra en viewport (no
+              al llegar al capítulo oscuro) — la visibilidad la da starsOpacity,
+              que comparte el crossfade del capítulo */}
+          {isInSection && (
+            <motion.div
+              style={{ opacity: starsOpacity }}
+              className="absolute inset-0 z-10 pointer-events-none"
+            >
               <GalaxyScene progress={darkProgress} />
-            </div>
+            </motion.div>
           )}
 
           <p className="sr-only" role="status">
