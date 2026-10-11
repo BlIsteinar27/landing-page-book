@@ -49,6 +49,12 @@ Landing page estática (single page) de venta del libro "Los Dos Reinos" de Vict
 - **Comunidad y Testimonios permanecen comentadas** (componentes conservados por si se reactivan).
 - Links centralizados en `src/config/links.ts` (Amazon, WhatsApp, redes). Nada de URLs hardcodeadas en componentes.
 
+## Flujo de compra
+
+- **Un solo CTA de compra**: `CTAButton` es un `<button>` que abre `CompraDialog` vía `useCompraDialog()` (`CompraDialogProvider` montado en `layout.tsx`). Nada de enlaces directos a Amazon/WhatsApp para comprar — todo pasa por el selector.
+- `CompraDialog` reparte por geografía: **Venezuela → pedido por WhatsApp** (pago y entrega se coordinan por chat), **resto del mundo → Amazon**. Sigue el patrón de overlays: `useDialog` + `Portal`.
+- Vocabulario: "pedir/comprar", nunca "reservar" — el libro ya está publicado y la UI dice "Ya disponible". El mensaje prellenado vive en `WHATSAPP_MESSAGE` (`links.ts`).
+
 ## Sección Mapa (scrollytelling) y overlays
 
 - **Zoom inicial adaptativo**: `ZoomableOverlay` acepta `initialFill` (0–1) = fracción del marco que la imagen cubre al abrirse. Se calcula midiendo el marco y `naturalWidth`/`naturalHeight` de la imagen, se clampa a `[1, cover]` y se recalcula con `ResizeObserver` — nada de escalas fijas por mapa.

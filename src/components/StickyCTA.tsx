@@ -19,20 +19,7 @@ export default function StickyCTA() {
           transition={motionTokens.spring}
           className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-3 lg:hidden bg-[linear-gradient(to_top,var(--surface-base)_70%,transparent)]"
         >
-          <div className="grid grid-cols-2 gap-3">
-            <CTAButton
-              variant="whatsapp-sticky"
-              size="sm"
-              text="Reserva ahora"
-              className="w-full"
-            />
-            <CTAButton
-              variant="primary"
-              size="sm"
-              text="Amazon"
-              className="w-full"
-            />
-          </div>
+          <CTAButton size="sm" className="w-full" />
         </motion.div>
       )}
     </AnimatePresence>

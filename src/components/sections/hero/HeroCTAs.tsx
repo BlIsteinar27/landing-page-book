@@ -17,8 +17,7 @@ export default function HeroCTAs() {
         variants={enter}
         className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2"
       >
-        <CTAButton variant="whatsapp" text="Reserva tu copia" />
-        <CTAButton variant="primary" text="Comprar en Amazon" />
+        <CTAButton />
       </motion.div>
     </>
   );

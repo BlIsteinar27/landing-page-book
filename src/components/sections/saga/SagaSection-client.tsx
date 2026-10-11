@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { Libro } from "@/data/libros";
-import { LINKS } from "@/config/links";
+import { useCompraDialog } from "@/components/CompraDialogProvider";
 import { motionTokens, staggerContainer } from "@/config/motion-tokens";
 import { useEnterVariants } from "@/hooks/useEnterVariants";
 
@@ -15,6 +15,7 @@ interface SagaSectionClientProps {
 
 export default function SagaSectionClient({ libros }: SagaSectionClientProps) {
   const enter = useEnterVariants();
+  const openCompra = useCompraDialog();
 
   return (
     <>
@@ -57,16 +58,15 @@ export default function SagaSectionClient({ libros }: SagaSectionClientProps) {
       >
         {libros.map((libro) =>
           libro.actual ? (
-            <motion.a
+            <motion.button
               key={libro.titulo}
-              href={LINKS.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Reserva ${libro.titulo} por WhatsApp (se abre en una pestaña nueva)`}
+              type="button"
+              onClick={openCompra}
+              aria-label={`Comprar ${libro.titulo}`}
               variants={enter}
               whileHover={{ y: motionTokens.translate.cardHover }}
               whileTap={{ scale: motionTokens.scale.tap }}
-              className={`${cardBase} bg-accent-dim border border-accent hover:border-accent/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-1`}
+              className={`${cardBase} bg-accent-dim border border-accent hover:border-accent/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-1 cursor-pointer`}
             >
               <span className="text-xs font-medium text-accent">
                 {libro.titulo}
@@ -74,7 +74,7 @@ export default function SagaSectionClient({ libros }: SagaSectionClientProps) {
               <span className="text-[10px] mt-1 text-ink-primary">
                 {libro.estado}
               </span>
-            </motion.a>
+            </motion.button>
           ) : (
             <motion.div
               key={libro.titulo}

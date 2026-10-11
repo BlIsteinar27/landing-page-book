@@ -9,7 +9,7 @@ export const SITE_CONFIG = {
   },
   shortTitle: "Victoria Querales | Autora de Dioses Universales",
   description:
-    "Victoria Querales, autora venezolana de fantasía oscura. Descubre Los Dos Reinos, primer libro de la saga Dioses Universales. Octubre 2026.",
+    "Victoria Querales, autora venezolana de fantasía oscura. Descubre Los Dos Reinos, primer libro de la saga Dioses Universales. Ya disponible.",
   ogDescription:
     "Donde amar es un acto político capaz de cambiar por completo el universo. Descubre la saga Dioses Universales.",
   keywords: [
@@ -51,9 +51,9 @@ export const SITE_CONFIG = {
     seriesCount: 7,
     position: 1,
     offer: {
-      availability: "https://schema.org/PreOrder",
+      availability: "https://schema.org/InStock",
       priceCurrency: "USD",
-      price: "19.99",
+      price: "17.99",
     },
   },
 };

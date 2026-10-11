@@ -54,7 +54,7 @@ export default function ContactoSection() {
             className="text-ink-secondary mb-12 max-w-xl mx-auto"
           >
             Únete a la comunidad de lectores, conoce más del universo de Dioses
-            Universales y acompaña el lanzamiento de <em>Los Dos Reinos</em>.
+            Universales y acompaña la llegada de <em>Los Dos Reinos</em>.
           </motion.p>
         </motion.div>
 

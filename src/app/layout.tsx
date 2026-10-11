@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { SITE_CONFIG } from "@/config/site";
 import { CTAVisibilityProvider } from "@/components/CTAVisibilityProvider";
+import { CompraDialogProvider } from "@/components/CompraDialogProvider";
 import MotionProvider from "@/components/MotionProvider";
 
 const starlightRune = localFont({
@@ -95,7 +96,9 @@ export default function RootLayout({
             <a href="#main-content" className="skip-link">
               Saltar al contenido principal
             </a>
-            <main id="main-content">{children}</main>
+            <CompraDialogProvider>
+              <main id="main-content">{children}</main>
+            </CompraDialogProvider>
           </CTAVisibilityProvider>
         </MotionProvider>
       </body>

@@ -8,7 +8,7 @@ export const SITE_URL = "https://www.victoriaquerales.com";
 // ========== WHATSAPP ==========
 export const WHATSAPP_NUMBER = "584247203076";
 export const WHATSAPP_MESSAGE =
-  "Hola, quiero reservar el libro Los Dos Reinos de Victoria";
+  "Hola, quiero pedir el libro Los Dos Reinos (estoy en Venezuela)";
 
 // ========== AMAZON ==========
 export const AMAZON_URL = "https://www.amazon.com/dp/B0HMK4FGYV";

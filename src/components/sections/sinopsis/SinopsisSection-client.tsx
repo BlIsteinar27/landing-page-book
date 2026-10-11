@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { BadgeCheck } from "lucide-react";
 import CTAButton from "@/components/ui/CTAButton";
 import { useRegisterCTA } from "@/hooks/useRegisterCTA";
 import { useEnterVariants } from "@/hooks/useEnterVariants";
@@ -63,8 +64,17 @@ export default function SinopsisSectionClient() {
         venganza dictan el destino de la creación.
       </motion.p>
 
-      <motion.p variants={enter} className="text-sm text-ink-secondary">
-        <span aria-hidden="true">📅</span> Lanzamiento: Octubre 2026
+      <motion.p
+        variants={enter}
+        className="text-sm text-ink-secondary inline-flex items-center gap-1.5"
+      >
+        <BadgeCheck
+          className="w-4 h-4 text-accent"
+          strokeWidth={2}
+          nonScalingStroke
+          aria-hidden
+        />
+        Ya disponible
       </motion.p>
 
       <motion.div
@@ -72,8 +82,7 @@ export default function SinopsisSectionClient() {
         variants={enter}
         className="flex flex-col sm:flex-row gap-3 pt-4"
       >
-        <CTAButton variant="whatsapp" text="Reserva Los Dos Reinos" />
-        <CTAButton variant="primary" text="Comprar en Amazon" />
+        <CTAButton />
       </motion.div>
     </motion.div>
   );

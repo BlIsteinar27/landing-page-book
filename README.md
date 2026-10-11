@@ -17,7 +17,7 @@ Landing page de venta para el libro "Los Dos Reinos" de Victoria. Diseño dark p
 - **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan) y zoom inicial adaptativo según la imagen y la pantalla
 - **Hotspots Interactivos**: Botones reales con teclado y lector de pantalla que despliegan el lore de cada reino
 - **Carrusel de Personajes**: Autoplay con pausa manual, pausa en hover/foco y respeto a `prefers-reduced-motion`
-- **CTAs de compra**: Reserva por WhatsApp y compra en Amazon (enlace oficial en `src/config/links.ts`)
+- **CTA de compra único**: Un solo botón "Comprar Los Dos Reinos" abre el selector de canal (`CompraDialog`): pedido por WhatsApp en Venezuela y compra en Amazon para el resto del mundo (enlaces en `src/config/links.ts`)
 - **Movimiento reducido**: Toda la página respeta `prefers-reduced-motion` vía `MotionConfig` y `useEnterVariants`
 - **Optimización de Imágenes**: Configuración avanzada de Next.js Image con AVIF/WebP, lazy loading y placeholders blur
 - **SEO Schema Markup**: Datos estructurados JSON-LD para autora, libro, sitio y organización
@@ -67,7 +67,7 @@ src/
 │   ├── ui/                      # Componentes UI reutilizables
 │   │   ├── NavigationDots.tsx   # Indicadores de navegación (desktop)
 │   │   ├── NavigationRail.tsx   # Riel de navegación entre reinos (móvil)
-│   │   ├── CTAButton.tsx        # Botón de llamada a acción
+│   │   ├── CTAButton.tsx        # Botón de compra (abre el selector de canal)
 │   │   └── ...
 │   ├── icons/                   # Logos de marca (Instagram, TikTok, WhatsApp)
 │   ├── Portal.tsx               # Portal para renderizar overlays fuera de <main>
@@ -75,6 +75,8 @@ src/
 │   ├── ImageErrorFallback.tsx   # Fallback para errores de imagen
 │   ├── SchemaMarkup.tsx         # Datos estructurados SEO (JSON-LD)
 │   ├── StickyCTA.tsx            # CTA sticky en scroll
+│   ├── CompraDialog.tsx         # Selector de canal de compra (WhatsApp Venezuela / Amazon)
+│   ├── CompraDialogProvider.tsx # Contexto: abre el selector desde cualquier CTA
 │   └── CTAVisibilityProvider.tsx # Provider de visibilidad de CTA
 ├── hooks/
 │   ├── useDialog.ts             # Accesibilidad de diálogos (foco, Escape, inert)
