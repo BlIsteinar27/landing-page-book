@@ -2,7 +2,8 @@ import { formatWhatsAppLink } from "@/utils/whatsapp";
 import { RedSocial } from "@/types/red-social";
 
 // ========== URL DEL SITIO ==========
-export const SITE_URL = "https://victoriaquerales.com";
+// Debe ser la URL canónica real que sirve contenido (Vercel redirige apex -> www)
+export const SITE_URL = "https://www.victoriaquerales.com";
 
 // ========== WHATSAPP ==========
 export const WHATSAPP_NUMBER = "584247203076";
