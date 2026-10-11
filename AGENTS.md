@@ -56,6 +56,8 @@ Landing page estática (single page) de venta del libro "Los Dos Reinos" de Vict
 - **El `header` de `ZoomableOverlay` se renderiza dentro del marco del mapa**: el pill del título cuelga del borde superior. Los controles de esquina (info de lore, «Ver ambos») van por `extraControls` en la capa externa del viewport.
 - **Vista alterna del Reino Oscuro**: `realm.altView` (Mapa de Galaxias) — pill de vista en `RealmChapter`; alterna sola cada 7 s (`darkAltView`/`autoCycle` en el client) hasta que el usuario elige manual. La etiqueta del hotspot sigue la vista activa.
 - **Navegación entre reinos**: `NavigationDots` solo en `lg+` (cápsula con nombre + tooltips por hover); en móvil `NavigationRail` (riel fino + chip transitorio del nombre ~2.6 s).
+- **Deriva ambiental en reposo** (`AMBIENT_DRIFT` en `RealmChapter`): el mapa "respira" en loop infinito con identidad por reino (Luz asciende, Central mece; el Oscuro no lleva — ya flota el starfield). Escala mínima 1.03 y deriva ≤1% para no descubrir bordes. Va en un `motion.div` **hijo** del wrapper de Ken Burns: los transforms por scroll y el ambiental nunca comparten elemento.
+- `CosmicDust` toma `variant` (`light`/`central`/`dark`): las motas ascienden en Luz, derivan con vaivén en Central y respiran en el sitio en Oscuro.
 - Capítulos inactivos: solo `inert`, **sin `aria-hidden`** (si el foco quedó dentro al salir del capítulo, Chrome avisa «Blocked aria-hidden… descendant retained focus»).
 - `GalaxyScene` (R3F): el `<Canvas>` lleva `pointer-events: none` explícito — R3F lo reactiva en su wrapper interno y bloquearía los hotspots.
 

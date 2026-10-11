@@ -13,7 +13,7 @@ Landing page de venta para el libro "Los Dos Reinos" de Victoria. Diseño dark p
 
 ## Características Principales
 
-- **Mapa Interactivo de Reinos**: Scrollytelling por capítulos para navegar entre 3 reinos cósmicos (Reino de la Luz, Reino Central, Reino Oscuro), con vista alterna Reino Oscuro ↔ Mapa de Galaxias, rail de navegación en móvil (`NavigationRail`) y cápsula de dots en desktop
+- **Mapa Interactivo de Reinos**: Scrollytelling por capítulos para navegar entre 3 reinos cósmicos (Reino de la Luz, Reino Central, Reino Oscuro), con vista alterna Reino Oscuro ↔ Mapa de Galaxias, rail de navegación en móvil (`NavigationRail`), cápsula de dots en desktop y animación ambiental en reposo — cada mapa respira con deriva y motas de partículas propias
 - **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan) y zoom inicial adaptativo según la imagen y la pantalla
 - **Hotspots Interactivos**: Botones reales con teclado y lector de pantalla que despliegan el lore de cada reino
 - **Carrusel de Personajes**: Autoplay con pausa manual, pausa en hover/foco y respeto a `prefers-reduced-motion`
@@ -42,9 +42,11 @@ src/
 │   ├── sections/                # Secciones de la página
 │   │   ├── hero/                # Hero con mockup del libro
 │   │   ├── mapa/                # Mapa interactivo de reinos (scrollytelling)
-│   │   │   ├── RealmChapter.tsx # Capítulo de reino con vista alterna
+│   │   │   ├── RealmChapter.tsx # Capítulo de reino con vista alterna y deriva ambiental
 │   │   │   ├── RealmLevel.tsx   # Nivel individual de reino
 │   │   │   ├── GalaxyScene.tsx  # Starfield 3D del Reino Oscuro (R3F)
+│   │   │   ├── AtmosphereLayer.tsx # Nieblas, halo y polvo por reino
+│   │   │   ├── CosmicDust.tsx   # Motas de partículas por variante
 │   │   │   ├── Hotspot.tsx      # Punto de interés interactivo
 │   │   │   └── InteractiveMapSection-*.tsx
 │   │   ├── personajes/          # Carrusel de protagonistas

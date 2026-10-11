@@ -1,6 +1,11 @@
 "use client";
 
-import { motion, useTransform, type MotionValue } from "motion/react";
+import {
+  motion,
+  useTransform,
+  type MotionValue,
+  type TargetAndTransition,
+} from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
 import { Realm } from "@/config/realms-data";
@@ -24,6 +29,34 @@ interface RealmChapterProps {
 }
 
 const FADE = 0.05; // margen de crossfade entre capítulos
+
+// Deriva ambiental en reposo (sin scroll): el mapa "respira" igual que el
+// balanceo de cámara del starfield del Reino Oscuro — mismo idioma, menor
+// intensidad. Escala mínima 1.03 → margen 1.5% por lado, así la deriva
+// (≤1%) nunca deja ver los bordes. El reino oscuro no lleva: ya flota en 3D.
+const AMBIENT_DRIFT: Record<
+  string,
+  { animate: TargetAndTransition; duration: number }
+> = {
+  "realm-light": {
+    // Ascenso: flota hacia arriba — lo divino se eleva
+    animate: {
+      scale: [1.04, 1.09, 1.04],
+      x: ["0%", "0.7%", "0%"],
+      y: ["0.8%", "-1.4%", "0.8%"],
+    },
+    duration: 19,
+  },
+  "realm-central": {
+    // Péndulo: mece de lado a lado — lo terrenal oscila
+    animate: {
+      scale: [1.04, 1.08, 1.04],
+      x: ["-1.3%", "1.3%", "-1.3%"],
+      y: ["0%", "-0.6%", "0%"],
+    },
+    duration: 15,
+  },
+};
 
 export default function RealmChapter({
   realm,
@@ -90,37 +123,53 @@ export default function RealmChapter({
       {hasError && <ImageErrorFallback />}
 
       <motion.div style={{ scale, y }} className="absolute inset-0">
-        <Image
-          src={realm.backgroundImage}
-          alt={isActive ? realm.name : ""}
-          fill
-          priority={index === 0}
-          loading={index === 0 ? "eager" : "lazy"}
-          quality={85}
-          className="object-cover"
-          sizes="100vw"
-          placeholder="blur"
-          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
-          onLoad={() => setIsLoaded(true)}
-          onError={() => setHasError(true)}
-        />
-        {realm.altView && (
-          <motion.div
-            animate={{ opacity: altView ? 1 : 0 }}
-            transition={{ duration: 1.4, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={realm.altView.image}
-              alt=""
-              fill
-              loading="lazy"
-              quality={85}
-              className="object-cover"
-              sizes="100vw"
-            />
-          </motion.div>
-        )}
+        {/* Capa ambiental separada del Ken Burns por scroll: los dos
+            transforms viven en elementos distintos y no se pisan */}
+        <motion.div
+          animate={AMBIENT_DRIFT[realm.id]?.animate}
+          transition={
+            AMBIENT_DRIFT[realm.id]
+              ? {
+                  duration: AMBIENT_DRIFT[realm.id].duration,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }
+              : undefined
+          }
+          className="absolute inset-0"
+        >
+          <Image
+            src={realm.backgroundImage}
+            alt={isActive ? realm.name : ""}
+            fill
+            priority={index === 0}
+            loading={index === 0 ? "eager" : "lazy"}
+            quality={85}
+            className="object-cover"
+            sizes="100vw"
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
+            onLoad={() => setIsLoaded(true)}
+            onError={() => setHasError(true)}
+          />
+          {realm.altView && (
+            <motion.div
+              animate={{ opacity: altView ? 1 : 0 }}
+              transition={{ duration: 1.4, ease: "easeInOut" }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={realm.altView.image}
+                alt=""
+                fill
+                loading="lazy"
+                quality={85}
+                className="object-cover"
+                sizes="100vw"
+              />
+            </motion.div>
+          )}
+        </motion.div>
       </motion.div>
 
       {/* Pill de vista: indica qué imagen está activa y permite cambiarla.

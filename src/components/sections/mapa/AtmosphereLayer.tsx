@@ -58,7 +58,7 @@ export default function AtmosphereLayer({
         style={{ opacity: glowOpacity }}
         className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--accent)_0%,transparent_60%)] opacity-0 mix-blend-screen"
       />
-      <CosmicDust />
+      <CosmicDust variant={variant} />
     </div>
   );
 }
