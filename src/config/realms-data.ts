@@ -21,12 +21,25 @@ export interface RealmLore {
   points: LorePoint[];
 }
 
+export interface RealmAltView {
+  /** Nombre corto para el pill de vista («Galaxias») */
+  name: string;
+  /** Título centrado cuando la vista alternativa está activa */
+  title: string;
+  description: string;
+  image: string;
+}
+
 export interface Realm {
   id: string;
   name: string;
   title: string;
   description: string;
   backgroundImage: string;
+  /** Vista alternativa del mismo nivel del cono (p. ej. mapa de galaxias) */
+  altView?: RealmAltView;
+  /** Fracción del marco (0-1) que el mapa cubre al abrir su overlay */
+  overlayFill?: number;
   order: number; // 1 = Luz, 2 = Central, 3 = Oscuro
   hotspots?: Hotspot[];
   lore?: RealmLore;
@@ -40,6 +53,7 @@ export const realms: Realm[] = [
     description:
       "La cúspide del cono cósmico, donde habitan los dioses de mayor jerarquía.",
     backgroundImage: "/landing-book-victoria/reino-de-la-luz.jpg",
+    overlayFill: 0.95,
     order: 1,
     hotspots: [
       {
@@ -77,6 +91,7 @@ export const realms: Realm[] = [
     description:
       "El punto medio del universo, equilibrio entre luz y oscuridad.",
     backgroundImage: "/landing-book-victoria/reino-central.jpg",
+    overlayFill: 0.7,
     order: 2,
     hotspots: [
       {
@@ -115,6 +130,14 @@ export const realms: Realm[] = [
     title: "Reino Oscuro",
     description: "La base del cono, hogar de galaxias y misterios cósmicos.",
     backgroundImage: "/landing-book-victoria/reino-oscuro.png",
+    // Mismo nivel del cono: el territorio de las galaxias colinda con el reino
+    altView: {
+      name: "Galaxias",
+      title: "Mapa de Galaxias",
+      description:
+        "Territorio de las galaxias, donde viven criaturas grandiosas como peligrosas.",
+      image: "/landing-book-victoria/mapa-galaxias.webp",
+    },
     order: 3,
     hotspots: [
       {

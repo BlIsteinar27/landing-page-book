@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { ReactNode, useState, useId } from "react";
+import { ReactNode, useState, useId, useLayoutEffect } from "react";
 import { Minus, Plus, X } from "lucide-react";
 import Portal from "@/components/Portal";
 import { motionTokens, exitTransition } from "@/config/motion-tokens";
@@ -21,6 +21,8 @@ interface ZoomableOverlayProps {
   children: ReactNode;
   enableZoom?: boolean;
   enablePan?: boolean;
+  /** Fracción del marco (0-1) que la imagen debe cubrir al abrirse */
+  initialFill?: number;
   header?: ReactNode;
   /** id del título dentro de un `header` custom, para `aria-labelledby` */
   titleId?: string;
@@ -36,6 +38,7 @@ export default function ZoomableOverlay({
   children,
   enableZoom = true,
   enablePan = true,
+  initialFill,
   header,
   titleId: titleIdProp,
   extraControls,
@@ -67,6 +70,52 @@ export default function ZoomableOverlay({
     currentScale: scale,
     enablePan: enablePan && scale > 1,
   });
+
+  // Zoom inicial adaptativo: acerca la imagen hasta cubrir `initialFill` del
+  // marco, según el aspecto de la imagen y el tamaño real del contenedor.
+  // Nunca pasa de "cover" completo ni abre por debajo de la vista ajustada.
+  useLayoutEffect(() => {
+    if (initialFill === undefined) return;
+    const frame = elementRef.current;
+    const img = frame?.querySelector("img");
+    if (!frame || !img) return;
+
+    const fitToFrame = () => {
+      const iw = img.naturalWidth;
+      const ih = img.naturalHeight;
+      const style = getComputedStyle(img);
+      const fitW =
+        img.clientWidth -
+        parseFloat(style.paddingLeft) -
+        parseFloat(style.paddingRight);
+      const fitH =
+        img.clientHeight -
+        parseFloat(style.paddingTop) -
+        parseFloat(style.paddingBottom);
+      const frameArea = frame.clientWidth * frame.clientHeight;
+      if (!iw || !ih || !fitW || !fitH || !frameArea) return;
+      const contain = Math.min(fitW / iw, fitH / ih);
+      const coverOverContain = Math.max(fitW / iw, fitH / ih) / contain;
+      const shownW = iw * contain;
+      const shownH = ih * contain;
+      const scaleForFill = Math.sqrt(
+        (initialFill * frameArea) / (shownW * shownH),
+      );
+      setScale(
+        Math.min(Math.max(scaleForFill, 1), coverOverContain, MAX_SCALE),
+      );
+    };
+
+    const raf = requestAnimationFrame(fitToFrame);
+    if (!img.complete) img.addEventListener("load", fitToFrame);
+    const observer = new ResizeObserver(fitToFrame);
+    observer.observe(frame);
+    return () => {
+      cancelAnimationFrame(raf);
+      img.removeEventListener("load", fitToFrame);
+      observer.disconnect();
+    };
+  }, [initialFill, elementRef]);
 
   const content = (
     <>
@@ -142,19 +191,6 @@ export default function ZoomableOverlay({
         </div>
       </div>
 
-      {header ?? (
-        <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none flex justify-center p-4">
-          <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
-            <h2
-              id={titleId}
-              className="text-lg md:text-xl font-semibold text-ink-primary"
-            >
-              {title}
-            </h2>
-          </div>
-        </div>
-      )}
-
       <motion.div
         ref={elementRef}
         initial={{ scale: 0.8, opacity: 0 }}
@@ -172,6 +208,19 @@ export default function ZoomableOverlay({
         >
           {children}
         </div>
+
+        {header ?? (
+          <div className="absolute top-0 inset-x-0 z-30 pointer-events-none flex justify-center">
+            <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
+              <h2
+                id={titleId}
+                className="text-lg md:text-xl font-semibold text-ink-primary"
+              >
+                {title}
+              </h2>
+            </div>
+          </div>
+        )}
       </motion.div>
     </>
   );

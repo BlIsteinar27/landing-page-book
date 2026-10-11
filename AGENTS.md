@@ -49,6 +49,16 @@ Landing page estática (single page) de venta del libro "Los Dos Reinos" de Vict
 - **Comunidad y Testimonios permanecen comentadas** (componentes conservados por si se reactivan).
 - Links centralizados en `src/config/links.ts` (Amazon, WhatsApp, redes). Nada de URLs hardcodeadas en componentes.
 
+## Sección Mapa (scrollytelling) y overlays
+
+- **Zoom inicial adaptativo**: `ZoomableOverlay` acepta `initialFill` (0–1) = fracción del marco que la imagen cubre al abrirse. Se calcula midiendo el marco y `naturalWidth`/`naturalHeight` de la imagen, se clampa a `[1, cover]` y se recalcula con `ResizeObserver` — nada de escalas fijas por mapa.
+- **`overlayFill` por reino** en `realms-data.ts` afina el zoom inicial de cada mapa (Luz 0.95, Central 0.7; default 0.8).
+- **El `header` de `ZoomableOverlay` se renderiza dentro del marco del mapa**: el pill del título cuelga del borde superior. Los controles de esquina (info de lore, «Ver ambos») van por `extraControls` en la capa externa del viewport.
+- **Vista alterna del Reino Oscuro**: `realm.altView` (Mapa de Galaxias) — pill de vista en `RealmChapter`; alterna sola cada 7 s (`darkAltView`/`autoCycle` en el client) hasta que el usuario elige manual. La etiqueta del hotspot sigue la vista activa.
+- **Navegación entre reinos**: `NavigationDots` solo en `lg+` (cápsula con nombre + tooltips por hover); en móvil `NavigationRail` (riel fino + chip transitorio del nombre ~2.6 s).
+- Capítulos inactivos: solo `inert`, **sin `aria-hidden`** (si el foco quedó dentro al salir del capítulo, Chrome avisa «Blocked aria-hidden… descendant retained focus»).
+- `GalaxyScene` (R3F): el `<Canvas>` lleva `pointer-events: none` explícito — R3F lo reactiva en su wrapper interno y bloquearía los hotspots.
+
 ## SEO y metadata
 
 - Toda la metadata vive en `src/config/site.ts`: título ≤60 caracteres, descripción ~155, imagen OG dedicada `public/landing-book-victoria/og-image.jpg` (1200×630, ≤5 MB). No apuntar `og:image` a la portada cruda (pesa 5.9 MB y es vertical).
@@ -75,5 +85,9 @@ npm run build       # solo cuando se pida explícitamente
 Notas de lint conocidas (preexistentes, no introducir más): comillas sin escapar en textos de la autora (`SobreAutoraSection`, `HeroTitle`, `TestimoniosSection`).
 
 - PowerShell: separar comandos con `;`, no `&&`.
+- **El shell del agente es Git Bash, no CMD.** Nunca usar sintaxis de CMD en redirecciones ni comandos:
+  - `2>/dev/null`, **nunca** `2>nul` — esto crea un archivo literal llamado `nul` en el proyecto, nombre reservado de Windows que hace crashear Turbopack (`os error 1`, panic al escanear el directorio). Si aparece un archivo `nul`, borrarlo con `rm -f ./nul`.
+  - Evitar también `dir`, `del` y demás builtin de CMD; usar `ls`, `rm`, `find` de bash.
+- Si Next/Turbopack sirve CSS o módulos compilados obsoletos (errores que referencian código que ya no existe en `src/`), el problema es el artefacto persistido: detener el dev server y borrar `.next` **completo** (no solo `.next/cache`).
 - No crear ramas ni commits salvo petición explícita.
 - Los mensajes de commit van en español y **sin trailers de herramientas**: nada de `Generated with Devin`, `Co-Authored-By` ni menciones a agentes/IA. Mensaje limpio, estilo convencional del repo.

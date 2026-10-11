@@ -216,22 +216,17 @@ export default function DualOverlay({
                   className="max-w-5xl max-h-[85vh] overflow-hidden"
                   enablePan
                   renderInline
+                  initialFill={0.8}
                   header={
-                    <div className="absolute top-0 inset-x-0 z-30 pointer-events-none flex items-start gap-3 p-4">
-                      {/* hueco de "Ver ambos" */}
-                      <div className="w-[7.5rem] shrink-0" />
-                      <div className="min-w-0 flex-1 flex justify-center">
-                        <div className="max-w-full bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
-                          <h2
-                            id={titleId}
-                            className="text-lg md:text-xl font-semibold text-ink-primary"
-                          >
-                            {currentTitle}
-                          </h2>
-                        </div>
+                    <div className="absolute top-0 inset-x-0 z-30 pointer-events-none flex justify-center">
+                      <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
+                        <h2
+                          id={titleId}
+                          className="text-lg md:text-xl font-semibold text-ink-primary text-center"
+                        >
+                          {currentTitle}
+                        </h2>
                       </div>
-                      {/* hueco de cerrar */}
-                      <div className="w-10 shrink-0" />
                     </div>
                   }
                   extraControls={

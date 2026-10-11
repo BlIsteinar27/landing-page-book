@@ -13,8 +13,8 @@ Landing page de venta para el libro "Los Dos Reinos" de Victoria. Diseño dark p
 
 ## Características Principales
 
-- **Mapa Interactivo de Reinos**: Sistema de scroll snap para navegar entre 3 reinos cósmicos (Reino de la Luz, Reino Central, Reino Oscuro)
-- **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan)
+- **Mapa Interactivo de Reinos**: Scrollytelling por capítulos para navegar entre 3 reinos cósmicos (Reino de la Luz, Reino Central, Reino Oscuro), con vista alterna Reino Oscuro ↔ Mapa de Galaxias, rail de navegación en móvil (`NavigationRail`) y cápsula de dots en desktop
+- **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan) y zoom inicial adaptativo según la imagen y la pantalla
 - **Hotspots Interactivos**: Botones reales con teclado y lector de pantalla que despliegan el lore de cada reino
 - **Carrusel de Personajes**: Autoplay con pausa manual, pausa en hover/foco y respeto a `prefers-reduced-motion`
 - **CTAs de compra**: Reserva por WhatsApp y compra en Amazon (enlace oficial en `src/config/links.ts`)
@@ -41,8 +41,10 @@ src/
 ├── components/
 │   ├── sections/                # Secciones de la página
 │   │   ├── hero/                # Hero con mockup del libro
-│   │   ├── mapa/                # Mapa interactivo de reinos
+│   │   ├── mapa/                # Mapa interactivo de reinos (scrollytelling)
+│   │   │   ├── RealmChapter.tsx # Capítulo de reino con vista alterna
 │   │   │   ├── RealmLevel.tsx   # Nivel individual de reino
+│   │   │   ├── GalaxyScene.tsx  # Starfield 3D del Reino Oscuro (R3F)
 │   │   │   ├── Hotspot.tsx      # Punto de interés interactivo
 │   │   │   └── InteractiveMapSection-*.tsx
 │   │   ├── personajes/          # Carrusel de protagonistas
@@ -61,7 +63,8 @@ src/
 │   │   ├── ZoomableOverlay.tsx  # Overlay con zoom y pan
 │   │   └── RealmInfoPanel.tsx   # Panel de información de reino
 │   ├── ui/                      # Componentes UI reutilizables
-│   │   ├── NavigationDots.tsx   # Indicadores de navegación
+│   │   ├── NavigationDots.tsx   # Indicadores de navegación (desktop)
+│   │   ├── NavigationRail.tsx   # Riel de navegación entre reinos (móvil)
 │   │   ├── CTAButton.tsx        # Botón de llamada a acción
 │   │   └── ...
 │   ├── icons/                   # Logos de marca (Instagram, TikTok, WhatsApp)
@@ -139,6 +142,8 @@ Abre [http://localhost:3000](http://localhost:3000) en desarrollo.
 - El hook `useLockBodyScroll` usa un contador global para manejar múltiples overlays apilados
 - Los gestos táctiles se registran en `document` para capturar drag fuera del elemento
 - `ZoomableOverlay` con `renderInline=true` no llama `useLockBodyScroll` (el padre ya lo hace)
+- El zoom inicial es adaptativo: `initialFill` (0–1) fija la fracción del marco que la imagen cubre al abrirse, medida en tiempo real según el tamaño de pantalla; cada reino puede ajustarlo con `overlayFill` en `realms-data.ts`
+- El `header` de `ZoomableOverlay` se renderiza dentro del marco del mapa — el pill del título cuelga del borde superior, no flota sobre el backdrop
 
 ### Identidad gráfica
 

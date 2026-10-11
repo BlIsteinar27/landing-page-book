@@ -50,12 +50,16 @@ export default function NavigationDots({
             onClick={() => onIndexChange(index)}
             aria-label={`Navegar a ${tooltips[index] || `elemento ${index + 1}`}`}
             aria-current={index === activeIndex ? "true" : undefined}
-            className={`rounded-full transition-[width,background-color] duration-300 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base ${
-              index === activeIndex
-                ? `bg-accent ${config.active}`
-                : `bg-ink-muted hover:bg-ink-tertiary ${config.default}`
-            }`}
-          />
+            className="flex items-center justify-center rounded-full p-1.5 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+          >
+            <span
+              className={`block rounded-full transition-[width,background-color] duration-300 ${
+                index === activeIndex
+                  ? `bg-accent ${config.active}`
+                  : `bg-ink-tertiary group-hover:bg-ink-secondary ${config.default}`
+              }`}
+            />
+          </motion.button>
           {showTooltips && tooltips[index] && (
             <div
               className={`${tooltipClass} opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap`}

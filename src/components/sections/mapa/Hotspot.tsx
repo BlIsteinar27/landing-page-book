@@ -83,7 +83,7 @@ export default function Hotspot({ hotspot, onShowDetail }: HotspotProps) {
 
           {/* Hotspot Dot */}
           <span
-            className={`block relative rounded-full border-2 border-ink-primary shadow-lg ${
+            className={`block relative rounded-full border-2 border-surface-base shadow-lg ${
               hotspot.isProminent ? "w-8 h-8 bg-accent" : "w-6 h-6 bg-accent"
             }`}
           >

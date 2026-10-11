@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   motion,
@@ -20,6 +20,7 @@ import Hotspot from "./Hotspot";
 import ImageOverlay from "@/components/overlays/ImageOverlay";
 import DualOverlay from "@/components/overlays/DualOverlay";
 import NavigationDots from "@/components/ui/NavigationDots";
+import NavigationRail from "@/components/ui/NavigationRail";
 
 const GalaxyScene = dynamic(() => import("./GalaxyScene"), { ssr: false });
 
@@ -58,6 +59,25 @@ export default function InteractiveMapSectionClient() {
     const idx = p < 1 / 3 ? 0 : p < 2 / 3 ? 1 : 2;
     setActiveIndex((prev) => (prev === idx ? prev : idx));
   });
+
+  // Vista alterna del capítulo oscuro (reino ↔ galaxias): alterna sola cada 7s
+  // mientras el capítulo está activo, hasta que el usuario toca el pill — a
+  // partir de ahí la selección manual manda y el ciclo automático se detiene.
+  // Vive aquí para que el hotspot pueda leerla
+  const [darkAltView, setDarkAltView] = useState(false);
+  const [autoCycle, setAutoCycle] = useState(true);
+  const darkActive = activeIndex === 2;
+
+  useEffect(() => {
+    if (!darkActive || !autoCycle) return;
+    const id = setInterval(() => setDarkAltView((v) => !v), 7000);
+    return () => clearInterval(id);
+  }, [darkActive, autoCycle]);
+
+  const selectDarkView = (alt: boolean) => {
+    setDarkAltView(alt);
+    setAutoCycle(false);
+  };
 
   const scrollToIndex = (index: number) => {
     const el = containerRef.current;
@@ -121,6 +141,7 @@ export default function InteractiveMapSectionClient() {
           imagePath={selectedRealm?.backgroundImage || ""}
           title={selectedRealm?.title || ""}
           lore={selectedRealm?.lore}
+          initialFill={selectedRealm?.overlayFill}
         />
         <DualOverlay
           key={`dual-overlay-${openCount}`}
@@ -148,8 +169,14 @@ export default function InteractiveMapSectionClient() {
               filter: "blur(4px)",
               transition: exitTransition.transition,
             }}
-            className="fixed right-4 top-1/2 -translate-y-1/2 z-40"
+            // Cápsula con el nombre del reino activo: solo en desktop (lg+),
+            // donde hay espacio y los tooltips por hover sí existen. En móvil
+            // ocupa demasiado del mapa y se usa el NavigationRail
+            className="fixed right-4 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-2 rounded-full border border-border-subtle bg-surface-1/80 px-2.5 py-3 backdrop-blur-sm"
           >
+            <span className="text-xs font-medium text-ink-secondary whitespace-nowrap">
+              {realms[activeIndex].name}
+            </span>
             <NavigationDots
               count={realms.length}
               activeIndex={activeIndex}
@@ -164,6 +191,20 @@ export default function InteractiveMapSectionClient() {
         )}
       </AnimatePresence>
 
+      {/* Rail fino en móvil: mismo rol que la cápsula pero ~14px de ancho.
+          El chip del nombre aparece al cambiar de reino y los ticks dorados
+          activos llevan el anillo oscuro del lenguaje visual de los hotspots */}
+      <AnimatePresence>
+        {isInSection && (
+          <NavigationRail
+            count={realms.length}
+            activeIndex={activeIndex}
+            onIndexChange={scrollToIndex}
+            tooltips={realms.map((r) => r.name)}
+          />
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {isInSection && activeIndex === 0 && (
           <motion.div
@@ -173,25 +214,28 @@ export default function InteractiveMapSectionClient() {
               ...exitTransition.exit,
               transition: exitTransition.transition,
             }}
-            className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] lg:bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2"
+            // Abajo sobre el StickyCTA solo si el viewport da espacio (≥400px de
+            // ancho y ≥660px de alto: móvil L en adelante); en pantallas más
+            // estrechas o bajas choca con la etiqueta del hotspot y va arriba
+            className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-40 max-[400px]:top-[calc(1rem+env(safe-area-inset-top))] [@media_not_all_and_(min-height:41.25rem)]:top-[calc(1rem+env(safe-area-inset-top))] min-[400px]:[@media(min-height:41.25rem)]:max-lg:bottom-[calc(6rem+env(safe-area-inset-bottom))] min-[400px]:[@media(min-height:41.25rem)]:lg:bottom-8"
           >
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="text-accent"
-            >
-              <ArrowDown
-                className="w-6 h-6"
-                strokeWidth={2}
-                nonScalingStroke
-                aria-hidden
-              />
-            </motion.div>
-            <p className="text-sm text-ink-secondary bg-surface-1/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border-subtle">
+            <p className="flex items-center gap-2 text-sm text-ink-secondary bg-surface-1/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border-subtle">
+              <motion.span
+                animate={{ y: [0, 4, 0] }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="text-accent inline-flex"
+              >
+                <ArrowDown
+                  className="w-4 h-4"
+                  strokeWidth={2}
+                  nonScalingStroke
+                  aria-hidden
+                />
+              </motion.span>
               <span className="pointer-coarse:hidden">
                 Desplázate para explorar el universo
               </span>
@@ -214,6 +258,10 @@ export default function InteractiveMapSectionClient() {
               range={CHAPTER_RANGES[index]}
               progress={scrollYProgress}
               isActive={activeIndex === index}
+              altView={realm.id === "realm-dark" ? darkAltView : undefined}
+              onSelectView={
+                realm.id === "realm-dark" ? selectDarkView : undefined
+              }
             />
           ))}
 
@@ -228,17 +276,25 @@ export default function InteractiveMapSectionClient() {
             {`Explorando: ${realms[activeIndex].name}`}
           </p>
 
-          {/* Hotspots del capítulo activo */}
+          {/* Hotspots del capítulo activo. En el reino oscuro la etiqueta
+              sigue la vista activa del pill (reino ↔ mapa de galaxias) */}
           {realms[activeIndex]?.hotspots?.length ? (
             <div className="absolute inset-0 z-30 pointer-events-none">
-              {realms[activeIndex].hotspots!.map((hotspot) => (
-                <div key={hotspot.id} className="pointer-events-auto">
-                  <Hotspot
-                    hotspot={hotspot}
-                    onShowDetail={handleHotspotClick}
-                  />
-                </div>
-              ))}
+              {realms[activeIndex].hotspots!.map((hotspot) => {
+                const realm = realms[activeIndex];
+                const displayHotspot =
+                  realm.altView && darkAltView
+                    ? { ...hotspot, title: realm.altView.title }
+                    : hotspot;
+                return (
+                  <div key={hotspot.id} className="pointer-events-auto">
+                    <Hotspot
+                      hotspot={displayHotspot}
+                      onShowDetail={handleHotspotClick}
+                    />
+                  </div>
+                );
+              })}
             </div>
           ) : null}
         </div>
@@ -251,6 +307,7 @@ export default function InteractiveMapSectionClient() {
         imagePath={selectedRealm?.backgroundImage || ""}
         title={selectedRealm?.title || ""}
         lore={selectedRealm?.lore}
+        initialFill={selectedRealm?.overlayFill}
       />
       <DualOverlay
         key={`dual-overlay-${openCount}`}

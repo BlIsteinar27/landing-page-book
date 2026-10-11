@@ -1,8 +1,10 @@
 "use client";
 
+import { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Stars } from "@react-three/drei";
+import { Stars, Sparkles } from "@react-three/drei";
 import type { MotionValue } from "motion/react";
+import type { Group } from "three";
 
 // @react-three/fiber instancia `new THREE.Clock()` internamente en createRoot
 // (hardcodeado, sin opción de inyectar THREE.Timer) → warning de deprecación
@@ -21,11 +23,55 @@ interface GalaxySceneProps {
 function CameraRig({ progress }: GalaxySceneProps) {
   useFrame((state) => {
     const p = progress.get();
+    const t = state.clock.elapsedTime;
     // La cámara "cae" hacia el campo de estrellas mientras avanza el capítulo
     state.camera.position.z = 10 - p * 6;
     state.camera.rotation.z = p * 0.25;
+    // Balanceo sinusoidal constante: sensación de flotar aunque el scroll
+    // esté detenido (amplitud pequeña para no marear)
+    state.camera.position.x = Math.sin(t * 0.15) * 0.35;
+    state.camera.position.y = Math.cos(t * 0.11) * 0.25;
   });
   return null;
+}
+
+// Dos capas a distinta distancia y velocidad de deriva → parallax real:
+// el cerebro lo lee como profundidad, no como "estrellas que respiran"
+function DriftingStars() {
+  const far = useRef<Group>(null);
+  const near = useRef<Group>(null);
+
+  useFrame((_, delta) => {
+    if (far.current) far.current.rotation.y += delta * 0.006;
+    if (near.current) near.current.rotation.y += delta * 0.014;
+  });
+
+  return (
+    <>
+      <group ref={far}>
+        <Stars
+          radius={55}
+          depth={45}
+          count={2600}
+          factor={4}
+          fade
+          speed={0.7}
+        />
+      </group>
+      <group ref={near}>
+        <Stars radius={20} depth={18} count={900} factor={7} fade speed={1.3} />
+      </group>
+      {/* Polvo cercano dorado: otra señal de profundidad a escala distinta */}
+      <Sparkles
+        count={80}
+        scale={[24, 14, 24]}
+        size={2.5}
+        speed={0.25}
+        opacity={0.5}
+        color="#ffc667"
+      />
+    </>
+  );
 }
 
 export default function GalaxyScene({ progress }: GalaxySceneProps) {
@@ -35,10 +81,13 @@ export default function GalaxyScene({ progress }: GalaxySceneProps) {
       dpr={[1, 1.5]}
       camera={{ position: [0, 0, 10], fov: 60 }}
       gl={{ antialias: false, powerPreference: "low-power", alpha: true }}
-      style={{ position: "absolute", inset: 0 }}
+      // R3F fuerza pointer-events:auto en su wrapper interno, lo que
+      // reactivaría la captura de clicks sobre todo el capítulo aunque el
+      // contenedor padre sea pointer-events-none — la escena no es interactiva
+      style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
       aria-hidden
     >
-      <Stars radius={45} depth={40} count={4000} factor={6} fade speed={1} />
+      <DriftingStars />
       <CameraRig progress={progress} />
     </Canvas>
   );
