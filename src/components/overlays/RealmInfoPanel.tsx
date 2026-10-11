@@ -98,8 +98,8 @@ export default function RealmInfoPanel({
                   relative w-full max-w-md max-h-[80dvh] flex flex-col
                   bg-[linear-gradient(135deg,var(--color-surface-base)_0%,var(--color-surface-deep)_100%)]
                   rounded-xl
-                  border border-transparent
-                  shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_16px_48px_rgba(0,0,0,0.6)]
+                  border border-border-emphasis
+                  shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6),0_0_24px_var(--color-accent-dim)]
                   p-6 md:p-8
                   ${panelClassName}
                 `}

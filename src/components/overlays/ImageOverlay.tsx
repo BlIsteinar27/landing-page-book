@@ -36,7 +36,7 @@ export default function ImageOverlay({
       initialFill={initialFill}
       header={
         <div className="absolute top-0 inset-x-0 z-30 pointer-events-none flex justify-center">
-          <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
+          <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b border-x border-accent-glow shadow-lg">
             <h2
               id={titleId}
               className="text-lg md:text-xl font-semibold text-ink-primary text-center"

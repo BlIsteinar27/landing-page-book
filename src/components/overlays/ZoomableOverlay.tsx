@@ -197,7 +197,7 @@ export default function ZoomableOverlay({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ ...exitTransition.exit, transition: exitTransition.transition }}
         transition={motionTokens.spring}
-        className={`relative w-full h-full flex items-center justify-center overflow-hidden ${scale > 1 ? "cursor-grab" : "cursor-default"} border border-transparent shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] bg-[linear-gradient(135deg,rgba(61,31,92,0.3)_0%,rgba(20,10,30,0.5)_100%)] ${className}`}
+        className={`relative w-full h-full flex items-center justify-center overflow-hidden ${scale > 1 ? "cursor-grab" : "cursor-default"} rounded-2xl border border-border-emphasis bg-[radial-gradient(120%_100%_at_50%_0%,var(--color-surface-3),var(--color-surface-deep))] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6),0_0_24px_var(--color-accent-dim)] ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div
@@ -211,7 +211,7 @@ export default function ZoomableOverlay({
 
         {header ?? (
           <div className="absolute top-0 inset-x-0 z-30 pointer-events-none flex justify-center">
-            <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
+            <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b border-x border-accent-glow shadow-lg">
               <h2
                 id={titleId}
                 className="text-lg md:text-xl font-semibold text-ink-primary"
@@ -242,7 +242,7 @@ export default function ZoomableOverlay({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain touch-none"
+            className="fixed inset-0 z-50 bg-surface-deep/95 backdrop-blur-sm flex items-center justify-center p-4 overscroll-contain touch-none"
             onClick={onClose}
           >
             {content}

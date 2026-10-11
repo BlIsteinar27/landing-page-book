@@ -66,6 +66,9 @@ Landing page estática (single page) de venta del libro "Los Dos Reinos" de Vict
 - `CosmicDust` toma `variant` (`light`/`central`/`dark`): las motas ascienden en Luz, derivan con vaivén en Central y respiran en el sitio en Oscuro.
 - Capítulos inactivos: solo `inert`, **sin `aria-hidden`** (si el foco quedó dentro al salir del capítulo, Chrome avisa «Blocked aria-hidden… descendant retained focus»).
 - `GalaxyScene` (R3F): el `<Canvas>` lleva `pointer-events: none` explícito — R3F lo reactiva en su wrapper interno y bloquearía los hotspots.
+- **Marco «vitrina» de overlays**: todos los marcos de mapa comparten el mismo tratamiento — `rounded-2xl`, `border-border-emphasis`, mat radial `surface-3 → surface-deep` y sombra `0 24px 48px -12px black/60 + 0 0 24px accent-dim` (el hover sube a `accent-glow`). No volver al doble anillo duro (`0_0_0_2px + 0_0_0_4px accent`) que había antes. Aplica a `DualOverlay`, `ZoomableOverlay` y `RealmInfoPanel`.
+- **Backdrop opaco**: `bg-surface-deep/95` + `backdrop-blur-sm` — con `bg-black/90` la UI del scrollytelling (pill de vista) se transparentaba detrás del overlay.
+- Pills de overlay: `border accent-glow` (no `border-2 accent`). En la vista dual el pill va arriba-izquierda con icono `Maximize2` + «Ampliar»; las dos tarjetas entran escalonadas ~100 ms.
 
 ## SEO y metadata
 

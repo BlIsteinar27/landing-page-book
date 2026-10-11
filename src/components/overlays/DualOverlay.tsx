@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import { useState, useId } from "react";
-import { ChevronLeft, X } from "lucide-react";
+import { ChevronLeft, Maximize2, X } from "lucide-react";
 import Portal from "@/components/Portal";
 import { motionTokens, exitTransition } from "@/config/motion-tokens";
 import { useDialog } from "@/hooks/useDialog";
@@ -63,7 +63,7 @@ export default function DualOverlay({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 overscroll-contain touch-none"
+            className="fixed inset-0 z-50 bg-surface-deep/95 backdrop-blur-sm flex items-center justify-center p-4 overscroll-contain touch-none"
             onClick={(e) => {
               e.stopPropagation();
               onClose();
@@ -135,35 +135,43 @@ export default function DualOverlay({
                   <motion.button
                     type="button"
                     aria-label={`Ampliar ${leftTitle}`}
+                    initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    transition={{
+                      duration: 0.3,
+                      ease: "easeOut",
+                      delay: 0.15,
+                    }}
                     whileHover={{ scale: motionTokens.scale.hover }}
                     whileTap={{ scale: motionTokens.scale.tap }}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleImageClick("left");
                     }}
-                    className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer border border-transparent shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                    className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden rounded-2xl cursor-pointer border border-border-emphasis bg-[radial-gradient(120%_100%_at_50%_0%,var(--color-surface-3),var(--color-surface-deep))] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6),0_0_24px_var(--color-accent-dim)] transition-[box-shadow,border-color] duration-300 hover:border-accent-glow hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6),0_0_40px_var(--color-accent-glow)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
                     <Image
                       src={leftImagePath}
                       alt={leftTitle}
                       fill
-                      className="object-contain p-2"
+                      className="object-contain p-3 outline-1 -outline-offset-1 outline-white/10"
                       sizes="50vw"
                       loading="lazy"
                       placeholder="blur"
                       blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
                     />
-                    <span className="block text-left absolute top-4 left-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-accent z-10 shadow-lg">
-                      <span className="block text-sm font-medium text-ink-primary">
+                    <span className="absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-accent-glow bg-surface-deep/85 py-1.5 pl-3 pr-3.5 shadow-lg backdrop-blur-sm">
+                      <Maximize2
+                        className="size-3.5 text-accent"
+                        strokeWidth={2}
+                        nonScalingStroke
+                        aria-hidden
+                      />
+                      <span className="text-xs font-medium text-ink-primary">
                         {leftTitle}
                       </span>
-                      <span className="block text-[10px] text-accent mt-0.5">
-                        <span className="pointer-coarse:hidden">
-                          Haz clic para ampliar
-                        </span>
-                        <span className="hidden pointer-coarse:inline">
-                          Toca para ampliar
-                        </span>
+                      <span className="text-[10px] text-ink-secondary">
+                        Ampliar
                       </span>
                     </span>
                   </motion.button>
@@ -172,35 +180,43 @@ export default function DualOverlay({
                   <motion.button
                     type="button"
                     aria-label={`Ampliar ${rightTitle}`}
+                    initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    transition={{
+                      duration: 0.3,
+                      ease: "easeOut",
+                      delay: 0.25,
+                    }}
                     whileHover={{ scale: motionTokens.scale.hover }}
                     whileTap={{ scale: motionTokens.scale.tap }}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleImageClick("right");
                     }}
-                    className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden bg-surface-2 cursor-pointer border border-transparent shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                    className="relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden rounded-2xl cursor-pointer border border-border-emphasis bg-[radial-gradient(120%_100%_at_50%_0%,var(--color-surface-3),var(--color-surface-deep))] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6),0_0_24px_var(--color-accent-dim)] transition-[box-shadow,border-color] duration-300 hover:border-accent-glow hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6),0_0_40px_var(--color-accent-glow)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
                     <Image
                       src={rightImagePath}
                       alt={rightTitle}
                       fill
-                      className="object-contain p-2"
+                      className="object-contain p-3 outline-1 -outline-offset-1 outline-white/10"
                       sizes="50vw"
                       loading="lazy"
                       placeholder="blur"
                       blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
                     />
-                    <span className="block text-left absolute bottom-4 right-4 bg-surface-1/95 backdrop-blur-sm rounded-lg px-3 py-2 border-2 border-accent z-10 shadow-lg">
-                      <span className="block text-sm font-medium text-ink-primary">
+                    <span className="absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-accent-glow bg-surface-deep/85 py-1.5 pl-3 pr-3.5 shadow-lg backdrop-blur-sm">
+                      <Maximize2
+                        className="size-3.5 text-accent"
+                        strokeWidth={2}
+                        nonScalingStroke
+                        aria-hidden
+                      />
+                      <span className="text-xs font-medium text-ink-primary">
                         {rightTitle}
                       </span>
-                      <span className="block text-[10px] text-accent mt-0.5">
-                        <span className="pointer-coarse:hidden">
-                          Haz clic para ampliar
-                        </span>
-                        <span className="hidden pointer-coarse:inline">
-                          Toca para ampliar
-                        </span>
+                      <span className="text-[10px] text-ink-secondary">
+                        Ampliar
                       </span>
                     </span>
                   </motion.button>
@@ -219,7 +235,7 @@ export default function DualOverlay({
                   initialFill={0.8}
                   header={
                     <div className="absolute top-0 inset-x-0 z-30 pointer-events-none flex justify-center">
-                      <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b-2 border-x-2 border-accent shadow-lg [border-top:2px_solid_var(--color-surface-base)]">
+                      <div className="bg-surface-1/95 backdrop-blur-sm rounded-b-lg px-6 py-3 border-b border-x border-accent-glow shadow-lg">
                         <h2
                           id={titleId}
                           className="text-lg md:text-xl font-semibold text-ink-primary text-center"
