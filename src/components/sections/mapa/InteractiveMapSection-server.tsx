@@ -1,10 +1,10 @@
-import InteractiveMapSectionClient from './InteractiveMapSection-client';
+import InteractiveMapSectionClient from "./InteractiveMapSection-client";
 
 export default function InteractiveMapSection() {
   return (
     <section id="mapa-interactivo" className="relative">
-      {/* Título de la sección - visible antes del scroll de reinos */}
-      <div className="relative z-50 bg-surface-base py-16 px-6">
+      {/* Título de la sección - visible antes del descenso por el cono */}
+      <div className="relative bg-surface-base py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-xs tracking-[0.25em] uppercase text-accent mb-4">
             El Cono Cósmico
@@ -13,11 +13,12 @@ export default function InteractiveMapSection() {
             Explora el Universo
           </h2>
           <p className="text-base md:text-lg text-ink-secondary max-w-2xl mx-auto">
-            Descubre los tres reinos donde se desarrolla la saga. Desliza para explorar cada nivel del universo.
+            Descubre los tres reinos donde se desarrolla la saga. Desliza para
+            explorar cada nivel del universo.
           </p>
         </div>
       </div>
-      
+
       <InteractiveMapSectionClient />
     </section>
   );

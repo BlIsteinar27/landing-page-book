@@ -262,6 +262,9 @@ export default function DualOverlay({
                     alt={currentTitle}
                     fill
                     className="object-contain p-2"
+                    // Sin optimizar: el zoom (hasta 3x) escala píxeles de la
+                    // imagen cargada; servir el original evita pixelar
+                    unoptimized
                     sizes="100vw"
                     loading="lazy"
                     placeholder="blur"

@@ -9,6 +9,11 @@ import { useDialog } from "@/hooks/useDialog";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { useTouchGestures } from "@/hooks/useTouchGestures";
 
+// Zoom máximo/minimo del contenido (los mapas se sirven con `unoptimized`
+// a resolución completa, así que ×7 sigue nítido)
+const MAX_SCALE = 7;
+const MIN_SCALE = 0.5;
+
 interface ZoomableOverlayProps {
   isVisible: boolean;
   onClose: () => void;
@@ -52,7 +57,8 @@ export default function ZoomableOverlay({
 
   const { elementRef } = useTouchGestures({
     onPinch: enableZoom
-      ? (newScale) => setScale(Math.min(Math.max(newScale, 0.5), 3))
+      ? (newScale) =>
+          setScale(Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE))
       : undefined,
     onPan: enablePan
       ? (deltaX, deltaY) =>
@@ -86,7 +92,7 @@ export default function ZoomableOverlay({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setScale((s) => Math.min(s + 0.2, 3));
+                setScale((s) => Math.min(s + 0.2, MAX_SCALE));
               }}
               aria-label="Acercar"
               className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
@@ -101,7 +107,7 @@ export default function ZoomableOverlay({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setScale((s) => Math.max(s - 0.2, 0.5));
+                setScale((s) => Math.max(s - 0.2, MIN_SCALE));
               }}
               aria-label="Alejar"
               className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
@@ -155,7 +161,7 @@ export default function ZoomableOverlay({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ ...exitTransition.exit, transition: exitTransition.transition }}
         transition={motionTokens.spring}
-        className={`relative w-full h-full flex items-center justify-center ${scale > 1 ? "cursor-grab" : "cursor-default"} border border-transparent shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] bg-[linear-gradient(135deg,rgba(61,31,92,0.3)_0%,rgba(20,10,30,0.5)_100%)] ${className}`}
+        className={`relative w-full h-full flex items-center justify-center overflow-hidden ${scale > 1 ? "cursor-grab" : "cursor-default"} border border-transparent shadow-[0_0_0_2px_var(--color-surface-base),0_0_0_4px_var(--accent),0_8px_32px_rgba(61,31,92,0.4)] bg-[linear-gradient(135deg,rgba(61,31,92,0.3)_0%,rgba(20,10,30,0.5)_100%)] ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div

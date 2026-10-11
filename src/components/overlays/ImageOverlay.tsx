@@ -56,6 +56,9 @@ export default function ImageOverlay({
         alt={title}
         fill
         className="object-contain p-2 md:p-3"
+        // Sin optimizar: el zoom (hasta 3x) escala píxeles de la imagen cargada;
+        // servir el archivo original evita pixelar al acercar
+        unoptimized
         sizes="100vw"
         loading="lazy"
         placeholder="blur"

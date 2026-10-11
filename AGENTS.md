@@ -76,3 +76,4 @@ Notas de lint conocidas (preexistentes, no introducir más): comillas sin escapa
 
 - PowerShell: separar comandos con `;`, no `&&`.
 - No crear ramas ni commits salvo petición explícita.
+- Los mensajes de commit van en español y **sin trailers de herramientas**: nada de `Generated with Devin`, `Co-Authored-By` ni menciones a agentes/IA. Mensaje limpio, estilo convencional del repo.

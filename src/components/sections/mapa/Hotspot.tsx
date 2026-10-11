@@ -45,7 +45,7 @@ export default function Hotspot({ hotspot, onShowDetail }: HotspotProps) {
         }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
-        className="absolute cursor-pointer flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+        className="absolute cursor-pointer flex items-center justify-center rounded-full p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
         style={{
           left: `${hotspot.x * 100}%`,
           top: `${hotspot.y * 100}%`,
@@ -58,7 +58,7 @@ export default function Hotspot({ hotspot, onShowDetail }: HotspotProps) {
         <motion.span
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 2, duration: 0.5 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
           className="relative flex items-center justify-center"
         >
           {/* Pulse Effect */}

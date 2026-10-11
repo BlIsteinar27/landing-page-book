@@ -1,25 +1,74 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useInView,
+  useMotionValueEvent,
+  useReducedMotion,
+  useTransform,
+} from "motion/react";
 import { ArrowDown } from "lucide-react";
 import { realms, Realm, Hotspot as HotspotType } from "@/config/realms-data";
-import { useScrollSnap } from "@/hooks/useScrollSnap";
 import { exitTransition } from "@/config/motion-tokens";
+import RealmChapter from "./RealmChapter";
 import RealmLevel from "./RealmLevel";
 import Hotspot from "./Hotspot";
 import ImageOverlay from "@/components/overlays/ImageOverlay";
 import DualOverlay from "@/components/overlays/DualOverlay";
 import NavigationDots from "@/components/ui/NavigationDots";
 
+const GalaxyScene = dynamic(() => import("./GalaxyScene"), { ssr: false });
+
+// Rangos de cada capítulo dentro del progreso global 0-1
+const CHAPTER_RANGES: [number, number][] = [
+  [0, 0.36],
+  [0.31, 0.69],
+  [0.64, 1],
+];
+// Centro de cada capítulo (para scrollToIndex)
+const CHAPTER_CENTERS = [0.17, 0.5, 0.83];
+
 export default function InteractiveMapSectionClient() {
-  const { containerRef, activeIndex, scrollToIndex, isInSection } =
-    useScrollSnap({ snapPoints: realms.length });
+  const containerRef = useRef<HTMLDivElement>(null);
+  // El sticky (100dvh) es lo que realmente "está en pantalla" mientras dura el pin;
+  // observar el contenedor de 400vh con amount 0.3 nunca se cumpliría (ratio máx. 0.25)
+  const stickyRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+  const isInSection = useInView(stickyRef, { amount: 0.3 });
+  const reduceMotion = useReducedMotion();
+  // Progreso local del capítulo oscuro (rango [0.64, 1] del progreso global)
+  const darkProgress = useTransform(scrollYProgress, [0.64, 1], [0, 1]);
+
+  const [activeIndex, setActiveIndex] = useState(0);
   const [showImageOverlay, setShowImageOverlay] = useState(false);
   const [showDualOverlay, setShowDualOverlay] = useState(false);
   const [selectedRealm, setSelectedRealm] = useState<Realm | null>(null);
   // Cambia solo al abrir: remonta los overlays con estado limpio sin cortar su animación de salida
   const [openCount, setOpenCount] = useState(0);
+
+  // Estado discreto derivado del progreso continuo (reemplaza IntersectionObserver)
+  useMotionValueEvent(scrollYProgress, "change", (p) => {
+    const idx = p < 1 / 3 ? 0 : p < 2 / 3 ? 1 : 2;
+    setActiveIndex((prev) => (prev === idx ? prev : idx));
+  });
+
+  const scrollToIndex = (index: number) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const start = el.getBoundingClientRect().top + window.scrollY;
+    const range = el.offsetHeight - window.innerHeight;
+    window.scrollTo({
+      top: start + range * CHAPTER_CENTERS[index],
+      behavior: "smooth",
+    });
+  };
 
   const handleHotspotClick = (hotspot: HotspotType) => {
     // Long press + click posterior no deben reabrir (ni remontar) el overlay
@@ -27,16 +76,12 @@ export default function InteractiveMapSectionClient() {
     const realm = realms.find((r) =>
       r.hotspots?.some((h) => h.id === hotspot.id),
     );
-
     if (realm) {
       setSelectedRealm(realm);
       setOpenCount((count) => count + 1);
-
-      // Si es el Reino Oscuro (última imagen), mostrar DualOverlay
       if (realm.id === "realm-dark") {
         setShowDualOverlay(true);
       } else {
-        // Para las otras imágenes, mostrar ImageOverlay normal
         setShowImageOverlay(true);
       }
     }
@@ -48,9 +93,51 @@ export default function InteractiveMapSectionClient() {
     setSelectedRealm(null);
   };
 
+  // Fallback reduced-motion: los tres reinos apilados, sin pinning
+  if (reduceMotion) {
+    return (
+      <div>
+        {realms.map((realm, index) => (
+          <div key={realm.id} className="h-dvh relative">
+            <RealmLevel realm={realm} isActive index={index} />
+            {realm.hotspots && realm.hotspots.length > 0 && (
+              <div className="absolute inset-0 z-30 pointer-events-none">
+                {realm.hotspots.map((hotspot) => (
+                  <div key={hotspot.id} className="pointer-events-auto">
+                    <Hotspot
+                      hotspot={hotspot}
+                      onShowDetail={handleHotspotClick}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+        <ImageOverlay
+          key={`image-overlay-${openCount}`}
+          isVisible={showImageOverlay}
+          onClose={closeOverlay}
+          imagePath={selectedRealm?.backgroundImage || ""}
+          title={selectedRealm?.title || ""}
+          lore={selectedRealm?.lore}
+        />
+        <DualOverlay
+          key={`dual-overlay-${openCount}`}
+          isVisible={showDualOverlay}
+          onClose={closeOverlay}
+          leftImagePath="/landing-book-victoria/mapa-galaxias.webp"
+          rightImagePath="/landing-book-victoria/reino-oscuro.png"
+          leftTitle="Mapa de Galaxias"
+          rightTitle="Reino Oscuro"
+          lore={realms.find((r) => r.id === "realm-dark")?.lore}
+        />
+      </div>
+    );
+  }
+
   return (
     <>
-      {/* Navigation Dots - solo visibles cuando la sección está en viewport */}
       <AnimatePresence>
         {isInSection && (
           <motion.div
@@ -77,7 +164,6 @@ export default function InteractiveMapSectionClient() {
         )}
       </AnimatePresence>
 
-      {/* Navigation Instructions - solo en el primer realm */}
       <AnimatePresence>
         {isInSection && activeIndex === 0 && (
           <motion.div
@@ -117,41 +203,47 @@ export default function InteractiveMapSectionClient() {
         )}
       </AnimatePresence>
 
-      {/* Realms Container - fluye directamente en la página, sin scroll anidado */}
-      <div ref={containerRef}>
-        {realms.map((realm, index) => (
-          <div
-            key={realm.id}
-            className="h-dvh relative"
-            data-snap-point
-            data-index={index}
-          >
-            <RealmLevel
+      {/* Contenedor de 400vh: 300vh de recorrido de scrub para 3 capítulos */}
+      <div ref={containerRef} className="relative h-[400vh]">
+        <div ref={stickyRef} className="sticky top-0 h-dvh overflow-hidden">
+          {realms.map((realm, index) => (
+            <RealmChapter
+              key={realm.id}
               realm={realm}
-              isActive={activeIndex === index}
               index={index}
+              range={CHAPTER_RANGES[index]}
+              progress={scrollYProgress}
+              isActive={activeIndex === index}
             />
+          ))}
 
-            {/* Hotspots - mismo inset que la imagen para alineamiento correcto */}
-            {realm.hotspots &&
-              realm.hotspots.length > 0 &&
-              activeIndex === index && (
-                <div className="absolute inset-0 z-30 pointer-events-none">
-                  {realm.hotspots.map((hotspot) => (
-                    <div key={hotspot.id} className="pointer-events-auto">
-                      <Hotspot
-                        hotspot={hotspot}
-                        onShowDetail={handleHotspotClick}
-                      />
-                    </div>
-                  ))}
+          {/* Starfield 3D: solo montado cerca del capítulo oscuro */}
+          {activeIndex === 2 && (
+            <div className="absolute inset-0 z-10 pointer-events-none">
+              <GalaxyScene progress={darkProgress} />
+            </div>
+          )}
+
+          <p className="sr-only" role="status">
+            {`Explorando: ${realms[activeIndex].name}`}
+          </p>
+
+          {/* Hotspots del capítulo activo */}
+          {realms[activeIndex]?.hotspots?.length ? (
+            <div className="absolute inset-0 z-30 pointer-events-none">
+              {realms[activeIndex].hotspots!.map((hotspot) => (
+                <div key={hotspot.id} className="pointer-events-auto">
+                  <Hotspot
+                    hotspot={hotspot}
+                    onShowDetail={handleHotspotClick}
+                  />
                 </div>
-              )}
-          </div>
-        ))}
+              ))}
+            </div>
+          ) : null}
+        </div>
       </div>
 
-      {/* Image Overlay para imágenes individuales (Reino de la Luz y Reino Central) */}
       <ImageOverlay
         key={`image-overlay-${openCount}`}
         isVisible={showImageOverlay}
@@ -160,13 +252,11 @@ export default function InteractiveMapSectionClient() {
         title={selectedRealm?.title || ""}
         lore={selectedRealm?.lore}
       />
-
-      {/* Dual Overlay para Reino Oscuro + Mapa de Galaxias */}
       <DualOverlay
         key={`dual-overlay-${openCount}`}
         isVisible={showDualOverlay}
         onClose={closeOverlay}
-        leftImagePath="/landing-book-victoria/mapa-galaxias.svg"
+        leftImagePath="/landing-book-victoria/mapa-galaxias.webp"
         rightImagePath="/landing-book-victoria/reino-oscuro.png"
         leftTitle="Mapa de Galaxias"
         rightTitle="Reino Oscuro"
