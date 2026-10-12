@@ -14,7 +14,7 @@ export default function SobreAutoraSection() {
       <div className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 w-80 h-80 rounded-full blur-3xl bg-accent-dim" />
       <div className="relative max-w-5xl mx-auto">
         <Stagger viewport={{ once: true, margin: "-80px" }}>
-          <Enter className="text-xs tracking-[0.25em] uppercase font-medium mb-14 text-center text-accent">
+          <Enter className="text-sm md:text-base tracking-[0.25em] uppercase font-medium mb-14 text-center text-accent">
             <p>La autora</p>
           </Enter>
         </Stagger>

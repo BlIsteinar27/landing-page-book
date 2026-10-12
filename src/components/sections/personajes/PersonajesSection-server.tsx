@@ -9,7 +9,7 @@ export default function PersonajesSection() {
 
       <div className="relative max-w-6xl mx-auto">
         <Stagger>
-          <Enter className="text-xs tracking-[0.25em] uppercase text-accent mb-8 text-center">
+          <Enter className="text-sm md:text-base tracking-[0.25em] uppercase text-accent mb-8 text-center">
             <p>Los Protagonistas</p>
           </Enter>
 

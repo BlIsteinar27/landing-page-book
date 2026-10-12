@@ -25,7 +25,7 @@ export default function ContactoSection() {
     <section className="relative py-24 px-6 md:px-8 bg-surface-1">
       <div className="max-w-4xl mx-auto text-center">
         <Stagger>
-          <Enter className="text-xs tracking-[0.25em] uppercase text-accent mb-8">
+          <Enter className="text-sm md:text-base tracking-[0.25em] uppercase text-accent mb-8">
             <p>Contacto</p>
           </Enter>
 

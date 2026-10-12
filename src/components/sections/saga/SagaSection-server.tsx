@@ -8,7 +8,7 @@ export default function SagaSection() {
     <section className="py-24 md:py-32 px-6 md:px-8 bg-surface-1">
       <div className="max-w-6xl mx-auto">
         <Stagger>
-          <Enter className="text-xs tracking-[0.25em] uppercase text-accent mb-8 text-center">
+          <Enter className="text-sm md:text-base tracking-[0.25em] uppercase text-accent mb-8 text-center">
             <p>La Saga Completa</p>
           </Enter>
 

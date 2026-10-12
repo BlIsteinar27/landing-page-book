@@ -29,7 +29,7 @@ export default function ComunidadSection() {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-xs tracking-[0.25em] uppercase text-accent mb-8"
+          className="text-sm md:text-base tracking-[0.25em] uppercase text-accent mb-8"
         >
           Comunidad
         </m.p>

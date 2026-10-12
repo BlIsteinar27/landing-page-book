@@ -6,7 +6,7 @@ export default function InteractiveMapSection() {
       {/* Título de la sección - visible antes del descenso por el cono */}
       <div className="relative bg-surface-base py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-xs tracking-[0.25em] uppercase text-accent mb-4">
+          <p className="text-sm md:text-base tracking-[0.25em] uppercase text-accent mb-4">
             El Cono Cósmico
           </p>
           <h2 className="text-4xl md:text-6xl font-display font-black text-accent mb-6">

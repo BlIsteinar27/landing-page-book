@@ -97,7 +97,7 @@ export default function CompraDialog({
                 />
               </button>
 
-              <p className="text-xs tracking-[0.25em] uppercase text-accent mb-3">
+              <p className="text-sm md:text-base tracking-[0.25em] uppercase text-accent mb-3">
                 Comprar
               </p>
               <h2

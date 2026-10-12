@@ -32,7 +32,7 @@ export default function TestimoniosSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5 }}
-          className="text-xs tracking-[0.25em] uppercase font-medium mb-12 text-center text-accent"
+          className="text-sm md:text-base tracking-[0.25em] uppercase font-medium mb-12 text-center text-accent"
         >
           Lectores
         </m.p>
