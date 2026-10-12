@@ -14,7 +14,7 @@ Landing page de venta para el libro "Los Dos Reinos" de Victoria. Diseño dark p
 ## Características Principales
 
 - **Mapa Interactivo de Reinos**: Scrollytelling por capítulos para navegar entre 3 reinos cósmicos (Reino de la Luz, Reino Central, Reino Oscuro), con vista alterna Reino Oscuro ↔ Mapa de Galaxias, rail de navegación en móvil (`NavigationRail`), cápsula de dots en desktop y animación ambiental en reposo — cada mapa respira con deriva y motas de partículas propias
-- **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan), zoom con rueda anclado al cursor y doble clic, todo por MotionValues sin re-render — y zoom inicial adaptativo según la imagen y la pantalla
+- **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan), zoom con rueda anclado al cursor, doble clic y doble toque, todo por MotionValues sin re-render — y zoom inicial adaptativo según la imagen y la pantalla
 - **Hotspots Interactivos**: Botones reales con teclado y lector de pantalla que despliegan el lore de cada reino
 - **Carrusel de Personajes**: Autoplay cada 4 s (solo mientras está en viewport) con pausa manual, pausa en hover/foco y respeto a `prefers-reduced-motion`
 - **CTA de compra único**: Un solo botón "Comprar Los Dos Reinos" abre el selector de canal (`CompraDialog`): pedido por WhatsApp en Venezuela y compra en Amazon para el resto del mundo (enlaces en `src/config/links.ts`)
@@ -148,7 +148,7 @@ Abre [http://localhost:3000](http://localhost:3000) en desarrollo.
 - El hook `useLockBodyScroll` usa un contador global para manejar múltiples overlays apilados
 - Los gestos táctiles se registran en `document` para capturar drag fuera del elemento
 - `ZoomableOverlay` con `renderInline=true` no llama `useLockBodyScroll` (el padre ya lo hace)
-- El zoom/pan de `ZoomableOverlay` vive en MotionValues (`useMotionValue` + `animate()`), no en estado React — los gestos no re-renderizan; la rueda hace zoom anclado al cursor y el doble clic alterna ×2 ↔ 1
+- El zoom/pan de `ZoomableOverlay` vive en MotionValues (`useMotionValue` + `animate()`), no en estado React — los gestos no re-renderizan; la rueda hace zoom anclado al cursor y el doble clic/doble toque (este último detectado a mano en `useTouchGestures`) alterna ×2 ↔ 1
 - El zoom inicial es adaptativo: `initialFill` (0–1) fija la fracción del marco que la imagen cubre al abrirse, medida en tiempo real según el tamaño de pantalla; cada reino puede ajustarlo con `overlayFill` en `realms-data.ts`
 - El `header` de `ZoomableOverlay` se renderiza dentro del marco del mapa — el pill del título cuelga del borde superior, no flota sobre el backdrop
 

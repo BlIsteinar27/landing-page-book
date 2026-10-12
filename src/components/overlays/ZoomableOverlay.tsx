@@ -7,7 +7,14 @@ import {
   useMotionValue,
   useMotionValueEvent,
 } from "motion/react";
-import { ReactNode, useState, useEffect, useId, useLayoutEffect } from "react";
+import {
+  ReactNode,
+  useState,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import { Minus, Plus, X } from "lucide-react";
 import Portal from "@/components/Portal";
 import { motionTokens, exitTransition } from "@/config/motion-tokens";
@@ -77,10 +84,23 @@ export default function ZoomableOverlay({
     onClose,
   );
 
+  // Marca cuándo el doble toque táctil ya manejó el toggle: el dblclick que
+  // Android sintetiza tras el segundo tap llega después y no debe alternar de
+  // nuevo (iOS directamente no emite dblclick)
+  const lastDoubleTapRef = useRef(0);
+
   const { elementRef } = useTouchGestures({
     onPinch: enableZoom
       ? (newScale) =>
           scale.set(Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE))
+      : undefined,
+    onDoubleTap: enableZoom
+      ? (e) => {
+          if ((e.target as HTMLElement | null)?.closest("button")) return;
+          lastDoubleTapRef.current = e.timeStamp;
+          const touch = e.changedTouches[0];
+          toggleZoomAtPoint(touch.clientX, touch.clientY);
+        }
       : undefined,
     onPan: enablePan
       ? (deltaX, deltaY) => {
@@ -149,13 +169,11 @@ export default function ZoomableOverlay({
     };
   }, [enableZoom, scale, x, y, elementRef]);
 
-  // Doble clic: alterna ×2 anclado al cursor ↔ escala 1
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    if (!enableZoom) return;
-    if ((e.target as HTMLElement).closest("button")) return;
+  // Alterna ×2 anclado al punto del gesto ↔ escala 1: lo comparten el doble
+  // clic (ratón) y el doble toque (táctil, vía onDoubleTap)
+  const toggleZoomAtPoint = (clientX: number, clientY: number) => {
     const frame = elementRef.current;
     if (!frame) return;
-    e.preventDefault();
     const transition = { duration: motionTokens.duration.normal };
     const s = scale.get();
     if (s > 1.001) {
@@ -164,8 +182,8 @@ export default function ZoomableOverlay({
       animate(y, 0, transition);
     } else {
       const rect = frame.getBoundingClientRect();
-      const ax = e.clientX - rect.left - rect.width / 2;
-      const ay = e.clientY - rect.top - rect.height / 2;
+      const ax = clientX - rect.left - rect.width / 2;
+      const ay = clientY - rect.top - rect.height / 2;
       const next = Math.min(s * 2, MAX_SCALE);
       const k = next / s;
       const boundX = Math.max(0, ((next - 1) * rect.width) / 2);
@@ -182,6 +200,14 @@ export default function ZoomableOverlay({
       );
       animate(scale, next, transition);
     }
+  };
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    if (!enableZoom) return;
+    if ((e.target as HTMLElement).closest("button")) return;
+    if (e.timeStamp - lastDoubleTapRef.current < 500) return;
+    e.preventDefault();
+    toggleZoomAtPoint(e.clientX, e.clientY);
   };
 
   // Zoom inicial adaptativo: acerca la imagen hasta cubrir `initialFill` del
@@ -295,14 +321,14 @@ export default function ZoomableOverlay({
         <div className="absolute bottom-16 md:bottom-4 left-4 max-w-[70%] bg-surface-1/90 backdrop-blur-sm rounded-lg px-3 py-2 border border-border-default pointer-events-auto">
           <p className="text-xs text-ink-secondary leading-snug">
             {zoomed ? (
-              "Arrastra para mover · Usa + y − para acercar o alejar"
+              "Arrastra para mover · Doble toque o doble clic para restablecer"
             ) : (
               <>
                 <span className="pointer-coarse:hidden">
-                  Usa + y − para acercar · Haz clic fuera del mapa para cerrar
+                  Doble clic para acercar · Haz clic fuera del mapa para cerrar
                 </span>
                 <span className="hidden pointer-coarse:inline">
-                  Pellizca para acercar · Toca fuera del mapa para cerrar
+                  Pellizca o doble toque para acercar · Toca fuera para cerrar
                 </span>
               </>
             )}
