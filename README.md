@@ -13,6 +13,7 @@ Landing page de venta para el libro "Los Dos Reinos" de Victoria. Diseño dark p
 
 ## Características Principales
 
+- **Hero con ambiente vivo**: glow radial que respira (centrado en móvil, junto al mockup en desktop), anillo tipo "sonar" en el pill de "Ya disponible" y motas doradas ascendentes (`CosmicDust` light) — todo CSS/Motion puro bajo `prefers-reduced-motion`, sin costo al LCP
 - **Mapa Interactivo de Reinos**: Scrollytelling por capítulos para navegar entre 3 reinos cósmicos (Reino de la Luz, Reino Central, Reino Oscuro), con vista alterna Reino Oscuro ↔ Mapa de Galaxias, rail de navegación en móvil (`NavigationRail`), cápsula de dots en desktop y animación ambiental en reposo — cada mapa respira con deriva y motas de partículas propias
 - **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan), zoom con rueda anclado al cursor, doble clic y doble toque, todo por MotionValues sin re-render — y zoom inicial adaptativo según la imagen y la pantalla
 - **Hotspots Interactivos**: Botones reales con teclado y lector de pantalla que despliegan el lore de cada reino
@@ -40,13 +41,12 @@ src/
 │   └── robots.ts                # Configuración de robots.txt
 ├── components/
 │   ├── sections/                # Secciones de la página
-│   │   ├── hero/                # Hero con mockup del libro
+│   │   ├── hero/                # Hero con mockup del libro y ambiente (glow, sonar, motas)
 │   │   ├── mapa/                # Mapa interactivo de reinos (scrollytelling)
 │   │   │   ├── RealmChapter.tsx # Capítulo de reino con vista alterna y deriva ambiental
 │   │   │   ├── RealmLevel.tsx   # Nivel individual de reino
 │   │   │   ├── GalaxyScene.tsx  # Starfield 3D del Reino Oscuro (R3F)
 │   │   │   ├── AtmosphereLayer.tsx # Nieblas, halo y polvo por reino
-│   │   │   ├── CosmicDust.tsx   # Motas de partículas por variante
 │   │   │   ├── Hotspot.tsx      # Punto de interés interactivo
 │   │   │   └── InteractiveMapSection-*.tsx
 │   │   ├── personajes/          # Carrusel de protagonistas
@@ -69,6 +69,7 @@ src/
 │   │   ├── NavigationDots.tsx   # Indicadores de navegación (desktop)
 │   │   ├── NavigationRail.tsx   # Riel de navegación entre reinos (móvil)
 │   │   ├── CTAButton.tsx        # Botón de compra (abre el selector de canal)
+│   │   ├── CosmicDust.tsx       # Motas de partículas por variante (hero y mapa)
 │   │   ├── Enter.tsx            # Primitiva client de entrada (envuelve children server)
 │   │   ├── Stagger.tsx          # Contenedor stagger de entrada para server components
 │   │   └── ...
@@ -86,7 +87,7 @@ src/
 │   ├── useEnterVariants.ts      # Variantes de entrada con reduced motion
 │   ├── useLockBodyScroll.ts     # Hook para bloquear scroll del body
 │   ├── useScrollSnap.ts         # Hook para scroll snap del mapa
-│   ├── useTouchGestures.ts      # Hook para gestos táctiles (pinch, pan)
+│   ├── useTouchGestures.ts      # Hook para gestos táctiles (pinch, pan, doble toque)
 │   └── useRegisterCTA.ts        # Hook para registrar elementos CTA
 ├── config/
 │   ├── realms-data.ts           # Datos de reinos y hotspots
