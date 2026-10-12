@@ -1,7 +1,7 @@
 "use client";
 
 import { m, useTransform, type MotionValue } from "motion/react";
-import CosmicDust from "./CosmicDust";
+import CosmicDust from "@/components/ui/CosmicDust";
 
 interface AtmosphereLayerProps {
   progress: MotionValue<number>;

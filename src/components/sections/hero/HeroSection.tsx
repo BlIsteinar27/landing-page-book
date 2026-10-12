@@ -1,18 +1,23 @@
 import { ArrowDown } from "lucide-react";
 import HeroCTAs from "./HeroCTAs";
 import HeroBookMockup from "./HeroBookMockup";
+import CosmicDust from "@/components/ui/CosmicDust";
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-dvh flex flex-col justify-center overflow-hidden px-6 md:px-8 pt-16 pb-28 md:pb-20 bg-surface-base">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_60%_80%,var(--accent-glow)_0%,transparent_70%)]" />
+      <div
+        className="pointer-events-none absolute inset-0 hero-glow-breathe"
+        aria-hidden
+      />
+      <CosmicDust variant="light" />
       <div className="absolute top-0 left-0 right-0 h-px bg-border-default" />
       <div className="relative max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           <div className="lg:col-span-8 flex flex-col gap-6 text-center lg:text-left">
             <div className="hero-enter inline-flex items-center gap-2 justify-center lg:justify-start">
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase border border-border-emphasis bg-accent-dim text-accent">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                <span className="w-1.5 h-1.5 rounded-full bg-accent hero-dot-pulse" />
                 Ya disponible
               </span>
             </div>

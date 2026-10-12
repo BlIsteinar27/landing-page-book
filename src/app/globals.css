@@ -198,6 +198,32 @@ body::before {
   }
 }
 
+/* Ambiente del hero: el glow radial respira y el punto del pill emite un
+   anillo tipo "sonar" — solo bajo no-preference */
+@keyframes hero-glow-breathe {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: translate3d(0, 3%, 0) scale(0.92);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translate3d(0, -2%, 0) scale(1.08);
+  }
+}
+
+@keyframes hero-dot-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 198, 103, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(255, 198, 103, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 198, 103, 0);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   /* Réplica del stagger 0.1s de staggerContainer */
   .hero-enter {
@@ -232,5 +258,52 @@ body::before {
 
   .hero-arrow-bounce {
     animation: hero-arrow-bounce 1.5s ease-in-out infinite;
+  }
+
+  .hero-glow-breathe {
+    background: radial-gradient(
+      ellipse 110% 55% at 50% 55%,
+      rgba(255, 198, 103, 0.45) 0%,
+      transparent 65%
+    );
+    animation: hero-glow-breathe 7s ease-in-out infinite;
+  }
+
+  .hero-dot-pulse {
+    animation: hero-dot-pulse 2.4s ease-out infinite;
+  }
+}
+
+/* En desktop el glow respirante baja a la esquina del mockup; en móvil queda
+   centrado y amplio para ambientar todo el hero en una sola columna */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  .hero-glow-breathe {
+    background: radial-gradient(
+      ellipse 65% 45% at 60% 75%,
+      rgba(255, 198, 103, 0.45) 0%,
+      transparent 65%
+    );
+  }
+}
+
+/* Esta capa es el único glow del hero; con reduced-motion queda estática con
+   la misma intensidad del glow base original para no perder la luz */
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow-breathe {
+    background: radial-gradient(
+      ellipse 110% 55% at 50% 55%,
+      var(--accent-glow) 0%,
+      transparent 65%
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
+  .hero-glow-breathe {
+    background: radial-gradient(
+      ellipse 65% 45% at 60% 75%,
+      var(--accent-glow) 0%,
+      transparent 65%
+    );
   }
 }
