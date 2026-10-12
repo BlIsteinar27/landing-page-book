@@ -22,10 +22,12 @@ Landing page estática (single page) de venta del libro "Los Dos Reinos" de Vict
 ## Animaciones (Motion)
 
 - Todo el movimiento respeta `prefers-reduced-motion`: la app ya monta `MotionConfig reducedMotion="user"` en `MotionProvider`.
+- **`LazyMotion` estricto**: `MotionProvider` monta `LazyMotion features={domAnimation} strict`. Los componentes usan `import { m } from "motion/react"` — `import { motion }` queda prohibido fuera del propio provider (rompe en runtime bajo `strict`).
+- **Entradas de sección**: los server components animan con las primitivas client `src/components/ui/Enter.tsx` y `Stagger.tsx` (envuelven `children` renderizados por el servidor). En client components se usa `useEnterVariants` — nunca duplicar variantes reducidas por componente. `enterVariants` es fade+subida, **sin blur** (decisión Fase 5: menos repaint en gama baja).
 - **No hardcodear valores de animación.** Usar `src/config/motion-tokens.ts` (escalas de tap/hover, springs sin rebote, transiciones `press`/`exit`, `staggerContainer`).
-- Para animaciones de entrada usar el hook `useEnterVariants` — nunca duplicar variantes reducidas por componente.
-- Nunca usar `style.transform` manual en componentes `motion.*`: anula las props `x`/`y`/`scale` de Motion. Posicionar con `x`/`y` de Motion.
+- Nunca usar `style.transform` manual en componentes `m.*`: anula las props `x`/`y`/`scale` de Motion. Posicionar con `x`/`y` de Motion.
 - `animate={cond ? valor : {}}` está prohibido: el objeto vacío congela el estado. Siempre animar de vuelta a un estado base explícito.
+- **Gateo por visibilidad**: las animaciones ambientales del mapa (deriva, `CosmicDust`, starfield) solo corren cuando el capítulo tiene `opacity > 0` — incluido durante los crossfades — y se reanudan con un estado base explícito. El autoplay del carrusel de personajes y sus partículas solo corren en viewport (`useInView`).
 
 ## Accesibilidad
 
@@ -38,7 +40,8 @@ Landing page estática (single page) de venta del libro "Los Dos Reinos" de Vict
 ## React / Next.js
 
 - **React Compiler está activo** (`reactCompiler: true` en `next.config.ts`): no añadir `useMemo`/`useCallback` salvo que el compilador no pueda con el caso (p. ej. callbacks usados en listeners de `document` → refs).
-- Patrón de secciones: `XSection-server.tsx` (datos/estática) + `XSection-client.tsx` (interactiva).
+- Patrón de secciones: `XSection-server.tsx` (datos/estática) + `XSection-client.tsx` (interactiva). Secciones puramente estáticas son server components directos; su entrada se anima con `<Stagger>`/`<Enter>` en vez de convertir toda la sección en client.
+- `CompraDialog` se carga con `next/dynamic` desde `CompraDialogProvider` — fuera del bundle inicial, como `DivineParticles`.
 - **Keys únicas entre hermanos**: dos elementos de listas distintas que se rendericen como hermanos en el mismo fragmento no pueden compartir key (causa de los warnings históricos `key={openCount}`). Prefijar (`image-overlay-${n}`, `dual-overlay-${n}`).
 - Estado derivado se calcula en render, no con `useEffect` + `setState` (regla `react-hooks/set-state-in-effect` de ESLint).
 - Componentes con `Math.random()` o contenido no determinista: `dynamic(..., { ssr: false })` (ver `DivineParticles`).
@@ -65,7 +68,9 @@ Landing page estática (single page) de venta del libro "Los Dos Reinos" de Vict
 - **Deriva ambiental en reposo** (`AMBIENT_DRIFT` en `RealmChapter`): el mapa "respira" en loop infinito con identidad por reino (Luz asciende, Central mece; el Oscuro no lleva — ya flota el starfield). Escala mínima 1.03 y deriva ≤1% para no descubrir bordes. Va en un `motion.div` **hijo** del wrapper de Ken Burns: los transforms por scroll y el ambiental nunca comparten elemento.
 - `CosmicDust` toma `variant` (`light`/`central`/`dark`): las motas ascienden en Luz, derivan con vaivén en Central y respiran en el sitio en Oscuro.
 - Capítulos inactivos: solo `inert`, **sin `aria-hidden`** (si el foco quedó dentro al salir del capítulo, Chrome avisa «Blocked aria-hidden… descendant retained focus»).
-- `GalaxyScene` (R3F): el `<Canvas>` lleva `pointer-events: none` explícito — R3F lo reactiva en su wrapper interno y bloquearía los hotspots.
+- `GalaxyScene` (R3F): el `<Canvas>` lleva `pointer-events: none` explícito — R3F lo reactiva en su wrapper interno y bloquearía los hotspots. Además usa `frameloop={active ? "always" : "never"}`: el contexto WebGL se monta temprano para warm-up pero no dibuja fuera del capítulo oscuro.
+- **Bitmaps de capítulos**: la `<Image>` de cada `RealmChapter` se desmonta tras ~2 s de opacidad 0 sostenida (gracia contra cambios de dirección) y remonta al reentrar — la cache del optimizer + `blurDataURL` cubren el re-decode.
+- **Zoom/pan por MotionValues**: `ZoomableOverlay` maneja `scale`/`x`/`y` con `useMotionValue` + `animate()` — cero re-render por gesto. Además de pinch/pan/botones, acepta rueda (anclada al cursor, por listener `wheel` no-pasivo acumulado en rAF) y doble clic (alterna ×2 ↔ 1). Todo clampea al mismo límite que el pan: la imagen nunca sale del marco.
 - **Marco «vitrina» de overlays**: todos los marcos de mapa comparten el mismo tratamiento — `rounded-2xl`, `border-border-emphasis`, mat radial `surface-3 → surface-deep` y sombra `0 24px 48px -12px black/60 + 0 0 24px accent-dim` (el hover sube a `accent-glow`). No volver al doble anillo duro (`0_0_0_2px + 0_0_0_4px accent`) que había antes. Aplica a `DualOverlay`, `ZoomableOverlay` y `RealmInfoPanel`.
 - **Backdrop opaco**: `bg-surface-deep/95` + `backdrop-blur-sm` — con `bg-black/90` la UI del scrollytelling (pill de vista) se transparentaba detrás del overlay.
 - Pills de overlay: `border accent-glow` (no `border-2 accent`). En la vista dual el pill va arriba-izquierda con icono `Maximize2` + «Ampliar»; las dos tarjetas entran escalonadas ~100 ms.
@@ -80,6 +85,7 @@ Landing page estática (single page) de venta del libro "Los Dos Reinos" de Vict
 ## Assets de icono
 
 - Iconos de pestaña con convención de Next.js App Router: `src/app/icon.svg` (glifos reales de Starlight Rune: V crema + Q dorada), `icon.png` (fallback 48px), `apple-icon.png` (180px). No restaurar `favicon.ico` de Vercel.
+- `src/fonts/` no se borra: `localFont` lee `Yudi-YqPny.ttf` de ahí en build. `Yudi-YqPny-subset.woff2` quedó de un intento de subseteo y no se usa; la copia del TTF en `public/` tampoco la referencia código.
 - Para regenerarlos se usó `opentype.js` (devDependency de tooling) + `sharp` — no importar opentype en código de la app.
 - `og-image.jpg` se regenera con `sharp` componiendo la portada sobre el gradiente de marca.
 
@@ -93,7 +99,7 @@ npx eslint src      # lint
 npm run build       # solo cuando se pida explícitamente
 ```
 
-Notas de lint conocidas (preexistentes, no introducir más): comillas sin escapar en textos de la autora (`SobreAutoraSection`, `HeroTitle`, `TestimoniosSection`).
+Notas de lint conocidas (preexistentes, no introducir más): 6 errores `react/no-unescaped-entities` por comillas en textos de la autora (`SobreAutoraSection-server.tsx`, `HeroSection.tsx`, `TestimoniosSection.tsx`).
 
 - PowerShell: separar comandos con `;`, no `&&`.
 - **El shell del agente es Git Bash, no CMD.** Nunca usar sintaxis de CMD en redirecciones ni comandos:

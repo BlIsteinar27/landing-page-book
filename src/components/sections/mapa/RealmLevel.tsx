@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
 import { Realm } from "@/config/realms-data";
@@ -20,7 +20,7 @@ export default function RealmLevel({
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{
         opacity: isActive ? 1 : 0.5,
@@ -31,7 +31,7 @@ export default function RealmLevel({
     >
       {/* Skeleton Loader */}
       {!isLoaded && (
-        <motion.div
+        <m.div
           animate={{ opacity: [1, 0.5, 1] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="absolute inset-0 bg-surface-2"
@@ -42,7 +42,7 @@ export default function RealmLevel({
       {hasError && <ImageErrorFallback />}
 
       {/* Background Image with Conditional Parallax */}
-      <motion.div
+      <m.div
         animate={isActive ? { y: [0, -10, 0] } : { y: 0 }}
         transition={
           isActive
@@ -65,14 +65,14 @@ export default function RealmLevel({
           onLoad={() => setIsLoaded(true)}
           onError={() => setHasError(true)}
         />
-      </motion.div>
+      </m.div>
 
       {/* Gradient Overlay - pointer-events-none para no bloquear el click */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50 pointer-events-none z-20" />
 
       {/* Content */}
       <div className="absolute inset-0 flex items-center justify-center p-6">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{
             opacity: isActive ? 1 : 0,
@@ -81,24 +81,24 @@ export default function RealmLevel({
           transition={{ delay: 0.2 }}
           className="text-center max-w-2xl"
         >
-          <motion.h3
+          <m.h3
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 20 }}
             transition={{ delay: 0.3 }}
             className="text-4xl md:text-6xl font-display font-black text-ink-primary mb-4"
           >
             {realm.title}
-          </motion.h3>
-          <motion.p
+          </m.h3>
+          <m.p
             initial={{ opacity: 0 }}
             animate={{ opacity: isActive ? 1 : 0 }}
             transition={{ delay: 0.4 }}
             className="text-lg md:text-xl text-ink-secondary"
           >
             {realm.description}
-          </motion.p>
-        </motion.div>
+          </m.p>
+        </m.div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

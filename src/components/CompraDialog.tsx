@@ -1,10 +1,11 @@
 "use client";
 
 import { ReactNode, useId } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { ChevronRight, MessageCircle, ShoppingBag, X } from "lucide-react";
 import Portal from "@/components/Portal";
 import { useDialog } from "@/hooks/useDialog";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { LINKS } from "@/config/links";
 import { motionTokens } from "@/config/motion-tokens";
 
@@ -22,7 +23,7 @@ function CanalOption({
   accentHover: string;
 }) {
   return (
-    <motion.a
+    <m.a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
@@ -42,7 +43,7 @@ function CanalOption({
         aria-hidden
       />
       <span className="sr-only">(se abre en una pestaña nueva)</span>
-    </motion.a>
+    </m.a>
   );
 }
 
@@ -55,13 +56,14 @@ export default function CompraDialog({
 }) {
   const titleId = useId();
   const ref = useDialog<HTMLDivElement>(open, onClose);
+  useLockBodyScroll(open);
 
   return (
     <Portal>
       <AnimatePresence>
         {open && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -70,7 +72,7 @@ export default function CompraDialog({
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               aria-hidden
             />
-            <motion.div
+            <m.div
               ref={ref}
               role="dialog"
               aria-modal="true"
@@ -142,7 +144,7 @@ export default function CompraDialog({
                   }
                 />
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

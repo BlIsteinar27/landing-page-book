@@ -9,18 +9,23 @@ import type { Group } from "three";
 // @react-three/fiber instancia `new THREE.Clock()` internamente en createRoot
 // (hardcodeado, sin opción de inyectar THREE.Timer) → warning de deprecación
 // ajeno a nuestro código. Se filtra solo ese mensaje; el resto pasa intacto.
-const originalWarn = console.warn;
-console.warn = (...args: unknown[]) => {
-  if (typeof args[0] === "string" && args[0].startsWith("THREE.Clock")) return;
-  originalWarn(...args);
-};
+if (process.env.NODE_ENV === "development") {
+  const originalWarn = console.warn;
+  console.warn = (...args: unknown[]) => {
+    if (typeof args[0] === "string" && args[0].startsWith("THREE.Clock"))
+      return;
+    originalWarn(...args);
+  };
+}
 
 interface GalaxySceneProps {
   /** Progreso LOCAL del capítulo oscuro (0-1), ya remapeado por el padre */
   progress: MotionValue<number>;
+  /** true mientras starsOpacity > 0 — solo entonces corre el render loop */
+  active: boolean;
 }
 
-function CameraRig({ progress }: GalaxySceneProps) {
+function CameraRig({ progress }: { progress: MotionValue<number> }) {
   useFrame((state) => {
     const p = progress.get();
     const t = state.clock.elapsedTime;
@@ -74,9 +79,12 @@ function DriftingStars() {
   );
 }
 
-export default function GalaxyScene({ progress }: GalaxySceneProps) {
+export default function GalaxyScene({ progress, active }: GalaxySceneProps) {
   return (
     <Canvas
+      // El canvas se monta temprano para el warm-up, pero el loop solo corre
+      // cuando hay estrellas visibles — fuera de la ventana no dibuja nada
+      frameloop={active ? "always" : "never"}
       // Móvil primero: DPR limitado, sin AA (las estrellas son puntos), bajo consumo
       dpr={[1, 1.5]}
       camera={{ position: [0, 0, 10], fov: 60 }}

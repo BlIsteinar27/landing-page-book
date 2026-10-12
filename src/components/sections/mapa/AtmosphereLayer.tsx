@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useTransform, type MotionValue } from "motion/react";
+import { m, useTransform, type MotionValue } from "motion/react";
 import CosmicDust from "./CosmicDust";
 
 interface AtmosphereLayerProps {
@@ -8,6 +8,8 @@ interface AtmosphereLayerProps {
   range: [number, number];
   /** Variante cromática por reino (tokens de marca, nada de colores ajenos) */
   variant: "light" | "central" | "dark";
+  /** true mientras la opacidad del capítulo > 0 — pausa el dust invisible */
+  active: boolean;
 }
 
 const VARIANT_CLASS: Record<AtmosphereLayerProps["variant"], string> = {
@@ -30,6 +32,7 @@ export default function AtmosphereLayer({
   progress,
   range,
   variant,
+  active,
 }: AtmosphereLayerProps) {
   const [start, end] = range;
   // Tres capas a distinta velocidad = profundidad sin recortar el arte
@@ -44,21 +47,21 @@ export default function AtmosphereLayer({
   return (
     <div aria-hidden className="absolute inset-0 pointer-events-none">
       {/* Niebla baja ascendente */}
-      <motion.div
+      <m.div
         style={{ y: fogY }}
         className={`absolute inset-x-0 bottom-0 h-2/3 ${VARIANT_CLASS[variant]}`}
       />
       {/* Bruma alta descendente */}
-      <motion.div
+      <m.div
         style={{ y: mistY }}
         className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-black/25 to-transparent"
       />
       {/* Halo central que respira con el capítulo */}
-      <motion.div
+      <m.div
         style={{ opacity: glowOpacity }}
         className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--accent)_0%,transparent_60%)] opacity-0 mix-blend-screen"
       />
-      <CosmicDust variant={variant} />
+      {active && <CosmicDust variant={variant} />}
     </div>
   );
 }

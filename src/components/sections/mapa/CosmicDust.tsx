@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
 
 // Tabla fija (determinista, SSR-safe): x%, y%, tamaño, delay, duración
 const DUST = [
@@ -35,11 +35,15 @@ const RISE: Record<
 };
 
 export default function CosmicDust({ variant = "dark" }: CosmicDustProps) {
+  const reduce = useReducedMotion();
   const rise =
     variant === "light" || variant === "central" ? RISE[variant] : undefined;
   // Las motas ascendentes se leen como «partículas», no como polvo: más
   // grandes y con más brillo que el dust ambiental del reino oscuro
   const dotSize = (s: number) => (rise ? s * 2.2 : s);
+
+  // Igual que DivineParticles: decorativo en bucle, fuera con reduced motion
+  if (reduce) return null;
 
   return (
     <div
@@ -47,7 +51,7 @@ export default function CosmicDust({ variant = "dark" }: CosmicDustProps) {
       className="absolute inset-0 overflow-hidden pointer-events-none"
     >
       {DUST.map((p, i) => (
-        <motion.span
+        <m.span
           key={`dust-${i}`}
           className={`absolute rounded-full blur-[1px] ${
             rise ? "bg-accent/60" : "bg-accent/30"

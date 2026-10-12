@@ -146,8 +146,6 @@ export const realms: Realm[] = [
         y: 0.68,
         title: "Reino Oscuro",
         description: "Explora las galaxias del universo de Dioses Universales",
-        image:
-          "/landing-book-victoria/Mapa de galaxias arreglado_20260622_174207_0000 (1).svg",
         isProminent: true,
       },
     ],

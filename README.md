@@ -7,22 +7,22 @@ Landing page de venta para el libro "Los Dos Reinos" de Victoria. Diseño dark p
 - **Framework:** Next.js 16 (App Router) con React Compiler
 - **Lenguaje:** TypeScript
 - **Estilos:** Tailwind CSS v4 con tokens de diseño custom
-- **Animaciones:** Motion (motion/react) v14, con `MotionConfig reducedMotion="user"`
+- **Animaciones:** Motion (motion/react) v14 con `LazyMotion` estricto (`domAnimation`, componentes usan `m.*`), `MotionConfig reducedMotion="user"`
 - **Iconos:** Lucide React (iconos de interfaz) + SVG propios solo para logos de marca
 - **Tipografía:** Starlight Rune (display), Playfair Display (serif), Inter (body)
 
 ## Características Principales
 
 - **Mapa Interactivo de Reinos**: Scrollytelling por capítulos para navegar entre 3 reinos cósmicos (Reino de la Luz, Reino Central, Reino Oscuro), con vista alterna Reino Oscuro ↔ Mapa de Galaxias, rail de navegación en móvil (`NavigationRail`), cápsula de dots en desktop y animación ambiental en reposo — cada mapa respira con deriva y motas de partículas propias
-- **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan) y zoom inicial adaptativo según la imagen y la pantalla
+- **Overlays con Zoom y Pan**: Diálogos accesibles (`role="dialog"`, foco atrapado, Escape, portal) para visualizar imágenes individuales o duales con gestos táctiles (pinch zoom, pan), zoom con rueda anclado al cursor y doble clic, todo por MotionValues sin re-render — y zoom inicial adaptativo según la imagen y la pantalla
 - **Hotspots Interactivos**: Botones reales con teclado y lector de pantalla que despliegan el lore de cada reino
-- **Carrusel de Personajes**: Autoplay con pausa manual, pausa en hover/foco y respeto a `prefers-reduced-motion`
+- **Carrusel de Personajes**: Autoplay cada 4 s (solo mientras está en viewport) con pausa manual, pausa en hover/foco y respeto a `prefers-reduced-motion`
 - **CTA de compra único**: Un solo botón "Comprar Los Dos Reinos" abre el selector de canal (`CompraDialog`): pedido por WhatsApp en Venezuela y compra en Amazon para el resto del mundo (enlaces en `src/config/links.ts`)
 - **Movimiento reducido**: Toda la página respeta `prefers-reduced-motion` vía `MotionConfig` y `useEnterVariants`
 - **Optimización de Imágenes**: Configuración avanzada de Next.js Image con AVIF/WebP, lazy loading y placeholders blur
 - **SEO Schema Markup**: Datos estructurados JSON-LD para autora, libro, sitio y organización
 - **Responsive Design**: Mobile-First con breakpoints optimizados y `dvh` para viewport móvil
-- **Performance**: React Compiler habilitado para optimización automática
+- **Performance**: React Compiler habilitado; secciones estáticas como server components con primitivas de entrada `<Enter>`/`<Stagger>`; `CompraDialog` por `dynamic()`; animaciones ambientales y starfield WebGL pausados cuando no son visibles (`frameloop` gateado, bitmaps de capítulos desmontados a opacidad 0 sostenida)
 
 ## Estructura
 
@@ -50,7 +50,8 @@ src/
 │   │   │   ├── Hotspot.tsx      # Punto de interés interactivo
 │   │   │   └── InteractiveMapSection-*.tsx
 │   │   ├── personajes/          # Carrusel de protagonistas
-│   │   │   ├── PersonajesSection-client.tsx
+│   │   │   ├── PersonajesSection-server.tsx  # Cabecera y cierre (server)
+│   │   │   ├── PersonajesSection-client.tsx  # Carrusel interactivo
 │   │   │   └── DivineParticles.tsx  # Partículas dinámicas (SSR: false)
 │   │   ├── sinopsis/            # Sinopsis del libro
 │   │   ├── autora/              # Sobre la autora
@@ -68,10 +69,12 @@ src/
 │   │   ├── NavigationDots.tsx   # Indicadores de navegación (desktop)
 │   │   ├── NavigationRail.tsx   # Riel de navegación entre reinos (móvil)
 │   │   ├── CTAButton.tsx        # Botón de compra (abre el selector de canal)
+│   │   ├── Enter.tsx            # Primitiva client de entrada (envuelve children server)
+│   │   ├── Stagger.tsx          # Contenedor stagger de entrada para server components
 │   │   └── ...
 │   ├── icons/                   # Logos de marca (Instagram, TikTok, WhatsApp)
 │   ├── Portal.tsx               # Portal para renderizar overlays fuera de <main>
-│   ├── MotionProvider.tsx       # MotionConfig con reducedMotion="user"
+│   ├── MotionProvider.tsx       # LazyMotion strict (domAnimation) + MotionConfig reducedMotion="user"
 │   ├── ImageErrorFallback.tsx   # Fallback para errores de imagen
 │   ├── SchemaMarkup.tsx         # Datos estructurados SEO (JSON-LD)
 │   ├── StickyCTA.tsx            # CTA sticky en scroll
@@ -106,9 +109,8 @@ El proyecto tiene configuración optimizada para imágenes en `next.config.ts`:
 - Formatos: AVIF, WebP
 - Calidades: 75, 85
 - Device sizes: 640, 750, 828, 1080, 1200, 1920, 2048, 3840
-- SVG permitidos con `dangerouslyAllowSVG`
+- `minimumCacheTTL` de 30 días para el optimizer
 - Local patterns para imágenes en `/landing-book-victoria/**`
-- CSP para seguridad de SVGs
 
 ## Scripts
 
@@ -146,6 +148,7 @@ Abre [http://localhost:3000](http://localhost:3000) en desarrollo.
 - El hook `useLockBodyScroll` usa un contador global para manejar múltiples overlays apilados
 - Los gestos táctiles se registran en `document` para capturar drag fuera del elemento
 - `ZoomableOverlay` con `renderInline=true` no llama `useLockBodyScroll` (el padre ya lo hace)
+- El zoom/pan de `ZoomableOverlay` vive en MotionValues (`useMotionValue` + `animate()`), no en estado React — los gestos no re-renderizan; la rueda hace zoom anclado al cursor y el doble clic alterna ×2 ↔ 1
 - El zoom inicial es adaptativo: `initialFill` (0–1) fija la fracción del marco que la imagen cubre al abrirse, medida en tiempo real según el tamaño de pantalla; cada reino puede ajustarlo con `overlayFill` en `realms-data.ts`
 - El `header` de `ZoomableOverlay` se renderiza dentro del marco del mapa — el pill del título cuelga del borde superior, no flota sobre el backdrop
 

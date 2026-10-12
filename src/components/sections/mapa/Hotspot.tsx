@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { m, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { Eye } from "lucide-react";
 import { Hotspot as HotspotType } from "@/config/realms-data";
@@ -34,7 +34,7 @@ export default function Hotspot({ hotspot, onShowDetail }: HotspotProps) {
 
   return (
     <>
-      <motion.button
+      <m.button
         type="button"
         ref={elementRef}
         aria-label={`Explorar ${hotspot.title}`}
@@ -55,14 +55,14 @@ export default function Hotspot({ hotspot, onShowDetail }: HotspotProps) {
         }}
       >
         {/* Entrada retardada en un span interno para que hover/tap no hereden el delay */}
-        <motion.span
+        <m.span
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
           className="relative flex items-center justify-center"
         >
           {/* Pulse Effect */}
-          <motion.span
+          <m.span
             animate={{
               scale: [1, hotspot.isProminent ? 2 : 1.5, 1],
               opacity: [0.8, 0, 0.8],
@@ -99,7 +99,7 @@ export default function Hotspot({ hotspot, onShowDetail }: HotspotProps) {
 
           {/* Label visible para hotspots prominentes */}
           {hotspot.isProminent && (
-            <motion.span
+            <m.span
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="absolute top-full mt-3 bg-surface-1/90 backdrop-blur-sm border border-border-default rounded-lg px-3 py-1.5 shadow-xl whitespace-nowrap"
@@ -115,15 +115,15 @@ export default function Hotspot({ hotspot, onShowDetail }: HotspotProps) {
                   Toca para explorar
                 </span>
               </span>
-            </motion.span>
+            </m.span>
           )}
-        </motion.span>
-      </motion.button>
+        </m.span>
+      </m.button>
 
       {/* Tooltip on hover (desktop) */}
       <AnimatePresence>
         {isHovered && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{
@@ -146,7 +146,7 @@ export default function Hotspot({ hotspot, onShowDetail }: HotspotProps) {
             <p className="text-xs text-ink-secondary mt-1">
               {hotspot.description}
             </p>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

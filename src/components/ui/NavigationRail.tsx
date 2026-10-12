@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { motionTokens, exitTransition } from "@/config/motion-tokens";
 
 interface NavigationRailProps {
@@ -33,7 +33,7 @@ export default function NavigationRail({
   }, [activeIndex]);
 
   return (
-    <motion.nav
+    <m.nav
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{
@@ -47,7 +47,7 @@ export default function NavigationRail({
       {/* «Respiración» dorada al aparecer: enseña que el riel es interactivo.
           Solo existe cuando la sección está pineada, y con reduced-motion el
           rail ni siquiera se monta (los reinos se apilan) */}
-      <motion.div
+      <m.div
         animate={{
           boxShadow: [
             "0 0 0 1px rgba(254, 244, 230, 0.2)",
@@ -63,10 +63,12 @@ export default function NavigationRail({
         <div
           aria-hidden="true"
           className="absolute inset-x-0 top-0 rounded-full bg-accent transition-[height] duration-300"
-          style={{ height: `${tickTop(activeIndex, count)}%` }}
+          style={{
+            height: `${activeIndex === count - 1 ? 100 : tickTop(activeIndex, count)}%`,
+          }}
         />
         {Array.from({ length: count }).map((_, index) => (
-          <motion.button
+          <m.button
             key={index}
             type="button"
             whileHover={{ scale: 1.15 }}
@@ -85,13 +87,13 @@ export default function NavigationRail({
                   : "size-2.5 shadow-[0_0_6px_rgba(255,198,103,0.45)]"
               }`}
             />
-          </motion.button>
+          </m.button>
         ))}
-      </motion.div>
+      </m.div>
 
       <AnimatePresence>
         {chipVisible && tooltips[activeIndex] && (
-          <motion.span
+          <m.span
             key={activeIndex}
             initial={{ opacity: 0, x: 8 }}
             animate={{ opacity: 1, x: 0 }}
@@ -100,9 +102,9 @@ export default function NavigationRail({
             className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-border-subtle bg-surface-1/90 px-3 py-1.5 text-xs text-ink-primary backdrop-blur-sm"
           >
             {tooltips[activeIndex]}
-          </motion.span>
+          </m.span>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </m.nav>
   );
 }

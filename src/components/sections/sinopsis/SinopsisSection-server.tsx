@@ -1,5 +1,8 @@
 import Image from "next/image";
-import SinopsisSectionClient from "./SinopsisSection-client";
+import { BadgeCheck } from "lucide-react";
+import Stagger from "@/components/ui/Stagger";
+import Enter from "@/components/ui/Enter";
+import SinopsisCTA from "./SinopsisCTA";
 
 export default function SobreLibroSection() {
   return (
@@ -23,7 +26,70 @@ export default function SobreLibroSection() {
             </div>
           </div>
 
-          <SinopsisSectionClient />
+          <Stagger className="flex flex-col gap-6">
+            <Enter>
+              <h2 className="text-4xl font-display font-black text-ink-primary">
+                Los Dos Reinos
+              </h2>
+            </Enter>
+
+            <Enter className="flex flex-wrap gap-2">
+              <span className="px-3 py-1 rounded-full bg-accent-dim text-accent text-sm">
+                Fantasía Oscura
+              </span>
+              <span className="px-3 py-1 rounded-full bg-accent-dim text-accent text-sm">
+                Romance
+              </span>
+              <span className="px-3 py-1 rounded-full bg-accent-dim text-accent text-sm">
+                Política
+              </span>
+            </Enter>
+
+            <Enter>
+              <p className="text-ink-secondary leading-relaxed">
+                En el Reino Central, las gemelas Laila y Liora personifican el
+                equilibrio entre la luz y la oscuridad. Sin embargo, su destino
+                se fractura cuando Kenan, su creador, destierra a Laila al reino
+                Oscuro bajo la tutela del dios de la muerte, Seth Godness.
+                Forjada en el dolor y la crueldad, Laila deberá aprender a
+                reinar en un mundo que la rechaza.
+              </p>
+            </Enter>
+
+            <Enter>
+              <p className="text-ink-secondary leading-relaxed">
+                Más de quinientos años después, el implacable dios Cosmo Godness
+                busca una consorte para perpetuar el linaje divino y someter el
+                universo. Su mirada recae sobre Aryana, una veterinaria cuya
+                fuerza lo cautiva. Atrapada en un pacto divino para salvar a su
+                familia de un nido de intrigas celestiales, Aryana deberá
+                sobrevivir a la dinastía más peligrosa del cosmos. Los Godness.
+              </p>
+            </Enter>
+
+            <Enter>
+              <p className="text-ink-secondary leading-relaxed italic">
+                Los dos reinos es una historia épica de traición, dolor y
+                redención, donde la línea entre la luz y la oscuridad
+                desaparece, y el amor y la venganza dictan el destino de la
+                creación.
+              </p>
+            </Enter>
+
+            <Enter>
+              <p className="text-sm text-ink-secondary inline-flex items-center gap-1.5">
+                <BadgeCheck
+                  className="w-4 h-4 text-accent"
+                  strokeWidth={2}
+                  nonScalingStroke
+                  aria-hidden
+                />
+                Ya disponible
+              </p>
+            </Enter>
+
+            <SinopsisCTA />
+          </Stagger>
         </div>
       </div>
     </section>

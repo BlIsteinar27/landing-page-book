@@ -1,7 +1,9 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import CompraDialog from "@/components/CompraDialog";
+import dynamic from "next/dynamic";
+
+const CompraDialog = dynamic(() => import("@/components/CompraDialog"));
 
 const CompraDialogContext = createContext<(() => void) | null>(null);
 

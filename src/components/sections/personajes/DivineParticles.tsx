@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
 
 export default function DivineParticles() {
   const [particles] = useState(() =>
@@ -22,7 +22,7 @@ export default function DivineParticles() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {particles.map((particle) => (
-        <motion.div
+        <m.div
           key={particle.id}
           className="absolute rounded-full bg-accent/30 blur-[1px]"
           style={{

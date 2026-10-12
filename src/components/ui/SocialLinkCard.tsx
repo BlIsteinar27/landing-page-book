@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { motionTokens } from "@/config/motion-tokens";
@@ -24,7 +24,7 @@ export default function SocialLinkCard({
   const enter = useEnterVariants();
 
   return (
-    <motion.a
+    <m.a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
@@ -64,6 +64,6 @@ export default function SocialLinkCard({
         />
       </div>
       <span className="sr-only">(se abre en una pestaña nueva)</span>
-    </motion.a>
+    </m.a>
   );
 }

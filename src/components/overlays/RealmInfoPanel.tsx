@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { m, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { Info, X } from "lucide-react";
 import Portal from "@/components/Portal";
@@ -68,7 +68,7 @@ export default function RealmInfoPanel({
       <Portal>
         <AnimatePresence>
           {isOpen && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -81,7 +81,7 @@ export default function RealmInfoPanel({
               }}
               role="presentation"
             >
-              <motion.div
+              <m.div
                 ref={dialogRef}
                 initial={{ scale: 0.9, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -143,7 +143,7 @@ export default function RealmInfoPanel({
                 {/* Points list */}
                 <ul className="space-y-3 min-h-0 overflow-y-auto overscroll-contain touch-pan-y pb-6 -mb-6 [scrollbar-width:thin] [scrollbar-color:var(--color-border-emphasis)_transparent] [mask-image:linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)]">
                   {lore.points.map((point, index) => (
-                    <motion.li
+                    <m.li
                       key={index}
                       initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -163,11 +163,11 @@ export default function RealmInfoPanel({
                       <span className="text-sm md:text-base text-ink-primary leading-relaxed">
                         {point.text}
                       </span>
-                    </motion.li>
+                    </m.li>
                   ))}
                 </ul>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           )}
         </AnimatePresence>
       </Portal>

@@ -1,7 +1,13 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
-import { ReactNode, useState, useId, useLayoutEffect } from "react";
+import {
+  m,
+  AnimatePresence,
+  animate,
+  useMotionValue,
+  useMotionValueEvent,
+} from "motion/react";
+import { ReactNode, useState, useEffect, useId, useLayoutEffect } from "react";
 import { Minus, Plus, X } from "lucide-react";
 import Portal from "@/components/Portal";
 import { motionTokens, exitTransition } from "@/config/motion-tokens";
@@ -45,8 +51,21 @@ export default function ZoomableOverlay({
   className = "",
   renderInline = false,
 }: ZoomableOverlayProps) {
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  // Zoom y pan en MotionValues: los gestos escriben el transform directo al
+  // DOM sin re-render por evento; `zoomed` solo se deriva al cruzar el umbral
+  const scale = useMotionValue(1);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const [zoomed, setZoomed] = useState(false);
+  useMotionValueEvent(scale, "change", (v) => {
+    const z = v > 1.001;
+    setZoomed((prev) => (prev === z ? prev : z));
+    // Al volver a escala 1 el pan se resetea — sin imagen desplazada de adorno
+    if (v <= 1.001) {
+      x.set(0);
+      y.set(0);
+    }
+  });
   const generatedTitleId = useId();
   const titleId = titleIdProp ?? generatedTitleId;
   // Con header custom sin id no hay título que referenciar: se usa aria-label
@@ -61,15 +80,109 @@ export default function ZoomableOverlay({
   const { elementRef } = useTouchGestures({
     onPinch: enableZoom
       ? (newScale) =>
-          setScale(Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE))
+          scale.set(Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE))
       : undefined,
     onPan: enablePan
-      ? (deltaX, deltaY) =>
-          setPosition((prev) => ({ x: prev.x + deltaX, y: prev.y + deltaY }))
+      ? (deltaX, deltaY) => {
+          // Clamp: el desplazamiento máximo es el overflow de la imagen
+          // escalada respecto al marco — no se puede sacar del marco
+          const frame = elementRef.current;
+          if (!frame) return;
+          const s = scale.get();
+          const boundX = Math.max(0, ((s - 1) * frame.clientWidth) / 2);
+          const boundY = Math.max(0, ((s - 1) * frame.clientHeight) / 2);
+          x.set(Math.min(Math.max(x.get() + deltaX, -boundX), boundX));
+          y.set(Math.min(Math.max(y.get() + deltaY, -boundY), boundY));
+        }
       : undefined,
-    currentScale: scale,
-    enablePan: enablePan && scale > 1,
+    currentScale: () => scale.get(),
+    enablePan: enablePan && zoomed,
   });
+
+  // Zoom con rueda anclado al cursor: el wheel va por listener no-pasivo
+  // (preventDefault) y se acumula en rAF para no escribir por evento
+  useEffect(() => {
+    const frame = elementRef.current;
+    if (!frame || !enableZoom) return;
+    let raf = 0;
+    let pendingDelta = 0;
+    let anchorX = 0;
+    let anchorY = 0;
+
+    const applyWheel = () => {
+      raf = 0;
+      const s = scale.get();
+      const next = Math.min(
+        Math.max(s * Math.exp(-pendingDelta * 0.0015), MIN_SCALE),
+        MAX_SCALE,
+      );
+      pendingDelta = 0;
+      if (next === s) return;
+      // El punto bajo el cursor queda fijo: x' = a - (a - x)·(s'/s),
+      // clampeado al overflow de la imagen escalada (mismo límite que el pan)
+      const k = next / s;
+      const rect = frame.getBoundingClientRect();
+      const boundX = Math.max(0, ((next - 1) * rect.width) / 2);
+      const boundY = Math.max(0, ((next - 1) * rect.height) / 2);
+      x.set(
+        Math.min(Math.max(anchorX - (anchorX - x.get()) * k, -boundX), boundX),
+      );
+      y.set(
+        Math.min(Math.max(anchorY - (anchorY - y.get()) * k, -boundY), boundY),
+      );
+      scale.set(next);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const rect = frame.getBoundingClientRect();
+      anchorX = e.clientX - rect.left - rect.width / 2;
+      anchorY = e.clientY - rect.top - rect.height / 2;
+      pendingDelta += e.deltaY;
+      if (!raf) raf = requestAnimationFrame(applyWheel);
+    };
+
+    frame.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      frame.removeEventListener("wheel", onWheel);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [enableZoom, scale, x, y, elementRef]);
+
+  // Doble clic: alterna ×2 anclado al cursor ↔ escala 1
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    if (!enableZoom) return;
+    if ((e.target as HTMLElement).closest("button")) return;
+    const frame = elementRef.current;
+    if (!frame) return;
+    e.preventDefault();
+    const transition = { duration: motionTokens.duration.normal };
+    const s = scale.get();
+    if (s > 1.001) {
+      animate(scale, 1, transition);
+      animate(x, 0, transition);
+      animate(y, 0, transition);
+    } else {
+      const rect = frame.getBoundingClientRect();
+      const ax = e.clientX - rect.left - rect.width / 2;
+      const ay = e.clientY - rect.top - rect.height / 2;
+      const next = Math.min(s * 2, MAX_SCALE);
+      const k = next / s;
+      const boundX = Math.max(0, ((next - 1) * rect.width) / 2);
+      const boundY = Math.max(0, ((next - 1) * rect.height) / 2);
+      animate(
+        x,
+        Math.min(Math.max(ax - (ax - x.get()) * k, -boundX), boundX),
+        transition,
+      );
+      animate(
+        y,
+        Math.min(Math.max(ay - (ay - y.get()) * k, -boundY), boundY),
+        transition,
+      );
+      animate(scale, next, transition);
+    }
+  };
 
   // Zoom inicial adaptativo: acerca la imagen hasta cubrir `initialFill` del
   // marco, según el aspecto de la imagen y el tamaño real del contenedor.
@@ -101,7 +214,7 @@ export default function ZoomableOverlay({
       const scaleForFill = Math.sqrt(
         (initialFill * frameArea) / (shownW * shownH),
       );
-      setScale(
+      scale.set(
         Math.min(Math.max(scaleForFill, 1), coverOverContain, MAX_SCALE),
       );
     };
@@ -115,7 +228,7 @@ export default function ZoomableOverlay({
       img.removeEventListener("load", fitToFrame);
       observer.disconnect();
     };
-  }, [initialFill, elementRef]);
+  }, [initialFill, elementRef, scale]);
 
   const content = (
     <>
@@ -141,7 +254,10 @@ export default function ZoomableOverlay({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setScale((s) => Math.min(s + 0.2, MAX_SCALE));
+                animate(scale, Math.min(scale.get() + 0.2, MAX_SCALE), {
+                  duration: motionTokens.duration.fast,
+                  ease: "easeOut",
+                });
               }}
               aria-label="Acercar"
               className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
@@ -156,7 +272,10 @@ export default function ZoomableOverlay({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setScale((s) => Math.max(s - 0.2, MIN_SCALE));
+                animate(scale, Math.max(scale.get() - 0.2, MIN_SCALE), {
+                  duration: motionTokens.duration.fast,
+                  ease: "easeOut",
+                });
               }}
               aria-label="Alejar"
               className="w-10 h-10 bg-surface-1 rounded-full flex items-center justify-center border border-border-default hover:bg-surface-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
@@ -175,7 +294,7 @@ export default function ZoomableOverlay({
 
         <div className="absolute bottom-16 md:bottom-4 left-4 max-w-[70%] bg-surface-1/90 backdrop-blur-sm rounded-lg px-3 py-2 border border-border-default pointer-events-auto">
           <p className="text-xs text-ink-secondary leading-snug">
-            {scale > 1 ? (
+            {zoomed ? (
               "Arrastra para mover · Usa + y − para acercar o alejar"
             ) : (
               <>
@@ -191,23 +310,22 @@ export default function ZoomableOverlay({
         </div>
       </div>
 
-      <motion.div
+      <m.div
         ref={elementRef}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ ...exitTransition.exit, transition: exitTransition.transition }}
         transition={motionTokens.spring}
-        className={`relative w-full h-full flex items-center justify-center overflow-hidden ${scale > 1 ? "cursor-grab" : "cursor-default"} rounded-2xl border border-border-emphasis bg-[radial-gradient(120%_100%_at_50%_0%,var(--color-surface-3),var(--color-surface-deep))] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6),0_0_24px_var(--color-accent-dim)] ${className}`}
+        className={`relative w-full h-full flex items-center justify-center overflow-hidden ${zoomed ? "cursor-grab" : "cursor-default"} rounded-2xl border border-border-emphasis bg-[radial-gradient(120%_100%_at_50%_0%,var(--color-surface-3),var(--color-surface-deep))] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6),0_0_24px_var(--color-accent-dim)] ${className}`}
         onClick={(e) => e.stopPropagation()}
+        onDoubleClick={handleDoubleClick}
       >
-        <div
+        <m.div
+          style={{ x, y, scale }}
           className="relative w-full h-full flex items-center justify-center"
-          style={{
-            transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-          }}
         >
           {children}
-        </div>
+        </m.div>
 
         {header ?? (
           <div className="absolute top-0 inset-x-0 z-30 pointer-events-none flex justify-center">
@@ -221,7 +339,7 @@ export default function ZoomableOverlay({
             </div>
           </div>
         )}
-      </motion.div>
+      </m.div>
     </>
   );
 
@@ -233,7 +351,7 @@ export default function ZoomableOverlay({
     <Portal>
       <AnimatePresence>
         {isVisible && (
-          <motion.div
+          <m.div
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
@@ -246,7 +364,7 @@ export default function ZoomableOverlay({
             onClick={onClose}
           >
             {content}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </Portal>

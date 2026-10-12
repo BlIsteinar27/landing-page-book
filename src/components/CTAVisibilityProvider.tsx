@@ -35,7 +35,9 @@ export function CTAVisibilityProvider({ children }: { children: ReactNode }) {
       return next;
     });
   const setVisible = (id: string, visible: boolean) =>
-    setVisibility((prev) => ({ ...prev, [id]: visible }));
+    setVisibility((prev) =>
+      prev[id] === visible ? prev : { ...prev, [id]: visible },
+    );
 
   // Sin CTAs registrados todavía (SSR / primer render) se asume visible
   const states = Object.values(visibility);

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { motionTokens } from "@/config/motion-tokens";
 
 interface NavigationDotsProps {
@@ -15,9 +15,9 @@ interface NavigationDotsProps {
 }
 
 const sizeConfig = {
-  small: { default: "w-2 h-2", active: "w-4" },
-  medium: { default: "w-3 h-3", active: "w-6" },
-  large: { default: "w-4 h-4", active: "w-8" },
+  small: { default: "w-2 h-2", activeScale: "scale-x-[2]" },
+  medium: { default: "w-3 h-3", activeScale: "scale-x-[2]" },
+  large: { default: "w-4 h-4", activeScale: "scale-x-[2]" },
 };
 
 export default function NavigationDots({
@@ -44,7 +44,7 @@ export default function NavigationDots({
     <div className={containerClass}>
       {Array.from({ length: count }).map((_, index) => (
         <div key={index} className="relative group">
-          <motion.button
+          <m.button
             whileHover={{ scale: 1.2 }}
             whileTap={{ scale: motionTokens.scale.tap }}
             onClick={() => onIndexChange(index)}
@@ -53,13 +53,13 @@ export default function NavigationDots({
             className="flex items-center justify-center rounded-full p-1.5 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
           >
             <span
-              className={`block rounded-full transition-[width,background-color] duration-300 ${
+              className={`block rounded-full origin-left transition-[transform,background-color] duration-300 ${
                 index === activeIndex
-                  ? `bg-accent ${config.active}`
-                  : `bg-ink-tertiary group-hover:bg-ink-secondary ${config.default}`
+                  ? `bg-accent ${config.default} ${config.activeScale}`
+                  : `bg-ink-tertiary group-hover:bg-ink-secondary ${config.default} scale-x-100`
               }`}
             />
-          </motion.button>
+          </m.button>
           {showTooltips && tooltips[index] && (
             <div
               className={`${tooltipClass} opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap`}

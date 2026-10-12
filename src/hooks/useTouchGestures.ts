@@ -5,15 +5,14 @@ interface UseTouchGesturesOptions {
   onPinch?: (scale: number) => void;
   onPan?: (deltaX: number, deltaY: number) => void;
   longPressDelay?: number; // ms
-  currentScale?: number; // Escala actual del componente para pinch zoom
+  /** Escala actual para el pinch: número fijo o getter (p. ej. sobre un MotionValue) */
+  currentScale?: number | (() => number);
   enablePan?: boolean; // Habilitar arrastre
 }
 
 export function useTouchGestures<T extends HTMLElement = HTMLDivElement>(
   options: UseTouchGesturesOptions = {},
 ) {
-  const enablePan = options.enablePan ?? false;
-  const hasPinch = !!options.onPinch;
   const elementRef = useRef<T>(null);
   const [isLongPressing, setIsLongPressing] = useState(false);
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
@@ -38,6 +37,11 @@ export function useTouchGestures<T extends HTMLElement = HTMLDivElement>(
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
+    // Estado inicial de las opciones para decidir listeners y passive;
+    // los handlers leen optsRef.current en cada evento (valores siempre frescos)
+    const initialOpts = optsRef.current;
+    const initialPan = initialOpts.enablePan ?? false;
+    const initialPinch = !!initialOpts.onPinch;
 
     const handleTouchStart = (e: TouchEvent) => {
       const {
@@ -72,7 +76,10 @@ export function useTouchGestures<T extends HTMLElement = HTMLDivElement>(
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      const { onPinch, onPan, currentScale = 1 } = optsRef.current;
+      const { onPinch, onPan } = optsRef.current;
+      const rawScale = optsRef.current.currentScale ?? 1;
+      const currentScale =
+        typeof rawScale === "function" ? rawScale() : rawScale;
       const panEnabled = optsRef.current.enablePan ?? false;
       const touchCount = e.touches.length;
 
@@ -154,7 +161,7 @@ export function useTouchGestures<T extends HTMLElement = HTMLDivElement>(
     };
 
     // Touch events - non-passive cuando hay pinch o pan activo para poder usar preventDefault
-    const needsActiveTouch = enablePan || hasPinch;
+    const needsActiveTouch = initialPan || initialPinch;
     element.addEventListener("touchstart", handleTouchStart, {
       passive: !needsActiveTouch,
     });
@@ -163,26 +170,26 @@ export function useTouchGestures<T extends HTMLElement = HTMLDivElement>(
     });
     element.addEventListener("touchend", handleTouchEnd);
 
-    // Mouse events: mousedown en el elemento, move/up en document
-    // para no perder el drag si el cursor sale del elemento
-    if (enablePan) {
-      element.addEventListener("mousedown", handleMouseDown);
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-    }
+    // Mouse events: siempre instalados — los handlers se autogatean leyendo
+    // optsRef.current.enablePan en cada evento
+    element.addEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
+      if (longPressTimerRef.current) {
+        clearTimeout(longPressTimerRef.current);
+      }
       element.removeEventListener("touchstart", handleTouchStart);
       element.removeEventListener("touchmove", handleTouchMove);
       element.removeEventListener("touchend", handleTouchEnd);
-
-      if (enablePan) {
-        element.removeEventListener("mousedown", handleMouseDown);
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-      }
+      element.removeEventListener("mousedown", handleMouseDown);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [enablePan, hasPinch]);
+    // Deps []: los handlers leen las opciones frescas vía optsRef,
+    // no hace falta re-suscribir cuando cambian
+  }, []);
 
   return { elementRef, isLongPressing };
 }

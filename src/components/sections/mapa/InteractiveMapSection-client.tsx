@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
-  motion,
+  m,
   AnimatePresence,
   useScroll,
   useInView,
@@ -56,6 +56,11 @@ export default function InteractiveMapSectionClient() {
     [0.64, 0.69, 0.92, 1],
     [0, 1, 1, 0],
   );
+  const [starsActive, setStarsActive] = useState(false);
+  useMotionValueEvent(starsOpacity, "change", (v) => {
+    const on = v > 0.001;
+    setStarsActive((prev) => (prev === on ? prev : on));
+  });
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [showImageOverlay, setShowImageOverlay] = useState(false);
@@ -171,7 +176,7 @@ export default function InteractiveMapSectionClient() {
     <>
       <AnimatePresence>
         {isInSection && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{
@@ -197,7 +202,7 @@ export default function InteractiveMapSectionClient() {
               tooltipPosition="left"
               orientation="vertical"
             />
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -217,7 +222,7 @@ export default function InteractiveMapSectionClient() {
 
       <AnimatePresence>
         {isInSection && activeIndex === 0 && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{
@@ -230,7 +235,7 @@ export default function InteractiveMapSectionClient() {
             className="pointer-events-none fixed left-1/2 -translate-x-1/2 z-40 max-[400px]:top-[calc(1rem+env(safe-area-inset-top))] [@media_not_all_and_(min-height:41.25rem)]:top-[calc(1rem+env(safe-area-inset-top))] min-[400px]:[@media(min-height:41.25rem)]:max-lg:bottom-[calc(6rem+env(safe-area-inset-bottom))] min-[400px]:[@media(min-height:41.25rem)]:lg:bottom-8"
           >
             <p className="flex items-center gap-2 text-sm text-ink-secondary bg-surface-1/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border-subtle">
-              <motion.span
+              <m.span
                 animate={{ y: [0, 4, 0] }}
                 transition={{
                   duration: 1.5,
@@ -245,7 +250,7 @@ export default function InteractiveMapSectionClient() {
                   nonScalingStroke
                   aria-hidden
                 />
-              </motion.span>
+              </m.span>
               <span className="pointer-coarse:hidden">
                 Desplázate para explorar el universo
               </span>
@@ -253,7 +258,7 @@ export default function InteractiveMapSectionClient() {
                 Desliza para explorar el universo
               </span>
             </p>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -279,12 +284,12 @@ export default function InteractiveMapSectionClient() {
               al llegar al capítulo oscuro) — la visibilidad la da starsOpacity,
               que comparte el crossfade del capítulo */}
           {isInSection && (
-            <motion.div
+            <m.div
               style={{ opacity: starsOpacity }}
               className="absolute inset-0 z-10 pointer-events-none"
             >
-              <GalaxyScene progress={darkProgress} />
-            </motion.div>
+              <GalaxyScene progress={darkProgress} active={starsActive} />
+            </m.div>
           )}
 
           <p className="sr-only" role="status">

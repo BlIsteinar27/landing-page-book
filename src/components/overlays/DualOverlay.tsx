@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { m, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import { useState, useId } from "react";
 import { ChevronLeft, Maximize2, X } from "lucide-react";
@@ -55,7 +55,7 @@ export default function DualOverlay({
     <Portal>
       <AnimatePresence>
         {isVisible && (
-          <motion.div
+          <m.div
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
@@ -119,7 +119,7 @@ export default function DualOverlay({
             {/* Vista Dual o Individual */}
             <AnimatePresence mode="wait">
               {viewMode === "dual" ? (
-                <motion.div
+                <m.div
                   key="dual-view"
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -132,7 +132,7 @@ export default function DualOverlay({
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Left Image */}
-                  <motion.button
+                  <m.button
                     type="button"
                     aria-label={`Ampliar ${leftTitle}`}
                     initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
@@ -174,10 +174,10 @@ export default function DualOverlay({
                         Ampliar
                       </span>
                     </span>
-                  </motion.button>
+                  </m.button>
 
                   {/* Right Image */}
-                  <motion.button
+                  <m.button
                     type="button"
                     aria-label={`Ampliar ${rightTitle}`}
                     initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
@@ -219,8 +219,8 @@ export default function DualOverlay({
                         Ampliar
                       </span>
                     </span>
-                  </motion.button>
-                </motion.div>
+                  </m.button>
+                </m.div>
               ) : (
                 /* Vista Individual delegada a ZoomableOverlay */
                 <ZoomableOverlay
@@ -246,7 +246,7 @@ export default function DualOverlay({
                     </div>
                   }
                   extraControls={
-                    <motion.button
+                    <m.button
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -10 }}
@@ -265,7 +265,7 @@ export default function DualOverlay({
                       <span className="text-sm text-ink-primary">
                         Ver ambos
                       </span>
-                    </motion.button>
+                    </m.button>
                   }
                 >
                   <Image
@@ -284,7 +284,7 @@ export default function DualOverlay({
                 </ZoomableOverlay>
               )}
             </AnimatePresence>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </Portal>

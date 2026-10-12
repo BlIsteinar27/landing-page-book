@@ -25,11 +25,10 @@ export const motionTokens = {
 
 // Entrada estándar de bloques de sección
 export const enterVariants: Variants = {
-  hidden: { opacity: 0, y: 12, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
     transition: { duration: 0.3, ease: "easeOut" },
   },
 };

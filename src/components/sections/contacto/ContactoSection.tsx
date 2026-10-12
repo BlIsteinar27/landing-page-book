@@ -1,12 +1,9 @@
-"use client";
-
-import { motion } from "motion/react";
 import InstagramIcon from "@/components/icons/InstagramIcon";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import { SOCIAL_LINKS_FLAT } from "@/config/links";
 import SocialLinkCard from "@/components/ui/SocialLinkCard";
-import { staggerContainer } from "@/config/motion-tokens";
-import { useEnterVariants } from "@/hooks/useEnterVariants";
+import Stagger from "@/components/ui/Stagger";
+import Enter from "@/components/ui/Enter";
 
 const redes = [
   {
@@ -24,47 +21,30 @@ const redes = [
 ];
 
 export default function ContactoSection() {
-  const enter = useEnterVariants();
-
   return (
     <section className="relative py-24 px-6 md:px-8 bg-surface-1">
       <div className="max-w-4xl mx-auto text-center">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.p
-            variants={enter}
-            className="text-xs tracking-[0.25em] uppercase text-accent mb-8"
-          >
-            Contacto
-          </motion.p>
+        <Stagger>
+          <Enter className="text-xs tracking-[0.25em] uppercase text-accent mb-8">
+            <p>Contacto</p>
+          </Enter>
 
-          <motion.h2
-            variants={enter}
-            className="text-3xl md:text-4xl font-display font-black mb-6 text-ink-primary"
-          >
-            Sigue el viaje de creación
-          </motion.h2>
+          <Enter>
+            <h2 className="text-3xl md:text-4xl font-display font-black mb-6 text-ink-primary">
+              Sigue el viaje de creación
+            </h2>
+          </Enter>
 
-          <motion.p
-            variants={enter}
-            className="text-ink-secondary mb-12 max-w-xl mx-auto"
-          >
-            Únete a la comunidad de lectores, conoce más del universo de Dioses
-            Universales y acompaña la llegada de <em>Los Dos Reinos</em>.
-          </motion.p>
-        </motion.div>
+          <Enter>
+            <p className="text-ink-secondary mb-12 max-w-xl mx-auto">
+              Únete a la comunidad de lectores, conoce más del universo de
+              Dioses Universales y acompaña la llegada de{" "}
+              <em>Los Dos Reinos</em>.
+            </p>
+          </Enter>
+        </Stagger>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="flex flex-col sm:flex-row gap-6 justify-center"
-        >
+        <Stagger className="flex flex-col sm:flex-row gap-6 justify-center">
           {redes.map((red) => (
             <SocialLinkCard
               key={red.nombre}
@@ -74,7 +54,7 @@ export default function ContactoSection() {
               icon={red.icon}
             />
           ))}
-        </motion.div>
+        </Stagger>
       </div>
     </section>
   );

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { m, AnimatePresence, useReducedMotion, useInView } from "motion/react";
 import Image from "next/image";
 import { Pause, Play } from "lucide-react";
-import { motionTokens, staggerContainer } from "@/config/motion-tokens";
+import { motionTokens } from "@/config/motion-tokens";
 import { useEnterVariants } from "@/hooks/useEnterVariants";
 
 const DivineParticles = dynamic(() => import("./DivineParticles"), {
@@ -20,7 +20,7 @@ const personajes = [
   },
   {
     id: 2,
-    src: "/landing-book-victoria/prota-libro-1-sin-fondo.PNG",
+    src: "/landing-book-victoria/prota-libro-1-sin-fondo.png",
     alt: "Segunda pareja de protagonistas de Los Dos Reinos",
   },
 ];
@@ -33,41 +33,23 @@ export default function PersonajesSectionClient() {
   const [hasFocus, setHasFocus] = useState(false);
   const reduce = useReducedMotion();
   const enter = useEnterVariants();
-  const autoplay = !(isPaused || isHovering || hasFocus || reduce);
+  const carruselRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(carruselRef, { amount: 0.2 });
+  const autoplay = inView && !(isPaused || isHovering || hasFocus || reduce);
 
   useEffect(() => {
     if (!autoplay) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % personajes.length);
-    }, 7000);
+    }, 4000);
     return () => clearInterval(interval);
   }, [autoplay]);
 
   return (
     <>
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-      >
-        <motion.p
-          variants={enter}
-          className="text-xs tracking-[0.25em] uppercase text-accent mb-8 text-center"
-        >
-          Los Protagonistas
-        </motion.p>
-
-        <motion.h2
-          variants={enter}
-          className="text-3xl md:text-4xl font-display font-black text-center mb-16 text-ink-primary"
-        >
-          Conoce a los Personajes Principales
-        </motion.h2>
-      </motion.div>
-
-      <motion.div
+      <m.div
+        ref={carruselRef}
         variants={enter}
         initial="hidden"
         whileInView="visible"
@@ -85,7 +67,7 @@ export default function PersonajesSectionClient() {
       >
         <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
           {/* Partículas doradas flotantes */}
-          <DivineParticles />
+          {inView && <DivineParticles />}
 
           {/* Fondo con gradiente cósmico */}
           <div className="absolute inset-0 bg-gradient-to-br from-surface-base via-surface-base/40 to-purple-medium/20" />
@@ -108,7 +90,7 @@ export default function PersonajesSectionClient() {
 
           {/* Carrusel con transición de luz divina */}
           <AnimatePresence initial={false} mode="wait">
-            <motion.div
+            <m.div
               key={personajes[currentIndex].id}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -119,7 +101,7 @@ export default function PersonajesSectionClient() {
               }}
               className="absolute inset-0 flex items-center justify-center p-5 md:p-8"
             >
-              <motion.div
+              <m.div
                 initial={{ filter: "brightness(0.8) blur(4px)" }}
                 animate={{ filter: "brightness(1) blur(0px)" }}
                 transition={
@@ -135,14 +117,14 @@ export default function PersonajesSectionClient() {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-contain drop-shadow-2xl"
                 />
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           </AnimatePresence>
 
           {/* Efecto de luz divina en transición */}
           <AnimatePresence>
             {isHovering && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.3 }}
                 exit={{ opacity: 0 }}
@@ -152,11 +134,12 @@ export default function PersonajesSectionClient() {
           </AnimatePresence>
 
           {/* Glow inferior divino */}
-          <motion.div
-            animate={{
-              opacity: [0.3, 0.6, 0.3],
-              scale: [1, 1.2, 1],
-            }}
+          <m.div
+            animate={
+              inView
+                ? { opacity: [0.3, 0.6, 0.3], scale: [1, 1.2, 1] }
+                : { opacity: 0.3, scale: 1 }
+            }
             transition={{
               duration: 4,
               repeat: Infinity,
@@ -167,12 +150,12 @@ export default function PersonajesSectionClient() {
         </div>
 
         {/* Indicadores de navegación con efecto divino */}
-        <motion.div
+        <m.div
           className="mt-8 flex justify-center items-center gap-3"
           variants={enter}
         >
           {personajes.map((_, index) => (
-            <motion.button
+            <m.button
               key={index}
               onClick={() => setCurrentIndex(index)}
               className="relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base rounded-full"
@@ -181,7 +164,7 @@ export default function PersonajesSectionClient() {
               aria-current={index === currentIndex ? "true" : undefined}
               aria-label={`Ver ${personajes[index].alt.charAt(0).toLowerCase() + personajes[index].alt.slice(1)}`}
             >
-              <motion.div
+              <m.div
                 animate={
                   index === currentIndex
                     ? {
@@ -206,7 +189,7 @@ export default function PersonajesSectionClient() {
                 }`}
               />
               {index === currentIndex && (
-                <motion.div
+                <m.div
                   className="absolute inset-0 rounded-full bg-accent/30 blur-sm"
                   animate={{
                     scale: [1, 1.5, 1],
@@ -219,7 +202,7 @@ export default function PersonajesSectionClient() {
                   }}
                 />
               )}
-            </motion.button>
+            </m.button>
           ))}
           <button
             type="button"
@@ -243,30 +226,8 @@ export default function PersonajesSectionClient() {
               />
             )}
           </button>
-        </motion.div>
-      </motion.div>
-
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="mt-12 text-center max-w-2xl mx-auto flex flex-col gap-3"
-      >
-        <motion.p
-          variants={enter}
-          className="text-base text-ink-secondary leading-relaxed"
-        >
-          Dioses con el poder de doblar el destino del universo. Decisiones que
-          no solo mueven reinos, sino que reescriben las leyes de lo divino.
-        </motion.p>
-        <motion.p
-          variants={enter}
-          className="text-sm text-ink-secondary italic font-serif"
-        >
-          Dioses Universales — Los Dos Reinos
-        </motion.p>
-      </motion.div>
+        </m.div>
+      </m.div>
     </>
   );
 }

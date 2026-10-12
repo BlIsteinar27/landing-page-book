@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { ShoppingBag } from "lucide-react";
 import { useCompraDialog } from "@/components/CompraDialogProvider";
 import { motionTokens } from "@/config/motion-tokens";
@@ -24,7 +24,7 @@ export default function CTAButton({
   const openCompra = useCompraDialog();
 
   return (
-    <motion.button
+    <m.button
       type="button"
       onClick={openCompra}
       whileTap={{ scale: motionTokens.scale.tap }}
@@ -38,6 +38,6 @@ export default function CTAButton({
         aria-hidden
       />
       {text || "Comprar Los Dos Reinos"}
-    </motion.button>
+    </m.button>
   );
 }

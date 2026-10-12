@@ -1,13 +1,14 @@
 "use client";
 
 import {
-  motion,
+  m,
   useTransform,
+  useMotionValueEvent,
   type MotionValue,
   type TargetAndTransition,
 } from "motion/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Realm } from "@/config/realms-data";
 import { motionTokens } from "@/config/motion-tokens";
 import ImageErrorFallback from "@/components/ImageErrorFallback";
@@ -79,6 +80,29 @@ export default function RealmChapter({
     [start, Math.min(start + FADE, end), Math.max(end - FADE, start), end],
     [isFirst ? 1 : 0, 1, 1, isLast ? 1 : 0],
   );
+
+  // La deriva solo corre mientras el capítulo es visible (incluido el crossfade
+  // completo); a opacity 0 se asienta a la escala base — nadie la ve parar
+  const [ambientVisible, setAmbientVisible] = useState(isFirst);
+  useMotionValueEvent(opacity, "change", (v) => {
+    const on = v > 0.001;
+    setAmbientVisible((prev) => (prev === on ? prev : on));
+  });
+  const drift = AMBIENT_DRIFT[realm.id];
+
+  // La imagen se desmonta solo tras ~2 s de opacidad 0 sostenida: libera el
+  // bitmap del capítulo fuera de pantalla sin riesgo de parpadear durante
+  // el crossfade ni de desmontar/remontar si el usuario cambia de dirección
+  const [grace, setGrace] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(
+      () => setGrace(ambientVisible),
+      ambientVisible ? 0 : 2000,
+    );
+    return () => clearTimeout(t);
+  }, [ambientVisible]);
+  const imageMounted = ambientVisible || grace;
+
   // Ken Burns: zoom-out lento + deriva vertical mientras el capítulo vive
   const scale = useTransform(progress, [start, end], [1.1, 1.02]);
   // Deriva vertical: el final se queda en -1% para que la imagen escalada
@@ -106,7 +130,7 @@ export default function RealmChapter({
   );
 
   return (
-    <motion.div
+    <m.div
       // Solo inert (sin aria-hidden): inert ya saca el subárbol del árbol de
       // accesibilidad y además desenfoca descendientes al activarse — con ambos,
       // Chrome avisa «Blocked aria-hidden… descendant retained focus» si el
@@ -122,38 +146,47 @@ export default function RealmChapter({
       )}
       {hasError && <ImageErrorFallback />}
 
-      <motion.div style={{ scale, y }} className="absolute inset-0">
+      <m.div style={{ scale, y }} className="absolute inset-0">
         {/* Capa ambiental separada del Ken Burns por scroll: los dos
             transforms viven en elementos distintos y no se pisan */}
-        <motion.div
-          animate={AMBIENT_DRIFT[realm.id]?.animate}
+        <m.div
+          animate={
+            drift
+              ? ambientVisible
+                ? drift.animate
+                : { scale: 1.04, x: "0%", y: "0%" }
+              : undefined
+          }
           transition={
-            AMBIENT_DRIFT[realm.id]
-              ? {
-                  duration: AMBIENT_DRIFT[realm.id].duration,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }
+            drift
+              ? ambientVisible
+                ? {
+                    duration: drift.duration,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }
+                : { duration: 1.2, ease: "easeInOut" }
               : undefined
           }
           className="absolute inset-0"
         >
-          <Image
-            src={realm.backgroundImage}
-            alt={isActive ? realm.name : ""}
-            fill
-            priority={index === 0}
-            loading={index === 0 ? "eager" : "lazy"}
-            quality={85}
-            className="object-cover"
-            sizes="100vw"
-            placeholder="blur"
-            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
-            onLoad={() => setIsLoaded(true)}
-            onError={() => setHasError(true)}
-          />
-          {realm.altView && (
-            <motion.div
+          {imageMounted && (
+            <Image
+              src={realm.backgroundImage}
+              alt={isActive ? realm.name : ""}
+              fill
+              loading="lazy"
+              quality={85}
+              className="object-cover"
+              sizes="100vw"
+              placeholder="blur"
+              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjM2QxZjVjIi8+PC9zdmc+"
+              onLoad={() => setIsLoaded(true)}
+              onError={() => setHasError(true)}
+            />
+          )}
+          {realm.altView && imageMounted && (
+            <m.div
               animate={{ opacity: altView ? 1 : 0 }}
               transition={{ duration: 1.4, ease: "easeInOut" }}
               className="absolute inset-0"
@@ -167,10 +200,10 @@ export default function RealmChapter({
                 className="object-cover"
                 sizes="100vw"
               />
-            </motion.div>
+            </m.div>
           )}
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
 
       {/* Pill de vista: indica qué imagen está activa y permite cambiarla.
           Ambas vistas son el mismo nivel del cono — el rail sigue en 3 ticks */}
@@ -183,7 +216,7 @@ export default function RealmChapter({
           {[realm.name, realm.altView.name].map((label, i) => {
             const active = altView === (i === 1);
             return (
-              <motion.button
+              <m.button
                 key={label}
                 type="button"
                 whileTap={{ scale: motionTokens.scale.tap }}
@@ -196,7 +229,7 @@ export default function RealmChapter({
                 }`}
               >
                 {label}
-              </motion.button>
+              </m.button>
             );
           })}
         </div>
@@ -215,23 +248,24 @@ export default function RealmChapter({
               ? "dark"
               : "central"
         }
+        active={ambientVisible}
       />
 
       {isLast && (
-        <motion.div
+        <m.div
           style={{ opacity: outroOpacity }}
           className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-surface-1 via-surface-1/70 to-transparent pointer-events-none"
         />
       )}
 
-      <motion.div
+      <m.div
         style={{ opacity: textOpacity, y: textY }}
         className="absolute inset-0 flex items-center justify-center p-6 pointer-events-none"
       >
         {/* Grid apilado: las dos vistas ocupan la misma celda y crossfaden;
             el contenedor se dimensiona al bloque más alto */}
         <div className="grid text-center max-w-2xl">
-          <motion.div
+          <m.div
             animate={{ opacity: altView ? 0 : 1 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
             className="col-start-1 row-start-1"
@@ -242,9 +276,9 @@ export default function RealmChapter({
             <p className="text-lg md:text-xl text-ink-secondary">
               {realm.description}
             </p>
-          </motion.div>
+          </m.div>
           {realm.altView && (
-            <motion.div
+            <m.div
               animate={{ opacity: altView ? 1 : 0 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className="col-start-1 row-start-1"
@@ -255,10 +289,10 @@ export default function RealmChapter({
               <p className="text-lg md:text-xl text-ink-secondary">
                 {realm.altView.description}
               </p>
-            </motion.div>
+            </m.div>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
