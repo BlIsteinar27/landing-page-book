@@ -30,8 +30,8 @@ const RISE: Record<
   "light" | "central",
   { dist: number; sway: number; peak: number; grow: number }
 > = {
-  light: { dist: 170, sway: 0, peak: 0.8, grow: 1.4 },
-  central: { dist: 110, sway: 18, peak: 0.65, grow: 1.25 },
+  light: { dist: 170, sway: 0, peak: 1, grow: 1.4 },
+  central: { dist: 110, sway: 18, peak: 0.9, grow: 1.25 },
 };
 
 export default function CosmicDust({ variant = "dark" }: CosmicDustProps) {
@@ -40,7 +40,7 @@ export default function CosmicDust({ variant = "dark" }: CosmicDustProps) {
     variant === "light" || variant === "central" ? RISE[variant] : undefined;
   // Las motas ascendentes se leen como «partículas», no como polvo: más
   // grandes y con más brillo que el dust ambiental del reino oscuro
-  const dotSize = (s: number) => (rise ? s * 2.2 : s);
+  const dotSize = (s: number) => (rise ? s * 2.7 : s);
 
   // Igual que DivineParticles: decorativo en bucle, fuera con reduced motion
   if (reduce) return null;
@@ -54,7 +54,7 @@ export default function CosmicDust({ variant = "dark" }: CosmicDustProps) {
         <m.span
           key={`dust-${i}`}
           className={`absolute rounded-full blur-[1px] ${
-            rise ? "bg-accent/60" : "bg-accent/30"
+            rise ? "bg-accent/90" : "bg-accent/30"
           }`}
           style={{
             left: `${p.x}%`,
